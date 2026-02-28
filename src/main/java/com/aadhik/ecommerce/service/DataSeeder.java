@@ -1,0 +1,109 @@
+package com.aadhik.ecommerce.service;
+
+import com.aadhik.ecommerce.model.HomeSlider;
+import com.aadhik.ecommerce.model.HomepageSection;
+import com.aadhik.ecommerce.model.Product;
+import com.aadhik.ecommerce.model.ProductCollection;
+import com.aadhik.ecommerce.model.SectionType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+
+import java.math.BigDecimal;
+
+@Singleton
+@Startup
+public class DataSeeder {
+
+    @PersistenceContext(unitName = "my_persistence_unit")
+    private EntityManager entityManager;
+
+    @PostConstruct
+    @Transactional
+    public void seed() {
+        Long existing = entityManager.createQuery("select count(c) from ProductCollection c", Long.class)
+                .getSingleResult();
+        if (existing != null && existing > 0) {
+            return;
+        }
+
+        ProductCollection bestSellers = createCollection("Best Sellers", "best-sellers",
+                "https://images.unsplash.com/photo-1494390248081-4e521a5940db?w=900&h=400&fit=crop",
+                "Top moving health drinks and cereals");
+
+        ProductCollection nutrition = createCollection("Nutrition Drinks", "nutrition-drinks",
+                "https://images.unsplash.com/photo-1615486363974-bfd7c6f33c0f?w=900&h=400&fit=crop",
+                "Energy and immunity boosters");
+
+        createSlider(1, "Sip Your Way to Health", "Premium wholesome powders",
+                "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=1400&h=700&fit=crop");
+        createSlider(2, "Sprouted Mix", "Natural goodness for all ages",
+                "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1400&h=700&fit=crop");
+        createSlider(3, "5 in 1 Weight Gain", "Healthy weight support",
+                "https://images.unsplash.com/photo-1467453678174-768ec283a940?w=1400&h=700&fit=crop");
+
+        createProduct("Apple Instant Cerealac - Homemade & Nutritious",
+                "https://images.unsplash.com/photo-1602741007916-4e52790f3f3f?w=700&h=900&fit=crop",
+                new BigDecimal("320.00"), new BigDecimal("375.00"), true, bestSellers);
+        createProduct("Nendran Banana Nutty Dates Drink",
+                "https://images.unsplash.com/photo-1627483262955-c873b837f078?w=700&h=900&fit=crop",
+                new BigDecimal("320.00"), new BigDecimal("750.00"), true, bestSellers);
+        createProduct("5-in-1 Weight Gain Nutrii Drink",
+                "https://images.unsplash.com/photo-1523906630133-f6934a1ab2b9?w=700&h=900&fit=crop",
+                new BigDecimal("270.00"), new BigDecimal("675.00"), true, nutrition);
+        createProduct("Sprouted Ragi Almond & Dates Powder",
+                "https://images.unsplash.com/photo-1514996937319-344454492b37?w=700&h=900&fit=crop",
+                new BigDecimal("250.00"), null, true, nutrition);
+
+        createSection("Best Sellers", SectionType.BEST_SELLERS, null, 4, 1);
+        createSection("Nutrition Drinks", SectionType.COLLECTION, nutrition, 4, 2);
+    }
+
+    private ProductCollection createCollection(String name, String slug, String image, String description) {
+        ProductCollection collection = new ProductCollection();
+        collection.setName(name);
+        collection.setSlug(slug);
+        collection.setBannerImage(image);
+        collection.setDescription(description);
+        collection.setActive(true);
+        entityManager.persist(collection);
+        return collection;
+    }
+
+    private void createSlider(int sortOrder, String title, String subtitle, String imageUrl) {
+        HomeSlider slider = new HomeSlider();
+        slider.setSortOrder(sortOrder);
+        slider.setTitle(title);
+        slider.setSubtitle(subtitle);
+        slider.setImageUrl(imageUrl);
+        slider.setActive(true);
+        entityManager.persist(slider);
+    }
+
+    private void createProduct(String name, String image, BigDecimal price, BigDecimal comparePrice,
+                               boolean featured, ProductCollection collection) {
+        Product product = new Product();
+        product.setName(name);
+        product.setImageUrl(image);
+        product.setPrice(price);
+        product.setComparePrice(comparePrice);
+        product.setFeatured(featured);
+        product.setActive(true);
+        product.setCollection(collection);
+        entityManager.persist(product);
+    }
+
+    private void createSection(String title, SectionType type, ProductCollection collection, int maxItems, int sortOrder) {
+        HomepageSection section = new HomepageSection();
+        section.setSectionTitle(title);
+        section.setSectionType(type);
+        section.setCollection(collection);
+        section.setMaxItems(maxItems);
+        section.setSortOrder(sortOrder);
+        section.setActive(true);
+        entityManager.persist(section);
+    }
+}
