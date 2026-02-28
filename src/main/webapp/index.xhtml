@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="primefaces"
+      xmlns:f="jakarta.faces.core">
+<h:head>
+    <title>The Mothers Care | Ecommerce</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <h:outputStylesheet>
+        :root {
+            --brand-blue: #173676;
+            --surface: #f5f7fb;
+            --text-main: #1d2b54;
+            --card-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Inter", "Segoe UI", sans-serif;
+            background: var(--surface);
+            color: var(--text-main);
+        }
+
+        .top-strip {
+            background: #ffffff;
+            color: #1d2b54;
+            text-align: center;
+            font-weight: 700;
+            padding: 0.75rem 1rem;
+            letter-spacing: 0.04em;
+        }
+
+        .nav-shell {
+            background: var(--brand-blue);
+            color: #fff;
+            padding: 0.75rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .nav-row {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .nav-left,
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 80px;
+        }
+
+        .logo-badge {
+            height: 54px;
+            width: 54px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            object-fit: cover;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 1.25rem;
+        }
+
+        .hero {
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 8px 22px rgba(17, 34, 68, 0.12);
+            margin-bottom: 2.2rem;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+        }
+
+        .hero-grid img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3.3rem);
+            margin: 0 0 1.2rem;
+            color: #10255f;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.1rem;
+        }
+
+        .product-card {
+            background: #fff;
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            box-shadow: 0 10px 24px rgba(21, 40, 70, 0.12);
+            position: relative;
+        }
+
+        .sale-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #1e4ea1;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            z-index: 2;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .product-info {
+            padding: 1rem;
+        }
+
+        .product-title {
+            margin: 0;
+            line-height: 1.4;
+            font-size: 1.07rem;
+            min-height: 3em;
+            font-weight: 600;
+        }
+
+        .old-price {
+            color: #7a849f;
+            text-decoration: line-through;
+            margin-right: 0.5rem;
+        }
+
+        .new-price {
+            color: #11357f;
+            font-weight: 700;
+            font-size: 1.35rem;
+        }
+
+        .floating-whatsapp {
+            position: fixed;
+            right: 20px;
+            bottom: 18px;
+            height: 56px;
+            width: 56px;
+            border-radius: 50%;
+            border: none;
+            background: #25d366;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.45);
+            z-index: 50;
+            font-size: 1.4rem;
+        }
+
+        .mobile-search {
+            display: none;
+            margin-top: 0.75rem;
+        }
+
+        .mobile-search .ui-inputtext {
+            width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .products-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .hero-grid img {
+                height: 260px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-shell {
+                padding: 0.65rem 0.8rem;
+            }
+
+            .logo-badge {
+                height: 44px;
+                width: 44px;
+            }
+
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-grid img {
+                height: 230px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .product-card img {
+                height: 220px;
+            }
+
+            .mobile-search {
+                display: block;
+            }
+        }
+    </h:outputStylesheet>
+</h:head>
+<h:body>
+    <h:form id="homeForm">
+        <div class="top-strip">Sip Your Way To Health</div>
+
+        <div class="nav-shell">
+            <div class="nav-row">
+                <div class="nav-left">
+                    <p:commandButton type="button" icon="pi pi-bars" styleClass="ui-button-flat ui-button-rounded ui-button-text" />
+                    <p:commandButton type="button" icon="pi pi-search" styleClass="ui-button-flat ui-button-rounded ui-button-text" />
+                </div>
+
+                <h:graphicImage styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="The Mothers Care" />
+
+                <div class="nav-right">
+                    <p:commandButton type="button" icon="pi pi-user" styleClass="ui-button-flat ui-button-rounded ui-button-text" />
+                    <p:commandButton type="button" icon="pi pi-shopping-bag" styleClass="ui-button-flat ui-button-rounded ui-button-text" />
+                </div>
+            </div>
+            <div class="mobile-search">
+                <p:inputText placeholder="Search healthy products..." />
+            </div>
+        </div>
+
+        <main class="container">
+            <section class="hero" aria-label="Featured products banner">
+                <div class="hero-grid">
+                    <h:graphicImage value="https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=700&amp;h=500&amp;fit=crop" alt="Milk mix" />
+                    <h:graphicImage value="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=700&amp;h=500&amp;fit=crop" alt="Sprouted mix" />
+                    <h:graphicImage value="https://images.unsplash.com/photo-1467453678174-768ec283a940?w=700&amp;h=500&amp;fit=crop" alt="Weight gain drink" />
+                </div>
+            </section>
+
+            <section aria-label="Best sellers section">
+                <h2 class="section-title">Best Sellers</h2>
+                <div class="products-grid">
+                    <article class="product-card">
+                        <span class="sale-badge">Sale</span>
+                        <h:graphicImage value="https://images.unsplash.com/photo-1602741007916-4e52790f3f3f?w=700&amp;h=900&amp;fit=crop" alt="Apple instant cereal" />
+                        <div class="product-info">
+                            <p class="product-title">Apple Instant Cerealac - Homemade &amp; Nutritious</p>
+                            <span class="old-price">Rs. 375.00</span>
+                            <span class="new-price">Rs. 320.00</span>
+                        </div>
+                    </article>
+
+                    <article class="product-card">
+                        <span class="sale-badge">Sale</span>
+                        <h:graphicImage value="https://images.unsplash.com/photo-1627483262955-c873b837f078?w=700&amp;h=900&amp;fit=crop" alt="Banana dates drink" />
+                        <div class="product-info">
+                            <p class="product-title">Nendran Banana Nutty Dates Drink</p>
+                            <span class="old-price">Rs. 750.00</span>
+                            <span class="new-price">Rs. 320.00</span>
+                        </div>
+                    </article>
+
+                    <article class="product-card">
+                        <span class="sale-badge">Sale</span>
+                        <h:graphicImage value="https://images.unsplash.com/photo-1523906630133-f6934a1ab2b9?w=700&amp;h=900&amp;fit=crop" alt="5 in 1 weight gain" />
+                        <div class="product-info">
+                            <p class="product-title">5-in-1 Weight Gain Nutrii Drink</p>
+                            <span class="old-price">Rs. 675.00</span>
+                            <span class="new-price">From Rs. 270.00</span>
+                        </div>
+                    </article>
+
+                    <article class="product-card">
+                        <h:graphicImage value="https://images.unsplash.com/photo-1514996937319-344454492b37?w=700&amp;h=900&amp;fit=crop" alt="Sprouted ragi almond" />
+                        <div class="product-info">
+                            <p class="product-title">Sprouted Ragi Almond &amp; Dates Powder</p>
+                            <span class="new-price">From Rs. 250.00</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </main>
+
+        <p:commandButton type="button" icon="pi pi-whatsapp" styleClass="floating-whatsapp ui-button-rounded" />
+    </h:form>
+</h:body>
+</html>
