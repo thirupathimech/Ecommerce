@@ -66,6 +66,16 @@ public class CatalogRepository {
                 .getResultList();
     }
 
+    public List<Product> findProducts() {
+        return entityManager.createQuery("""
+                        select p from Product p
+                        left join fetch p.collection c
+                        where p.active = true
+                        order by p.id desc
+                        """, Product.class)
+                .getResultList();
+    }
+
     @Transactional
     public HomeSlider saveSlider(HomeSlider slider) {
         if (slider.getId() == null) {
@@ -101,5 +111,24 @@ public class CatalogRepository {
             return collection;
         }
         return entityManager.merge(collection);
+    }
+
+    @Transactional
+    public Product saveProduct(Product product) {
+        if (product.getCollection() != null) {
+            if (product.getCollection().getId() != null) {
+                ProductCollection managedCollection = entityManager.find(ProductCollection.class, product.getCollection().getId());
+                product.setCollection(managedCollection);
+            } else {
+                product.setCollection(null);
+            }
+        }
+
+        if (product.getId() == null) {
+            entityManager.persist(product);
+            return product;
+        }
+
+        return entityManager.merge(product);
     }
 }
