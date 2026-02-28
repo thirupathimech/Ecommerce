@@ -22,4 +22,14 @@ public class HomePageBean {
     public List<CatalogService.HomepageSectionView> getSectionViews() {
         return catalogService.getHomepageSectionsWithProducts();
     }
+
+    public String resolveMediaUrl(String source) {
+        if (source == null || source.isBlank()) {
+            return "https://via.placeholder.com/700x900?text=No+Image";
+        }
+        if (source.startsWith("dbfile:")) {
+            return "/resources/files/" + source.substring("dbfile:".length());
+        }
+        return source;
+    }
 }

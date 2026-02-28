@@ -2,6 +2,7 @@ package com.aadhik.ecommerce.web;
 
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
+import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.SectionType;
@@ -12,9 +13,11 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.primefaces.event.FileUploadEvent;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,21 +38,229 @@ public class AdminBean implements Serializable {
     private Product productForm;
     private List<ProductVariantInput> variantInputs;
 
+    private String fileSelectionTarget;
+    private int fileSelectionVariantIndex;
+
     @PostConstruct
     public void init() {
         activeMenu = "products";
         productEditorVisible = false;
         variantInputs = new ArrayList<>();
+        fileSelectionTarget = "primary";
+        fileSelectionVariantIndex = -1;
         resetSliderForm();
         resetSectionForm();
         resetCollectionForm();
         resetProductForm();
     }
 
+    public void setActiveMenu(String activeMenu) {
+        this.activeMenu = activeMenu;
+        if (!"products".equals(activeMenu)) {
+            productEditorVisible = false;
+        }
+    }
+
+    public void openNewProductForm() {
+        activeMenu = "products";
+        productEditorVisible = true;
+        resetProductForm();
+    }
+
+    public void cancelProductEditor() {
+        resetProductForm();
+        productEditorVisible = false;
+    }
+
+    public void addVariantRow() {
+        variantInputs.add(new ProductVariantInput());
+    }
+
+    public void removeVariantRow(int index) {
+        if (index >= 0 && index < variantInputs.size()) {
+            variantInputs.remove(index);
+        }
+        if (variantInputs.isEmpty()) {
+            variantInputs.add(new ProductVariantInput());
+        }
+    }
+
+    public void openFilePickerForPrimary() {
+        fileSelectionTarget = "primary";
+        fileSelectionVariantIndex = -1;
+    }
+
+    public void openFilePickerForGallery() {
+        fileSelectionTarget = "gallery";
+        fileSelectionVariantIndex = -1;
+    }
+
+    public void openFilePickerForVariant(int index) {
+        fileSelectionTarget = "variant";
+        fileSelectionVariantIndex = index;
+    }
+
+    public void selectFileForProduct(MediaFile file) {
+        String ref = toDbFileRef(file.getId());
+        if ("primary".equals(fileSelectionTarget)) {
+            productForm.setImageUrl(ref);
+        } else if ("gallery".equals(fileSelectionTarget)) {
+            if (isBlank(productForm.getGalleryImages())) {
+                productForm.setGalleryImages(ref);
+            } else if (!productForm.getGalleryImages().contains(ref)) {
+                productForm.setGalleryImages(productForm.getGalleryImages() + "," + ref);
+            }
+        } else if ("variant".equals(fileSelectionTarget)
+                && fileSelectionVariantIndex >= 0
+                && fileSelectionVariantIndex < variantInputs.size()) {
+            variantInputs.get(fileSelectionVariantIndex).setImageUrl(ref);
+        }
+        addInfo("File selected");
+    }
+
+    public void handleFileUpload(FileUploadEvent event) {
+        try {
+            String contentType = event.getFile().getContentType() == null ? "application/octet-stream" : event.getFile().getContentType();
+            if (!isAllowedType(contentType)) {
+                addError("Only images, videos and PDFs are allowed.");
+                return;
+            }
+
+            MediaFile mediaFile = new MediaFile();
+            mediaFile.setFileName(event.getFile().getFileName());
+            mediaFile.setContentType(contentType);
+            mediaFile.setFileType(resolveFileType(contentType));
+            mediaFile.setFileSize(event.getFile().getSize());
+            mediaFile.setData(event.getFile().getContent());
+            mediaFile.setUploadedAt(LocalDateTime.now());
+            catalogService.saveMediaFile(mediaFile);
+            addInfo("File uploaded successfully");
+        } catch (Exception exception) {
+            addError("Upload failed: " + exception.getMessage());
+        }
+    }
+
+    private boolean isAllowedType(String contentType) {
+        return contentType.startsWith("image/")
+                || contentType.startsWith("video/")
+                || "application/pdf".equals(contentType);
+    }
+
+    private String resolveFileType(String contentType) {
+        if (contentType.startsWith("image/")) {
+            return "IMAGE";
+        }
+        if (contentType.startsWith("video/")) {
+            return "VIDEO";
+        }
+        if ("application/pdf".equals(contentType)) {
+            return "PDF";
+        }
+        return "OTHER";
+    }
+
+    public String toDbFileRef(Long fileId) {
+        return "dbfile:" + fileId;
+    }
+
+    public String resolveMediaUrl(String source) {
+        if (isBlank(source)) {
+            return "https://via.placeholder.com/62x62?text=NA";
+        }
+        if (source.startsWith("dbfile:")) {
+            return "/resources/files/" + source.substring("dbfile:".length());
+        }
+        return source;
+    }
+
+    public String previewLabel(String source) {
+        if (isBlank(source)) {
+            return "Not selected";
+        }
+        if (source.startsWith("dbfile:")) {
+            return "Selected from Files: " + source;
+        }
+        return source;
+    }
+
+    public String fileThumbnail(MediaFile file) {
+        if ("IMAGE".equals(file.getFileType())) {
+            return "/resources/files/" + file.getId();
+        }
+        if ("VIDEO".equals(file.getFileType())) {
+            return "https://via.placeholder.com/62x62?text=VIDEO";
+        }
+        if ("PDF".equals(file.getFileType())) {
+            return "https://via.placeholder.com/62x62?text=PDF";
+        }
+        return "https://via.placeholder.com/62x62?text=FILE";
+    }
+
+    public String humanSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " B";
+        }
+        double kb = bytes / 1024.0;
+        if (kb < 1024) {
+            return String.format("%.1f KB", kb);
+        }
+        return String.format("%.2f MB", kb / 1024.0);
+    }
+
+    public long fileUsageCount(Long fileId) {
+        return catalogService.getFileUsageCount(fileId);
+    }
+
+    public void saveProduct() {
+        if (!validateProduct()) {
+            return;
+        }
+
+        if (productForm.isHasVariants()) {
+            productForm.setVariantData(serializeVariants(variantInputs));
+        } else {
+            productForm.setVariantData(null);
+        }
+
+        catalogService.saveProduct(productForm);
+        resetProductForm();
+        productEditorVisible = false;
+        addInfo("Product saved successfully");
+    }
+
+    public void editProduct(Product product) {
+        Product draft = new Product();
+        draft.setId(product.getId());
+        draft.setName(product.getName());
+        draft.setDescription(product.getDescription());
+        draft.setSku(product.getSku());
+        draft.setHsn(product.getHsn());
+        draft.setImageUrl(product.getImageUrl());
+        draft.setGalleryImages(product.getGalleryImages());
+        draft.setPrice(product.getPrice());
+        draft.setComparePrice(product.getComparePrice());
+        draft.setWeight(product.getWeight());
+        draft.setHasVariants(product.isHasVariants());
+        draft.setVariantData(product.getVariantData());
+        draft.setFeatured(product.isFeatured());
+        draft.setActive(product.isActive());
+        draft.setCollection(toCollectionReference(product.getCollection()));
+        productForm = draft;
+
+        variantInputs = deserializeVariants(product.getVariantData());
+        if (variantInputs.isEmpty()) {
+            variantInputs.add(new ProductVariantInput());
+        }
+
+        activeMenu = "products";
+        productEditorVisible = true;
+    }
+
     public void saveSlider() {
         if (!validateSlider()) {
             return;
         }
+
         catalogService.saveSlider(sliderForm);
         resetSliderForm();
         addInfo("Slider saved successfully");
@@ -71,22 +282,6 @@ public class AdminBean implements Serializable {
         catalogService.saveCollection(collectionForm);
         resetCollectionForm();
         addInfo("Collection saved successfully");
-    }
-
-    public void saveProduct() {
-        if (!validateProduct()) {
-            return;
-        }
-
-        if (productForm.isHasVariants()) {
-            productForm.setVariantData(serializeVariants(variantInputs));
-        } else {
-            productForm.setVariantData(null);
-        }
-        catalogService.saveProduct(productForm);
-        resetProductForm();
-        productEditorVisible = false;
-        addInfo("Product saved successfully");
     }
 
     public void editSlider(HomeSlider slider) {
@@ -123,65 +318,6 @@ public class AdminBean implements Serializable {
         collectionForm = draft;
     }
 
-    public void editProduct(Product product) {
-        Product draft = new Product();
-        draft.setId(product.getId());
-        draft.setName(product.getName());
-        draft.setDescription(product.getDescription());
-        draft.setSku(product.getSku());
-        draft.setHsn(product.getHsn());
-        draft.setImageUrl(product.getImageUrl());
-        draft.setGalleryImages(product.getGalleryImages());
-        draft.setPrice(product.getPrice());
-        draft.setComparePrice(product.getComparePrice());
-        draft.setWeight(product.getWeight());
-        draft.setHasVariants(product.isHasVariants());
-        draft.setVariantData(product.getVariantData());
-        draft.setFeatured(product.isFeatured());
-        draft.setActive(product.isActive());
-        draft.setCollection(toCollectionReference(product.getCollection()));
-        productForm = draft;
-
-        variantInputs = deserializeVariants(product.getVariantData());
-        if (variantInputs.isEmpty()) {
-            variantInputs.add(new ProductVariantInput());
-        }
-
-        activeMenu = "products";
-        productEditorVisible = true;
-    }
-
-    public void setActiveMenu(String activeMenu) {
-        this.activeMenu = activeMenu;
-        if (!"products".equals(activeMenu)) {
-            productEditorVisible = false;
-        }
-    }
-
-    public void openNewProductForm() {
-        activeMenu = "products";
-        productEditorVisible = true;
-        resetProductForm();
-    }
-
-    public void cancelProductEditor() {
-        resetProductForm();
-        productEditorVisible = false;
-    }
-
-    public void addVariantRow() {
-        variantInputs.add(new ProductVariantInput());
-    }
-
-    public void removeVariantRow(int index) {
-        if (index >= 0 && index < variantInputs.size()) {
-            variantInputs.remove(index);
-        }
-        if (variantInputs.isEmpty()) {
-            variantInputs.add(new ProductVariantInput());
-        }
-    }
-
     public void resetSliderForm() {
         sliderForm = new HomeSlider();
         sliderForm.setActive(true);
@@ -210,6 +346,10 @@ public class AdminBean implements Serializable {
         variantInputs.add(new ProductVariantInput());
     }
 
+    public List<MediaFile> getMediaFiles() {
+        return catalogService.getMediaFiles();
+    }
+
     public List<HomeSlider> getSliders() {
         return catalogService.getHomeSliders();
     }
@@ -228,42 +368,6 @@ public class AdminBean implements Serializable {
 
     public List<SectionType> getSectionTypes() {
         return Arrays.asList(SectionType.values());
-    }
-
-    private void addInfo(String message) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, message, ""));
-    }
-
-    public HomeSlider getSliderForm() {
-        return sliderForm;
-    }
-
-    public void setSliderForm(HomeSlider sliderForm) {
-        this.sliderForm = sliderForm;
-    }
-
-    public HomepageSection getSectionForm() {
-        return sectionForm;
-    }
-
-    public void setSectionForm(HomepageSection sectionForm) {
-        this.sectionForm = sectionForm;
-    }
-
-    public ProductCollection getCollectionForm() {
-        return collectionForm;
-    }
-
-    public void setCollectionForm(ProductCollection collectionForm) {
-        this.collectionForm = collectionForm;
-    }
-
-    public Product getProductForm() {
-        return productForm;
-    }
-
-    public void setProductForm(Product productForm) {
-        this.productForm = productForm;
     }
 
     private ProductCollection toCollectionReference(ProductCollection sourceCollection) {
@@ -353,7 +457,7 @@ public class AdminBean implements Serializable {
         }
 
         if (isBlank(productForm.getImageUrl())) {
-            addError("Primary product image is required.");
+            addError("Primary product image selection is required.");
             return false;
         }
 
@@ -387,15 +491,11 @@ public class AdminBean implements Serializable {
                 return false;
             }
             if (isBlank(variant.getImageUrl())) {
-                addError("Variant image is required.");
+                addError("Variant image selection is required.");
                 return false;
             }
             if (variant.getPrice() == null || variant.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
                 addError("Variant price must be greater than 0.");
-                return false;
-            }
-            if (variant.getComparePrice() != null && variant.getComparePrice().compareTo(variant.getPrice()) < 0) {
-                addError("Variant compare price must be greater than or equal to variant price.");
                 return false;
             }
         }
@@ -471,6 +571,10 @@ public class AdminBean implements Serializable {
         return text == null || text.trim().isEmpty();
     }
 
+    private void addInfo(String message) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, message, message));
+    }
+
     private void addError(String message) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, message, message));
         FacesContext.getCurrentInstance().validationFailed();
@@ -482,6 +586,38 @@ public class AdminBean implements Serializable {
 
     public boolean isProductEditorVisible() {
         return productEditorVisible;
+    }
+
+    public HomeSlider getSliderForm() {
+        return sliderForm;
+    }
+
+    public void setSliderForm(HomeSlider sliderForm) {
+        this.sliderForm = sliderForm;
+    }
+
+    public HomepageSection getSectionForm() {
+        return sectionForm;
+    }
+
+    public void setSectionForm(HomepageSection sectionForm) {
+        this.sectionForm = sectionForm;
+    }
+
+    public ProductCollection getCollectionForm() {
+        return collectionForm;
+    }
+
+    public void setCollectionForm(ProductCollection collectionForm) {
+        this.collectionForm = collectionForm;
+    }
+
+    public Product getProductForm() {
+        return productForm;
+    }
+
+    public void setProductForm(Product productForm) {
+        this.productForm = productForm;
     }
 
     public List<ProductVariantInput> getVariantInputs() {
@@ -536,5 +672,4 @@ public class AdminBean implements Serializable {
             this.weight = weight;
         }
     }
-
 }

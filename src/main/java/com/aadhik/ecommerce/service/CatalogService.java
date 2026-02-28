@@ -2,6 +2,7 @@ package com.aadhik.ecommerce.service;
 
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
+import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.SectionType;
@@ -52,6 +53,18 @@ public class CatalogService {
         return repository.findProducts();
     }
 
+    public List<MediaFile> getMediaFiles() {
+        return repository.findMediaFiles();
+    }
+
+    public MediaFile getMediaFile(Long id) {
+        return repository.findMediaFileById(id);
+    }
+
+    public long getFileUsageCount(Long fileId) {
+        return repository.countProductsUsingFile(fileId);
+    }
+
     public HomeSlider saveSlider(HomeSlider slider) {
         return repository.saveSlider(slider);
     }
@@ -66,6 +79,10 @@ public class CatalogService {
 
     public Product saveProduct(Product product) {
         return repository.saveProduct(product);
+    }
+
+    public MediaFile saveMediaFile(MediaFile mediaFile) {
+        return repository.saveMediaFile(mediaFile);
     }
 
     public static class HomepageSectionView {

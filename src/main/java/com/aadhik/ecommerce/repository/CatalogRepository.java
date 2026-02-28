@@ -2,6 +2,7 @@ package com.aadhik.ecommerce.repository;
 
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
+import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -75,6 +76,31 @@ public class CatalogRepository {
                 .getResultList();
     }
 
+    public List<MediaFile> findMediaFiles() {
+        return entityManager.createQuery("""
+                        select m from MediaFile m
+                        order by m.id desc
+                        """, MediaFile.class)
+                .getResultList();
+    }
+
+    public MediaFile findMediaFileById(Long id) {
+        return entityManager.find(MediaFile.class, id);
+    }
+
+    public long countProductsUsingFile(Long fileId) {
+        String ref = "dbfile:" + fileId;
+        return entityManager.createQuery("""
+                        select count(p) from Product p
+                        where p.imageUrl = :ref
+                           or p.galleryImages like :refLike
+                           or p.variantData like :refLike
+                        """, Long.class)
+                .setParameter("ref", ref)
+                .setParameter("refLike", "%" + ref + "%")
+                .getSingleResult();
+    }
+
     @Transactional
     public HomeSlider saveSlider(HomeSlider slider) {
         if (slider.getId() == null) {
@@ -129,5 +155,14 @@ public class CatalogRepository {
         }
 
         return entityManager.merge(product);
+    }
+
+    @Transactional
+    public MediaFile saveMediaFile(MediaFile mediaFile) {
+        if (mediaFile.getId() == null) {
+            entityManager.persist(mediaFile);
+            return mediaFile;
+        }
+        return entityManager.merge(mediaFile);
     }
 }

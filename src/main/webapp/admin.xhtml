@@ -51,6 +51,7 @@
                     <p:commandButton value="Products" action="#{adminBean.setActiveMenu('products')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                     <p:commandButton value="Collections" action="#{adminBean.setActiveMenu('collections')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                     <p:commandButton value="Content" action="#{adminBean.setActiveMenu('content')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Files" action="#{adminBean.setActiveMenu('files')}" update=":mainForm" process="@this" styleClass="menu-btn menu-separator"/>
                     <p:commandButton value="Home Page" action="#{adminBean.setActiveMenu('home-page')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                     <p:commandButton value="Product Page" action="#{adminBean.setActiveMenu('product-page')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                     <p:commandButton value="CheckOut Page" action="#{adminBean.setActiveMenu('checkout-page')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
@@ -61,11 +62,11 @@
                 </div>
             </h:form>
 
-            <h:form id="mainForm" styleClass="content">
-                <h1 class="page-title">#{adminBean.activeMenu eq 'products' ? 'Products' : 'Coming Soon'}</h1>
-                <p:messages id="messages" closable="true" showDetail="true"/>
+            <h:form id="mainForm" styleClass="content" enctype="multipart/form-data">
+                <h1 class="page-title">#{adminBean.activeMenu eq 'products' ? 'Products' : adminBean.activeMenu eq 'files' ? 'Files' : 'Coming Soon'}</h1>
+                <p:messages id="messages" closable="true" showDetail="true" skipDetailIfEqualsSummary="true"/>
 
-                <h:panelGroup rendered="#{adminBean.activeMenu ne 'products'}" layout="block" styleClass="card">
+                <h:panelGroup rendered="#{adminBean.activeMenu ne 'products' and adminBean.activeMenu ne 'files'}" layout="block" styleClass="card">
                     <div class="card-head"><h3>#{adminBean.activeMenu}</h3></div>
                     <div class="card-body">This module is added in sidebar as requested. We can enhance this one next.</div>
                 </h:panelGroup>
@@ -206,6 +207,37 @@
                         </div>
                     </h:panelGroup>
                 </h:panelGroup>
+
+                <h:panelGroup rendered="#{adminBean.activeMenu eq 'files'}" layout="block">
+                    <div class="card">
+                        <div class="card-head"><h3>Content Files</h3></div>
+                        <div class="card-body">
+                            <p:fileUpload listener="#{adminBean.handleFileUpload}" mode="advanced" auto="true" update=":mainForm:messages :mainForm:fileTable" label="Add File"
+                                          allowTypes="/(\.|\/)(pdf|png|jpg|jpeg|gif|webp|mp4|mov|avi|mkv)$/"/>
+                            <p:dataTable id="fileTable" value="#{adminBean.mediaFiles}" var="fItem" paginator="true" rows="8" style="margin-top:12px;">
+                                <p:column headerText="Preview"><h:graphicImage value="#{adminBean.fileThumbnail(fItem)}" styleClass="thumb"/></p:column>
+                                <p:column headerText="Name"><h:outputText value="#{fItem.fileName}"/></p:column>
+                                <p:column headerText="Type"><h:outputText value="#{fItem.fileType}"/></p:column>
+                                <p:column headerText="Size"><h:outputText value="#{adminBean.humanSize(fItem.fileSize)}"/></p:column>
+                                <p:column headerText="Usage Count"><h:outputText value="#{adminBean.fileUsageCount(fItem.id)}"/></p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </h:panelGroup>
+                
+                
+                
+                <p:dialog id="filePickerDialog" header="Select File" widgetVar="filePicker" modal="true" width="900" appendTo="@(body)">
+                    <p:dataTable id="filePickerTable" value="#{adminBean.mediaFiles}" var="fItem" paginator="true" rows="6" emptyMessage="No files uploaded yet.">
+                        <p:column headerText="Preview"><h:graphicImage value="#{adminBean.fileThumbnail(fItem)}" styleClass="thumb"/></p:column>
+                        <p:column headerText="Name"><h:outputText value="#{fItem.fileName}"/></p:column>
+                        <p:column headerText="Type"><h:outputText value="#{fItem.fileType}"/></p:column>
+                        <p:column headerText="Size"><h:outputText value="#{adminBean.humanSize(fItem.fileSize)}"/></p:column>
+                        <p:column headerText="Action" style="width:120px;"><p:commandButton value="Select" action="#{adminBean.selectFileForProduct(fItem)}" update=":mainForm" oncomplete="PF('filePicker').hide()" process="@this"/></p:column>
+                    </p:dataTable>
+                </p:dialog>
+                
+                
             </h:form>
         </div>
     </h:body>

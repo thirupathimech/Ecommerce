@@ -71,7 +71,7 @@
                         <div class="products-grid">
                             <ui:repeat value="#{sectionView.products}" var="product">
                                 <article class="product-card">
-                                    <h:graphicImage value="#{product.imageUrl}" alt="#{product.name}"/>
+                                    <h:graphicImage value="#{homePageBean.resolveMediaUrl(product.imageUrl)}" alt="#{product.name}"/>
                                     <div class="product-info">
                                         <p class="product-title">#{product.name}</p>
                                         <h:panelGroup rendered="#{not empty product.comparePrice}">
@@ -91,27 +91,27 @@
             </main>
         </h:form>
         <h:outputScript target="body">
-    (function () {
-        var slider = document.querySelector('.hero-slider');
-        if (!slider) {
+            (function () {
+            var slider = document.querySelector('.hero-slider');
+            if (!slider) {
             return;
-        }
+            }
 
-        var slides = slider.querySelectorAll('.hero-slide');
-        if (slides.length &lt;= 1) {
+            var slides = slider.querySelectorAll('.hero-slide');
+            if (slides.length &lt;= 1) {
             return;
-        }
+            }
 
-        var slideSeconds = Number(slider.dataset.slideSeconds || '3.5');
-        var interval = Number.isFinite(slideSeconds) &amp;&amp; slideSeconds &gt; 0 ? slideSeconds * 1000 : 3500;
-        var index = 0;
+            var slideSeconds = Number(slider.dataset.slideSeconds || '3.5');
+            var interval = Number.isFinite(slideSeconds) &amp;&amp; slideSeconds &gt; 0 ? slideSeconds * 1000 : 3500;
+            var index = 0;
 
-        window.setInterval(function () {
+            window.setInterval(function () {
             slides[index].classList.remove('active');
             index = (index + 1) % slides.length;
             slides[index].classList.add('active');
-        }, interval);
-    }());
-</h:outputScript>
+            }, interval);
+            }());
+        </h:outputScript>
     </h:body>
 </html>
