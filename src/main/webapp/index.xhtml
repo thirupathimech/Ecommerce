@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="primefaces"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
+<h:head>
+    <title>Ecommerce | Storefront</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <h:outputStylesheet>
+        :root { --brand-blue: #173676; --surface: #f5f7fb; --text-main: #1d2b54; --card-radius: 16px; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: "Inter", "Segoe UI", sans-serif; background: var(--surface); color: var(--text-main); }
+        .top-strip { background: #ffffff; text-align: center; font-weight: 700; padding: 0.75rem 1rem; letter-spacing: 0.04em; }
+        .nav-shell { background: var(--brand-blue); color: #fff; padding: 0.75rem 1rem; position: sticky; top: 0; z-index: 20; }
+        .nav-row { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+        .nav-left,.nav-right { display: flex; align-items: center; gap: 0.75rem; min-width: 80px; }
+        .logo-badge { height: 52px; width: 52px; border-radius: 50%; border: 3px solid rgba(255,255,255,.5); object-fit: cover; }
+        .container { max-width: 1180px; margin: 0 auto; padding: 1.25rem; }
+        .hero-slider { margin-bottom: 2rem; border-radius: var(--card-radius); overflow: hidden; }
+        .hero-slide { position: relative; }
+        .hero-slide img { width: 100%; height: 420px; object-fit: cover; display: block; }
+        .hero-overlay { position: absolute; left: 24px; bottom: 24px; background: rgba(15, 32, 77, 0.7); color: #fff; padding: 1rem 1.2rem; border-radius: 10px; }
+        .hero-overlay h3,.hero-overlay p { margin: 0; }
+        .section-title { font-size: clamp(1.7rem, 3vw, 2.8rem); margin: 0 0 1rem; color: #10255f; }
+        .products-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .product-card { background: #fff; border-radius: var(--card-radius); overflow: hidden; box-shadow: 0 8px 18px rgba(21, 40, 70, .12); }
+        .product-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
+        .product-info { padding: 1rem; }
+        .product-title { margin: 0; line-height: 1.35; font-size: 1rem; min-height: 2.6em; }
+        .old-price { color: #7a849f; text-decoration: line-through; margin-right: .4rem; }
+        .new-price { color: #11357f; font-weight: 700; font-size: 1.15rem; }
+        .admin-link { text-align: right; margin-top: 8px; }
+        @media (max-width: 1024px) { .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hero-slide img {height: 300px;} }
+        @media (max-width: 640px) { .products-grid { grid-template-columns: 1fr; } .hero-slide img {height: 220px;} }
+    </h:outputStylesheet>
+</h:head>
+<h:body>
+<h:form>
+    <div class="top-strip">Sip Your Way To Health</div>
+    <div class="nav-shell">
+        <div class="nav-row">
+            <div class="nav-left">
+                <p:commandButton type="button" icon="pi pi-bars" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
+                <p:commandButton type="button" icon="pi pi-search" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
+            </div>
+            <h:graphicImage styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="logo"/>
+            <div class="nav-right">
+                <p:commandButton type="button" icon="pi pi-user" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
+                <p:commandButton type="button" icon="pi pi-shopping-bag" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+        <section class="hero-slider">
+            <p:galleria value="#{homePageBean.sliders}" var="slide" numVisible="5" showCaption="false"
+                        circular="true" autoPlay="true" transitionInterval="3500" showItemNavigators="true"
+                        showThumbnails="false" responsiveOptions="[{breakpoint:'1024px',numVisible:3},{breakpoint:'640px',numVisible:1}]">
+                <p:graphicImage value="#{slide.imageUrl}" alt="#{slide.title}" styleClass="hero-slide-image"/>
+                <f:facet name="caption">
+                    <div class="hero-overlay">
+                        <h3>#{slide.title}</h3>
+                        <p>#{slide.subtitle}</p>
+                    </div>
+                </f:facet>
+            </p:galleria>
+        </section>
+
+        <ui:repeat value="#{homePageBean.sectionViews}" var="sectionView">
+            <section>
+                <h2 class="section-title">#{sectionView.section.sectionTitle}</h2>
+                <div class="products-grid">
+                    <ui:repeat value="#{sectionView.products}" var="product">
+                        <article class="product-card">
+                            <h:graphicImage value="#{product.imageUrl}" alt="#{product.name}"/>
+                            <div class="product-info">
+                                <p class="product-title">#{product.name}</p>
+                                <h:panelGroup rendered="#{not empty product.comparePrice}">
+                                    <span class="old-price">Rs. #{product.comparePrice}</span>
+                                </h:panelGroup>
+                                <span class="new-price">Rs. #{product.price}</span>
+                            </div>
+                        </article>
+                    </ui:repeat>
+                </div>
+            </section>
+        </ui:repeat>
+
+        <div class="admin-link">
+            <h:outputLink value="admin.xhtml">Go to Admin Setup</h:outputLink>
+        </div>
+    </main>
+</h:form>
+</h:body>
+</html>

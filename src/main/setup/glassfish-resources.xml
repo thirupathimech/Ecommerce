@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE resources PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Resource Definitions//EN" "http://glassfish.org/dtds/glassfish-resources_1_5.dtd">
+<resources>
+    <jdbc-connection-pool
+            name="ecomPool"
+            datasource-classname="com.mysql.cj.jdbc.MysqlDataSource"
+            res-type="jakarta.sql.DataSource">
+        <property name="URL" value="jdbc:mysql://localhost:3306/ecom?createDatabaseIfNotExist=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC"/>
+        <property name="User" value="root"/>
+        <property name="Password" value="root123"/>
+    </jdbc-connection-pool>
+
+    <jdbc-resource jndi-name="jdbc/ecomDS" pool-name="ecomPool"/>
+</resources>
