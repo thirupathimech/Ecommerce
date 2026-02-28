@@ -13,6 +13,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <jakartaee.version>9.1.0</jakartaee.version>
         <primefaces.version>13.0.10</primefaces.version>
+        <primeicons.version>6.0.1</primeicons.version>
         <mysql.version>9.0.0</mysql.version>
         <hibernate.version>6.6.1.Final</hibernate.version>
         <poi.version>5.3.0</poi.version>
@@ -40,11 +41,11 @@
             <classifier>jakarta</classifier>
         </dependency>
         <dependency>
-            <groupId>org.primefaces</groupId>
+            <groupId>org.mvnpm</groupId>
             <artifactId>primeicons</artifactId>
             <version>${primeicons.version}</version>
+            <scope>compile</scope>
         </dependency>
-
         <!-- MySQL Connector -->
         <dependency>
             <groupId>com.mysql</groupId>
