@@ -48,6 +48,10 @@ public class CatalogService {
         return repository.findCollections();
     }
 
+    public List<Product> getProducts() {
+        return repository.findProducts();
+    }
+
     public HomeSlider saveSlider(HomeSlider slider) {
         return repository.saveSlider(slider);
     }
@@ -58,6 +62,10 @@ public class CatalogService {
 
     public ProductCollection saveCollection(ProductCollection collection) {
         return repository.saveCollection(collection);
+    }
+
+    public Product saveProduct(Product product) {
+        return repository.saveProduct(product);
     }
 
     public record HomepageSectionView(HomepageSection section, List<Product> products) {

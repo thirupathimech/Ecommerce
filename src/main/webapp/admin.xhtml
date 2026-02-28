@@ -31,7 +31,7 @@
             <p:selectBooleanCheckbox value="#{adminBean.collectionForm.active}" itemLabel="Active"/>
             <p:inputText value="#{adminBean.collectionForm.bannerImage}" placeholder="Banner Image URL" styleClass="full"/>
             <p:inputTextarea value="#{adminBean.collectionForm.description}" placeholder="Description" rows="2" styleClass="full"/>
-            <p:commandButton value="Save Collection" action="#{adminBean.saveCollection}" update="@form sectionForm sectionTable"/>
+            <p:commandButton value="Save Collection" action="#{adminBean.saveCollection}" update="@form sectionForm sectionTable productForm"/>
         </div>
     </h:form>
 
@@ -65,6 +65,25 @@
         </div>
     </h:form>
 
+
+
+    <h:form id="productForm" styleClass="card">
+        <h3>4) Add Product</h3>
+        <div class="grid">
+            <p:inputText value="#{adminBean.productForm.name}" placeholder="Product Name" styleClass="full"/>
+            <p:selectOneMenu value="#{adminBean.productForm.collection.id}">
+                <f:selectItem itemLabel="No Collection" itemValue="#{null}"/>
+                <f:selectItems value="#{adminBean.collections}" var="c" itemLabel="#{c.name}" itemValue="#{c.id}"/>
+            </p:selectOneMenu>
+            <p:inputNumber value="#{adminBean.productForm.price}" placeholder="Price" decimalPlaces="2"/>
+            <p:inputNumber value="#{adminBean.productForm.comparePrice}" placeholder="Compare Price" decimalPlaces="2"/>
+            <p:selectBooleanCheckbox value="#{adminBean.productForm.featured}" itemLabel="Featured"/>
+            <p:selectBooleanCheckbox value="#{adminBean.productForm.active}" itemLabel="Active"/>
+            <p:inputText value="#{adminBean.productForm.imageUrl}" placeholder="Image URL" styleClass="full"/>
+            <p:commandButton value="Save Product" action="#{adminBean.saveProduct}" update="@form productTable sectionTable"/>
+        </div>
+    </h:form>
+
     <h:form id="sliderTable" styleClass="card">
         <h3>Active Sliders</h3>
         <p:dataTable value="#{adminBean.sliders}" var="s" paginator="true" rows="5">
@@ -83,6 +102,20 @@
             <p:column headerText="Products Loaded"><h:outputText value="#{s.products.size()}"/></p:column>
         </p:dataTable>
     </h:form>
+
+
+
+    <h:form id="productTable" styleClass="card">
+        <h3>Active Products</h3>
+        <p:dataTable value="#{adminBean.products}" var="pItem" paginator="true" rows="6">
+            <p:column headerText="Name"><h:outputText value="#{pItem.name}"/></p:column>
+            <p:column headerText="Collection"><h:outputText value="#{empty pItem.collection ? '—' : pItem.collection.name}"/></p:column>
+            <p:column headerText="Price"><h:outputText value="Rs. #{pItem.price}"/></p:column>
+            <p:column headerText="Compare"><h:outputText value="#{empty pItem.comparePrice ? '—' : pItem.comparePrice}"/></p:column>
+            <p:column headerText="Featured"><h:outputText value="#{pItem.featured ? 'Yes' : 'No'}"/></p:column>
+        </p:dataTable>
+    </h:form>
+
 
     <h:link outcome="index.xhtml" value="Back to Storefront"/>
 </div>
