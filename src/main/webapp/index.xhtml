@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
@@ -57,7 +56,7 @@
         <section class="hero-slider">
             <p:galleria value="#{homePageBean.sliders}" var="slide" numVisible="5" showCaption="false"
                         circular="true" autoPlay="true" transitionInterval="3500" showItemNavigators="true"
-                        showThumbnails="false" responsiveOptions="[{breakpoint:'1024px',numVisible:3},{breakpoint:'640px',numVisible:1}]">
+                        showThumbnails="false">
                 <p:graphicImage value="#{slide.imageUrl}" alt="#{slide.title}" styleClass="hero-slide-image"/>
                 <f:facet name="caption">
                     <div class="hero-overlay">
