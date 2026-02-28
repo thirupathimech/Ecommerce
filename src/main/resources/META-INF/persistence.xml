@@ -6,7 +6,6 @@
 
     <persistence-unit name="my_persistence_unit" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <jta-data-source>jdbc/ecomDS</jta-data-source>
 
         <class>com.aadhik.ecommerce.model.HomeSlider</class>
         <class>com.aadhik.ecommerce.model.HomepageSection</class>

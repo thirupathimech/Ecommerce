@@ -60,22 +60,6 @@ public class CatalogService {
         return repository.saveCollection(collection);
     }
 
-    public static class HomepageSectionView {
-
-        private final HomepageSection section;
-        private final List<Product> products;
-
-        public HomepageSectionView(HomepageSection section, List<Product> products) {
-            this.section = section;
-            this.products = products;
-        }
-
-        public HomepageSection getSection() {
-            return section;
-        }
-
-        public List<Product> getProducts() {
-            return products;
-        }
+    public record HomepageSectionView(HomepageSection section, List<Product> products) {
     }
 }
