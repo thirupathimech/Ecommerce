@@ -2,244 +2,211 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
-        <title>Admin | Homepage Builder</title>
+        <title>Admin | Commerce Console</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <h:outputStylesheet>
-            body { margin: 0; font-family: "Inter", "Segoe UI", sans-serif; background: #f4f6fb; color: #1d2b54; }
-            .page { max-width: 1260px; margin: 0 auto; padding: 20px; }
-            .title { margin: 0; font-size: 2rem; }
-            .subtitle { margin: 8px 0 18px; color: #5f6b8c; }
-            .card { background: #fff; border-radius: 14px; box-shadow: 0 8px 16px rgba(21,40,70,.08); margin-bottom: 16px; }
-            .card h3 { margin: 0; padding: 16px 16px 0; }
-            .hint { color: #6b7696; font-size: .92rem; padding: 4px 16px 0; margin: 0; }
-            .grid { padding: 16px; display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0,1fr)); }
-            .full { grid-column: 1 / -1; }
+            body { margin: 0; font-family: "Inter", "Segoe UI", sans-serif; background: #f3f5fb; color: #1d2b54; }
+            .layout { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
+            .sidebar { background: #0f1f49; color: #fff; padding: 20px 14px; }
+            .brand { font-size: 1.1rem; font-weight: 700; margin: 0 0 14px; }
+            .menu-group { display: grid; gap: 8px; }
+            .menu-btn { width: 100%; justify-content: flex-start; border-radius: 10px !important; }
+            .menu-btn.ui-button { background: rgba(255,255,255,.08) !important; border: 1px solid rgba(255,255,255,.12) !important; }
+            .menu-btn.ui-state-hover { background: rgba(255,255,255,.2) !important; }
+            .content { padding: 24px; }
+            .page-title { margin: 0; }
+            .card { background: #fff; border-radius: 14px; box-shadow: 0 8px 18px rgba(21,40,70,.08); margin-top: 14px; }
+            .card-head { padding: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e8ecf8; }
+            .card-body { padding: 16px; }
+            .grid { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
             .field { display: flex; flex-direction: column; gap: 6px; }
-            .field label { font-weight: 600; font-size: .92rem; }
-            .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-            .table-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 16px 16px 0; }
-            .table-title h3 { padding: 0; }
-            .status-pill { padding: 2px 8px; border-radius: 999px; font-size: .8rem; font-weight: 600; }
-            .status-active { background: #e9f8ee; color: #1d7a3b; }
-            .status-inactive { background: #fff2f2; color: #9f2d2d; }
-            @media (max-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
-            @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+            .field label { font-weight: 600; }
+            .full { grid-column: 1 / -1; }
+            .variant-row { border: 1px solid #e3e7f3; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+            .status-pill { padding: 2px 8px; border-radius: 999px; font-size: .8rem; font-weight: 700; }
+            .active { background: #e8f9ef; color: #1f7f43; }
+            .inactive { background: #fff0f0; color: #a33333; }
+            .thumb { width: 62px; height: 62px; object-fit: cover; border-radius: 8px; border: 1px solid #d9deed; }
+            @media (max-width: 1024px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { position: sticky; top: 0; z-index: 10; }
+            .grid { grid-template-columns: 1fr 1fr; }
+            }
+            @media (max-width: 720px) {
+            .grid { grid-template-columns: 1fr; }
+            }
         </h:outputStylesheet>
     </h:head>
     <h:body>
-        <div class="page">
-            <h1 class="title">Homepage Builder</h1>
-            <p class="subtitle">Create and manage Collections, Slider banners, Sections, and Products in one place.</p>
-            <p:messages id="globalMessages" closable="true" showDetail="true"/>
-
-            <h:form id="collectionForm" styleClass="card">
-                <h3>1) Collection Setup</h3>
-                <p class="hint">Collections are used to group products and map homepage sections.</p>
-                <div class="grid">
-                    <div class="field">
-                        <label for="collectionName">Collection Name *</label>
-                        <p:inputText id="collectionName" value="#{adminBean.collectionForm.name}" required="true" requiredMessage="Collection name is required."/>
-                    </div>
-                    <div class="field">
-                        <label for="collectionSlug">Slug *</label>
-                        <p:inputText id="collectionSlug" value="#{adminBean.collectionForm.slug}" required="true" requiredMessage="Collection slug is required."/>
-                    </div>
-                    <div class="field">
-                        <label for="collectionActive">Status</label>
-                        <p:selectBooleanCheckbox id="collectionActive" value="#{adminBean.collectionForm.active}" itemLabel="Active"/>
-                    </div>
-                    <div class="field full">
-                        <label for="collectionBanner">Banner Image URL</label>
-                        <p:inputText id="collectionBanner" value="#{adminBean.collectionForm.bannerImage}"/>
-                    </div>
-                    <div class="field full">
-                        <label for="collectionDescription">Description</label>
-                        <p:inputTextarea id="collectionDescription" value="#{adminBean.collectionForm.description}" rows="2" autoResize="false"/>
-                    </div>
-                    <div class="actions full">
-                        <p:commandButton value="#{empty adminBean.collectionForm.id ? 'Save Collection' : 'Update Collection'}" action="#{adminBean.saveCollection}" update="@form collectionTable sectionForm productForm globalMessages"/>
-                        <p:commandButton value="Clear" action="#{adminBean.resetCollectionForm}" process="@this" update="@form" styleClass="ui-button-secondary"/>
-                    </div>
+        <div class="layout">
+            <h:form id="menuForm" styleClass="sidebar">
+                <p class="brand">Admin Console</p>
+                <div class="menu-group">
+                    <p:commandButton value="Orders" action="#{adminBean.setActiveMenu('orders')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Customers" action="#{adminBean.setActiveMenu('customers')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Discounts" action="#{adminBean.setActiveMenu('discounts')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Products" action="#{adminBean.setActiveMenu('products')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Collections" action="#{adminBean.setActiveMenu('collections')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Content" action="#{adminBean.setActiveMenu('content')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Home Page" action="#{adminBean.setActiveMenu('home-page')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Product Page" action="#{adminBean.setActiveMenu('product-page')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="CheckOut Page" action="#{adminBean.setActiveMenu('checkout-page')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Shipping" action="#{adminBean.setActiveMenu('shipping')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Tax" action="#{adminBean.setActiveMenu('tax')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Payments" action="#{adminBean.setActiveMenu('payments')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    <p:commandButton value="Settings" action="#{adminBean.setActiveMenu('settings')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                 </div>
             </h:form>
 
-            <h:form id="sliderForm" styleClass="card">
-                <h3>2) Home Slider Setup</h3>
-                <p class="hint">These banners show on storefront top hero. Sort order controls sequence.</p>
-                <div class="grid">
-                    <div class="field">
-                        <label for="sliderTitle">Title *</label>
-                        <p:inputText id="sliderTitle" value="#{adminBean.sliderForm.title}" required="true" requiredMessage="Slider title is required."/>
-                    </div>
-                    <div class="field">
-                        <label for="sliderSubtitle">Subtitle</label>
-                        <p:inputText id="sliderSubtitle" value="#{adminBean.sliderForm.subtitle}"/>
-                    </div>
-                    <div class="field">
-                        <label for="sliderSort">Sort Order *</label>
-                        <p:inputNumber id="sliderSort" value="#{adminBean.sliderForm.sortOrder}" decimalPlaces="0" required="true" requiredMessage="Slider sort order is required."/>
-                    </div>
-                    <div class="field full">
-                        <label for="sliderImage">Image URL *</label>
-                        <p:inputText id="sliderImage" value="#{adminBean.sliderForm.imageUrl}" required="true" requiredMessage="Slider image URL is required."/>
-                    </div>
-                    <div class="field">
-                        <label for="sliderActive">Status</label>
-                        <p:selectBooleanCheckbox id="sliderActive" value="#{adminBean.sliderForm.active}" itemLabel="Active"/>
-                    </div>
-                    <div class="actions full">
-                        <p:commandButton value="#{empty adminBean.sliderForm.id ? 'Save Slider' : 'Update Slider'}" action="#{adminBean.saveSlider}" update="@form sliderTable globalMessages"/>
-                        <p:commandButton value="Clear" action="#{adminBean.resetSliderForm}" process="@this" update="@form" styleClass="ui-button-secondary"/>
-                    </div>
-                </div>
-            </h:form>
+            <h:form id="mainForm" styleClass="content">
+                <h1 class="page-title">#{adminBean.activeMenu eq 'products' ? 'Products' : 'Coming Soon'}</h1>
+                <p:messages id="messages" closable="true" showDetail="true"/>
 
-            <h:form id="sectionForm" styleClass="card">
-                <h3>3) Homepage Section Setup</h3>
-                <p class="hint">Use collection type to show products from a selected collection.</p>
-                <div class="grid">
-                    <div class="field">
-                        <label for="sectionTitle">Section Title *</label>
-                        <p:inputText id="sectionTitle" value="#{adminBean.sectionForm.sectionTitle}" required="true" requiredMessage="Section title is required."/>
-                    </div>
-                    <div class="field">
-                        <label for="sectionType">Section Type *</label>
-                        <p:selectOneMenu id="sectionType" value="#{adminBean.sectionForm.sectionType}" required="true" requiredMessage="Section type is required.">
-                            <f:selectItems value="#{adminBean.sectionTypes}"/>
-                        </p:selectOneMenu>
-                    </div>
-                    <div class="field">
-                        <label for="sectionCollection">Collection (optional)</label>
-                        <p:selectOneMenu id="sectionCollection" value="#{adminBean.sectionForm.collection.id}">
-                            <f:selectItem itemLabel="No Collection" itemValue="#{null}"/>
-                            <f:selectItems value="#{adminBean.collections}" var="c" itemLabel="#{c.name}" itemValue="#{c.id}"/>
-                        </p:selectOneMenu>
-                    </div>
-                    <div class="field">
-                        <label for="sectionMaxItems">Max Cards in Home *</label>
-                        <p:inputNumber id="sectionMaxItems" value="#{adminBean.sectionForm.maxItems}" decimalPlaces="0" required="true" requiredMessage="Max cards is required."/>
-                    </div>
-                    <div class="field">
-                        <label for="sectionSort">Sort Order *</label>
-                        <p:inputNumber id="sectionSort" value="#{adminBean.sectionForm.sortOrder}" decimalPlaces="0" required="true" requiredMessage="Section sort order is required."/>
-                    </div>
-                    <div class="field">
-                        <label for="sectionActive">Status</label>
-                        <p:selectBooleanCheckbox id="sectionActive" value="#{adminBean.sectionForm.active}" itemLabel="Active"/>
-                    </div>
-                    <div class="actions full">
-                        <p:commandButton value="#{empty adminBean.sectionForm.id ? 'Save Section' : 'Update Section'}" action="#{adminBean.saveSection}" update="@form sectionTable globalMessages"/>
-                        <p:commandButton value="Clear" action="#{adminBean.resetSectionForm}" process="@this" update="@form" styleClass="ui-button-secondary"/>
-                    </div>
-                </div>
-            </h:form>
+                <h:panelGroup rendered="#{adminBean.activeMenu ne 'products'}" layout="block" styleClass="card">
+                    <div class="card-head"><h3>#{adminBean.activeMenu}</h3></div>
+                    <div class="card-body">This module is added in sidebar as requested. We can enhance this one next.</div>
+                </h:panelGroup>
 
-            <h:form id="productForm" styleClass="card">
-                <h3>4) Product Setup</h3>
-                <p class="hint">Featured products will appear in non-collection sections.</p>
-                <div class="grid">
-                    <div class="field full">
-                        <label for="productName">Product Name *</label>
-                        <p:inputText id="productName" value="#{adminBean.productForm.name}" required="true" requiredMessage="Product name is required."/>
+                <h:panelGroup rendered="#{adminBean.activeMenu eq 'products'}" layout="block">
+                    <div class="card">
+                        <div class="card-head">
+                            <h3>All Products</h3>
+                            <p:commandButton value="Add Product" icon="pi pi-plus" action="#{adminBean.openNewProductForm}" update=":mainForm" process="@this"/>
+                        </div>
+                        <div class="card-body">
+                            <p:dataTable value="#{adminBean.products}" var="pItem" paginator="true" rows="8" rowKey="#{pItem.id}" emptyMessage="No products found.">
+                                <p:column headerText="Image">
+                                    <h:graphicImage value="#{empty pItem.imageUrl ? 'https://via.placeholder.com/62x62?text=NA' : pItem.imageUrl}" styleClass="thumb"/>
+                                </p:column>
+                                <p:column headerText="Title"><h:outputText value="#{pItem.name}"/></p:column>
+                                <p:column headerText="SKU"><h:outputText value="#{empty pItem.sku ? '—' : pItem.sku}"/></p:column>
+                                <p:column headerText="Price"><h:outputText value="Rs. #{pItem.price}"/></p:column>
+                                <p:column headerText="Status">
+                                    <span class="status-pill #{pItem.active ? 'active' : 'inactive'}">#{pItem.active ? 'Active' : 'Inactive'}</span>
+                                </p:column>
+                                <p:column headerText="Action" style="width: 120px;">
+                                    <p:commandButton value="Edit" action="#{adminBean.editProduct(pItem)}" update=":mainForm" process="@this"/>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
                     </div>
-                    <div class="field">
-                        <label for="productCollection">Collection (optional)</label>
-                        <p:selectOneMenu id="productCollection" value="#{adminBean.productForm.collection.id}">
-                            <f:selectItem itemLabel="No Collection" itemValue="#{null}"/>
-                            <f:selectItems value="#{adminBean.collections}" var="c" itemLabel="#{c.name}" itemValue="#{c.id}"/>
-                        </p:selectOneMenu>
-                    </div>
-                    <div class="field">
-                        <label for="productPrice">Price *</label>
-                        <p:inputNumber id="productPrice" value="#{adminBean.productForm.price}" decimalPlaces="2" required="true" requiredMessage="Product price is required."/>
-                    </div>
-                    <div class="field">
-                        <label for="productComparePrice">Compare Price</label>
-                        <p:inputNumber id="productComparePrice" value="#{adminBean.productForm.comparePrice}" decimalPlaces="2"/>
-                    </div>
-                    <div class="field">
-                        <label for="productFeatured">Featured</label>
-                        <p:selectBooleanCheckbox id="productFeatured" value="#{adminBean.productForm.featured}" itemLabel="Yes"/>
-                    </div>
-                    <div class="field">
-                        <label for="productActive">Status</label>
-                        <p:selectBooleanCheckbox id="productActive" value="#{adminBean.productForm.active}" itemLabel="Active"/>
-                    </div>
-                    <div class="field full">
-                        <label for="productImage">Image URL</label>
-                        <p:inputText id="productImage" value="#{adminBean.productForm.imageUrl}"/>
-                    </div>
-                    <div class="actions full">
-                        <p:commandButton value="#{empty adminBean.productForm.id ? 'Save Product' : 'Update Product'}" action="#{adminBean.saveProduct}" update="@form productTable sectionTable globalMessages"/>
-                        <p:commandButton value="Clear" action="#{adminBean.resetProductForm}" process="@this" update="@form" styleClass="ui-button-secondary"/>
-                    </div>
-                </div>
-            </h:form>
 
-            <h:form id="collectionTable" styleClass="card">
-                <div class="table-title"><h3>Collections</h3></div>
-                <p:dataTable value="#{adminBean.collections}" var="c" paginator="true" rows="5" rowKey="#{c.id}" emptyMessage="No collections found.">
-                    <p:column headerText="Name"><h:outputText value="#{c.name}"/></p:column>
-                    <p:column headerText="Slug"><h:outputText value="#{c.slug}"/></p:column>
-                    <p:column headerText="Status">
-                        <span class="status-pill #{c.active ? 'status-active' : 'status-inactive'}">#{c.active ? 'Active' : 'Inactive'}</span>
-                    </p:column>
-                    <p:column headerText="Actions" style="width: 130px;">
-                        <p:commandButton value="Edit" action="#{adminBean.editCollection(c)}" update=":collectionForm" process="@this"/>
-                    </p:column>
-                </p:dataTable>
-            </h:form>
+                    <h:panelGroup rendered="#{adminBean.productEditorVisible}" layout="block" styleClass="card">
+                        <div class="card-head">
+                            <h3>#{empty adminBean.productForm.id ? 'Add Product' : 'Edit Product'}</h3>
+                            <p:commandButton value="Close" action="#{adminBean.cancelProductEditor}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid">
+                                <div class="field full">
+                                    <label for="title">Title *</label>
+                                    <p:inputText id="title" value="#{adminBean.productForm.name}" required="true"/>
+                                </div>
+                                <div class="field full">
+                                    <label for="desc">Description *</label>
+                                    <p:inputTextarea id="desc" value="#{adminBean.productForm.description}" rows="3" autoResize="false" required="true"/>
+                                </div>
+                                <div class="field">
+                                    <label for="price">Price *</label>
+                                    <p:inputNumber id="price" value="#{adminBean.productForm.price}" decimalPlaces="2" required="true"/>
+                                </div>
+                                <div class="field">
+                                    <label for="comparePrice">Compare Price</label>
+                                    <p:inputNumber id="comparePrice" value="#{adminBean.productForm.comparePrice}" decimalPlaces="2"/>
+                                </div>
+                                <div class="field">
+                                    <label for="sku">SKU *</label>
+                                    <p:inputText id="sku" value="#{adminBean.productForm.sku}" required="true"/>
+                                </div>
+                                <div class="field">
+                                    <label for="hsn">HSN *</label>
+                                    <p:inputText id="hsn" value="#{adminBean.productForm.hsn}" required="true"/>
+                                </div>
+                                <div class="field">
+                                    <label for="collection">Collection</label>
+                                    <p:selectOneMenu id="collection" value="#{adminBean.productForm.collection.id}">
+                                        <f:selectItem itemLabel="No Collection" itemValue="#{null}"/>
+                                        <f:selectItems value="#{adminBean.collections}" var="c" itemLabel="#{c.name}" itemValue="#{c.id}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="field">
+                                    <label for="image">Primary Product Image *</label>
+                                    <p:inputText id="image" value="#{adminBean.productForm.imageUrl}" required="true"/>
+                                </div>
+                                <div class="field full">
+                                    <label for="gallery">Product Images (multiple URLs comma separated)</label>
+                                    <p:inputTextarea id="gallery" value="#{adminBean.productForm.galleryImages}" rows="2" autoResize="false"/>
+                                </div>
+                                <div class="field">
+                                    <label for="weight">Weight (kg)</label>
+                                    <p:inputNumber id="weight" value="#{adminBean.productForm.weight}" decimalPlaces="3"/>
+                                </div>
+                                <div class="field">
+                                    <label for="featured">Featured</label>
+                                    <p:selectBooleanCheckbox id="featured" value="#{adminBean.productForm.featured}" itemLabel="Yes"/>
+                                </div>
+                                <div class="field">
+                                    <label for="active">Status</label>
+                                    <p:selectBooleanCheckbox id="active" value="#{adminBean.productForm.active}" itemLabel="Active"/>
+                                </div>
+                                <div class="field full">
+                                    <label for="hasVariants">Product with Variants</label>
+                                    <p:selectBooleanCheckbox id="hasVariants" value="#{adminBean.productForm.hasVariants}" itemLabel="Enable variants (color/price/weight/image)"/>
+                                </div>
+                            </div>
 
-            <h:form id="sliderTable" styleClass="card">
-                <div class="table-title"><h3>Slider Banners</h3></div>
-                <p:dataTable value="#{adminBean.sliders}" var="s" paginator="true" rows="5" rowKey="#{s.id}" emptyMessage="No sliders found.">
-                    <p:column headerText="Order"><h:outputText value="#{s.sortOrder}"/></p:column>
-                    <p:column headerText="Title"><h:outputText value="#{s.title}"/></p:column>
-                    <p:column headerText="Image URL"><h:outputText value="#{s.imageUrl}"/></p:column>
-                    <p:column headerText="Status">
-                        <span class="status-pill #{s.active ? 'status-active' : 'status-inactive'}">#{s.active ? 'Active' : 'Inactive'}</span>
-                    </p:column>
-                    <p:column headerText="Actions" style="width: 130px;">
-                        <p:commandButton value="Edit" action="#{adminBean.editSlider(s)}" update=":sliderForm" process="@this"/>
-                    </p:column>
-                </p:dataTable>
-            </h:form>
+                            <h:panelGroup rendered="#{adminBean.productForm.hasVariants}" layout="block" style="margin-top: 14px;">
+                                <div class="card" style="box-shadow:none; border:1px solid #e3e8f6;">
+                                    <div class="card-head">
+                                        <h3>Variants</h3>
+                                        <p:commandButton value="Add Variant" icon="pi pi-plus" action="#{adminBean.addVariantRow}" update=":mainForm" process="@this"/>
+                                    </div>
+                                    <div class="card-body">
+                                        <ui:repeat value="#{adminBean.variantInputs}" var="v" varStatus="vs">
+                                            <div class="variant-row">
+                                                <div class="grid">
+                                                    <div class="field">
+                                                        <label>Color *</label>
+                                                        <p:inputText value="#{v.color}"/>
+                                                    </div>
+                                                    <div class="field">
+                                                        <label>Variant Image *</label>
+                                                        <p:inputText value="#{v.imageUrl}"/>
+                                                    </div>
+                                                    <div class="field">
+                                                        <label>Variant Price *</label>
+                                                        <p:inputNumber value="#{v.price}" decimalPlaces="2"/>
+                                                    </div>
+                                                    <div class="field">
+                                                        <label>Variant Compare Price</label>
+                                                        <p:inputNumber value="#{v.comparePrice}" decimalPlaces="2"/>
+                                                    </div>
+                                                    <div class="field">
+                                                        <label>Variant Weight (kg)</label>
+                                                        <p:inputNumber value="#{v.weight}" decimalPlaces="3"/>
+                                                    </div>
+                                                    <div class="field">
+                                                        <label>Action</label>
+                                                        <p:commandButton value="Remove" action="#{adminBean.removeVariantRow(vs.index)}" update=":mainForm" process="@this" styleClass="ui-button-danger"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ui:repeat>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
 
-            <h:form id="sectionTable" styleClass="card">
-                <p:column headerText="Section"><h:outputText value="#{s.section.sectionTitle}"/></p:column>
-                <div class="table-title"><h3>Homepage Sections</h3></div>
-                <p:dataTable value="#{adminBean.sectionViews}" var="s" paginator="true" rows="5" rowKey="#{s.section.id}" emptyMessage="No homepage sections found.">
-                    <p:column headerText="Title"><h:outputText value="#{s.section.sectionTitle}"/></p:column>
-                    <p:column headerText="Type"><h:outputText value="#{s.section.sectionType}"/></p:column>
-                    <p:column headerText="Collection"><h:outputText value="#{empty s.section.collection ? '—' : s.section.collection.name}"/></p:column>
-                    <p:column headerText="Max Items"><h:outputText value="#{s.section.maxItems}"/></p:column>
-                    <p:column headerText="Products Loaded"><h:outputText value="#{s.products.size()}"/></p:column>
-                    <p:column headerText="Actions" style="width: 130px;">
-                        <p:commandButton value="Edit" action="#{adminBean.editSection(s.section)}" update=":sectionForm" process="@this"/>
-                    </p:column>
-                </p:dataTable>
+                            <div style="margin-top: 12px; display:flex; gap:8px;">
+                                <p:commandButton value="#{empty adminBean.productForm.id ? 'Save Product' : 'Update Product'}" action="#{adminBean.saveProduct}" update=":mainForm"/>
+                                <p:commandButton value="Reset" action="#{adminBean.resetProductForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </h:panelGroup>
             </h:form>
-
-            <h:form id="productTable" styleClass="card">
-                <div class="table-title"><h3>Products</h3></div>
-                <p:dataTable value="#{adminBean.products}" var="pItem" paginator="true" rows="6" rowKey="#{pItem.id}" emptyMessage="No products found.">
-                    <p:column headerText="Name"><h:outputText value="#{pItem.name}"/></p:column>
-                    <p:column headerText="Collection"><h:outputText value="#{empty pItem.collection ? '—' : pItem.collection.name}"/></p:column>
-                    <p:column headerText="Price"><h:outputText value="Rs. #{pItem.price}"/></p:column>
-                    <p:column headerText="Compare"><h:outputText value="#{empty pItem.comparePrice ? '—' : pItem.comparePrice}"/></p:column>
-                    <p:column headerText="Featured"><h:outputText value="#{pItem.featured ? 'Yes' : 'No'}"/></p:column>
-                    <p:column headerText="Status">
-                        <span class="status-pill #{pItem.active ? 'status-active' : 'status-inactive'}">#{pItem.active ? 'Active' : 'Inactive'}</span>
-                    </p:column>
-                    <p:column headerText="Actions" style="width: 130px;">
-                        <p:commandButton value="Edit" action="#{adminBean.editProduct(pItem)}" update=":productForm" process="@this"/>
-                    </p:column>
-                </p:dataTable>
-            </h:form>
-
-            <h:link outcome="index.xhtml" value="Back to Storefront"/>
         </div>
     </h:body>
 </html>

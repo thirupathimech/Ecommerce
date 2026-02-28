@@ -70,7 +70,6 @@ public class CatalogRepository {
         return entityManager.createQuery("""
                         select p from Product p
                         left join fetch p.collection c
-                        where p.active = true
                         order by p.id desc
                         """, Product.class)
                 .getResultList();
