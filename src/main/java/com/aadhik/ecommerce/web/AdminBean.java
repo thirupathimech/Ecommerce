@@ -2,6 +2,7 @@ package com.aadhik.ecommerce.web;
 
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
+import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.SectionType;
 import com.aadhik.ecommerce.service.CatalogService;
@@ -26,6 +27,7 @@ public class AdminBean implements Serializable {
     private HomeSlider sliderForm;
     private HomepageSection sectionForm;
     private ProductCollection collectionForm;
+    private Product productForm;
 
     @PostConstruct
     public void init() {
@@ -33,6 +35,8 @@ public class AdminBean implements Serializable {
         sectionForm = new HomepageSection();
         sectionForm.setCollection(new ProductCollection());
         collectionForm = new ProductCollection();
+        productForm = new Product();
+        productForm.setCollection(new ProductCollection());
     }
 
     public void saveSlider() {
@@ -54,6 +58,13 @@ public class AdminBean implements Serializable {
         addInfo("Collection saved successfully");
     }
 
+    public void saveProduct() {
+        catalogService.saveProduct(productForm);
+        productForm = new Product();
+        productForm.setCollection(new ProductCollection());
+        addInfo("Product saved successfully");
+    }
+
     public List<HomeSlider> getSliders() {
         return catalogService.getHomeSliders();
     }
@@ -64,6 +75,10 @@ public class AdminBean implements Serializable {
 
     public List<ProductCollection> getCollections() {
         return catalogService.getActiveCollections();
+    }
+
+    public List<Product> getProducts() {
+        return catalogService.getProducts();
     }
 
     public List<SectionType> getSectionTypes() {
@@ -96,5 +111,13 @@ public class AdminBean implements Serializable {
 
     public void setCollectionForm(ProductCollection collectionForm) {
         this.collectionForm = collectionForm;
+    }
+
+    public Product getProductForm() {
+        return productForm;
+    }
+
+    public void setProductForm(Product productForm) {
+        this.productForm = productForm;
     }
 }

@@ -48,6 +48,10 @@ public class CatalogService {
         return repository.findCollections();
     }
 
+    public List<Product> getProducts() {
+        return repository.findProducts();
+    }
+
     public HomeSlider saveSlider(HomeSlider slider) {
         return repository.saveSlider(slider);
     }
@@ -60,6 +64,26 @@ public class CatalogService {
         return repository.saveCollection(collection);
     }
 
-    public record HomepageSectionView(HomepageSection section, List<Product> products) {
+    public Product saveProduct(Product product) {
+        return repository.saveProduct(product);
+    }
+
+    public static class HomepageSectionView {
+
+        private final HomepageSection section;
+        private final List<Product> products;
+
+        public HomepageSectionView(HomepageSection section, List<Product> products) {
+            this.section = section;
+            this.products = products;
+        }
+
+        public HomepageSection getSection() {
+            return section;
+        }
+
+        public List<Product> getProducts() {
+            return products;
+        }
     }
 }

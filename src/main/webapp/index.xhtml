@@ -66,6 +66,7 @@
                 </f:facet>
             </p:galleria>
         </section>
+
         <ui:repeat value="#{homePageBean.sectionViews}" var="sectionView">
             <section>
                 <h2 class="section-title">#{sectionView.section.sectionTitle}</h2>
@@ -85,6 +86,7 @@
                 </div>
             </section>
         </ui:repeat>
+
         <div class="admin-link">
             <h:outputLink value="admin.xhtml">Go to Admin Setup</h:outputLink>
         </div>

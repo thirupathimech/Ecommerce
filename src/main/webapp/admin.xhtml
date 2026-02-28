@@ -3,87 +3,115 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-<h:head>
-    <title>Admin | Homepage Builder</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <h:outputStylesheet>
-        body { margin:0; font-family: "Inter", "Segoe UI", sans-serif; background:#f4f6fb; color:#1d2b54;}
-        .page { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .title { margin: 0 0 12px; font-size: 2rem; }
-        .card { background: #fff; border-radius: 14px; box-shadow: 0 8px 16px rgba(21,40,70,.08); margin-bottom: 16px; }
-        .card h3 { margin: 0; padding: 16px 16px 0; }
-        .grid { padding: 16px; display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0,1fr)); }
-        .full { grid-column: 1 / -1; }
-        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
-    </h:outputStylesheet>
-</h:head>
-<h:body>
-<div class="page">
-    <h1 class="title">Homepage Builder</h1>
-    <p:messages closable="true" showDetail="true"/>
+    <h:head>
+        <title>Admin | Homepage Builder</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <h:outputStylesheet>
+            body { margin:0; font-family: "Inter", "Segoe UI", sans-serif; background:#f4f6fb; color:#1d2b54;}
+            .page { max-width: 1200px; margin: 0 auto; padding: 20px; }
+            .title { margin: 0 0 12px; font-size: 2rem; }
+            .card { background: #fff; border-radius: 14px; box-shadow: 0 8px 16px rgba(21,40,70,.08); margin-bottom: 16px; }
+            .card h3 { margin: 0; padding: 16px 16px 0; }
+            .grid { padding: 16px; display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0,1fr)); }
+            .full { grid-column: 1 / -1; }
+            @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        </h:outputStylesheet>
+    </h:head>
+    <h:body>
+        <div class="page">
+            <h1 class="title">Homepage Builder</h1>
+            <p:messages closable="true" showDetail="true"/>
 
-    <h:form id="collectionForm" styleClass="card">
-        <h3>1) Create Collection</h3>
-        <div class="grid">
-            <p:inputText value="#{adminBean.collectionForm.name}" placeholder="Collection Name"/>
-            <p:inputText value="#{adminBean.collectionForm.slug}" placeholder="Slug"/>
-            <p:selectBooleanCheckbox value="#{adminBean.collectionForm.active}" itemLabel="Active"/>
-            <p:inputText value="#{adminBean.collectionForm.bannerImage}" placeholder="Banner Image URL" styleClass="full"/>
-            <p:inputTextarea value="#{adminBean.collectionForm.description}" placeholder="Description" rows="2" styleClass="full"/>
-            <p:commandButton value="Save Collection" action="#{adminBean.saveCollection}" update="@form sectionForm sectionTable"/>
+            <h:form id="collectionForm" styleClass="card">
+                <h3>1) Create Collection</h3>
+                <div class="grid">
+                    <p:inputText value="#{adminBean.collectionForm.name}" placeholder="Collection Name"/>
+                    <p:inputText value="#{adminBean.collectionForm.slug}" placeholder="Slug"/>
+                    <p:selectBooleanCheckbox value="#{adminBean.collectionForm.active}" itemLabel="Active"/>
+                    <p:inputText value="#{adminBean.collectionForm.bannerImage}" placeholder="Banner Image URL" styleClass="full"/>
+                    <p:inputTextarea value="#{adminBean.collectionForm.description}" placeholder="Description" rows="2" styleClass="full"/>
+                    <p:commandButton value="Save Collection" action="#{adminBean.saveCollection}" update="@form sectionForm sectionTable productForm"/>
+                </div>
+            </h:form>
+
+            <h:form id="sliderForm" styleClass="card">
+                <h3>2) Add Home Slider</h3>
+                <div class="grid">
+                    <p:inputText value="#{adminBean.sliderForm.title}" placeholder="Slider Title"/>
+                    <p:inputText value="#{adminBean.sliderForm.subtitle}" placeholder="Slider Subtitle"/>
+                    <p:inputNumber value="#{adminBean.sliderForm.sortOrder}" placeholder="Sort Order" decimalPlaces="0"/>
+                    <p:inputText value="#{adminBean.sliderForm.imageUrl}" placeholder="Image URL" styleClass="full"/>
+                    <p:selectBooleanCheckbox value="#{adminBean.sliderForm.active}" itemLabel="Active"/>
+                    <p:commandButton value="Save Slider" action="#{adminBean.saveSlider}" update="@form sliderTable"/>
+                </div>
+            </h:form>
+
+            <h:form id="sectionForm" styleClass="card">
+                <h3>3) Configure Homepage Section</h3>
+                <div class="grid">
+                    <p:inputText value="#{adminBean.sectionForm.sectionTitle}" placeholder="Section Title (ex: Best Sellers)"/>
+                    <p:selectOneMenu value="#{adminBean.sectionForm.sectionType}">
+                        <f:selectItems value="#{adminBean.sectionTypes}"/>
+                    </p:selectOneMenu>
+                    <p:selectOneMenu value="#{adminBean.sectionForm.collection.id}">
+                        <f:selectItem itemLabel="No Collection" itemValue="#{null}"/>
+                        <f:selectItems value="#{adminBean.collections}" var="c" itemLabel="#{c.name}" itemValue="#{c.id}"/>
+                    </p:selectOneMenu>
+                    <p:inputNumber value="#{adminBean.sectionForm.maxItems}" placeholder="Max cards in home" decimalPlaces="0"/>
+                    <p:inputNumber value="#{adminBean.sectionForm.sortOrder}" placeholder="Sort Order" decimalPlaces="0"/>
+                    <p:selectBooleanCheckbox value="#{adminBean.sectionForm.active}" itemLabel="Active"/>
+                    <p:commandButton value="Save Section" action="#{adminBean.saveSection}" update="@form sectionTable"/>
+                </div>
+            </h:form>
+
+            <h:form id="productForm" styleClass="card">
+                <h3>4) Add Product</h3>
+                <div class="grid">
+                    <p:inputText value="#{adminBean.productForm.name}" placeholder="Product Name" styleClass="full"/>
+                    <p:selectOneMenu value="#{adminBean.productForm.collection.id}">
+                        <f:selectItem itemLabel="No Collection" itemValue="#{null}"/>
+                        <f:selectItems value="#{adminBean.collections}" var="c" itemLabel="#{c.name}" itemValue="#{c.id}"/>
+                    </p:selectOneMenu>
+                    <p:inputNumber value="#{adminBean.productForm.price}" placeholder="Price" decimalPlaces="2"/>
+                    <p:inputNumber value="#{adminBean.productForm.comparePrice}" placeholder="Compare Price" decimalPlaces="2"/>
+                    <p:selectBooleanCheckbox value="#{adminBean.productForm.featured}" itemLabel="Featured"/>
+                    <p:selectBooleanCheckbox value="#{adminBean.productForm.active}" itemLabel="Active"/>
+                    <p:inputText value="#{adminBean.productForm.imageUrl}" placeholder="Image URL" styleClass="full"/>
+                    <p:commandButton value="Save Product" action="#{adminBean.saveProduct}" update="@form productTable sectionTable"/>
+                </div>
+            </h:form>
+
+            <h:form id="sliderTable" styleClass="card">
+                <h3>Active Sliders</h3>
+                <p:dataTable value="#{adminBean.sliders}" var="s" paginator="true" rows="5">
+                    <p:column headerText="Order"><h:outputText value="#{s.sortOrder}"/></p:column>
+                    <p:column headerText="Title"><h:outputText value="#{s.title}"/></p:column>
+                    <p:column headerText="Image"><h:outputText value="#{s.imageUrl}"/></p:column>
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="sectionTable" styleClass="card">
+                <h3>Configured Homepage Sections</h3>
+                <p:dataTable value="#{adminBean.sectionViews}" var="s" paginator="true" rows="5">
+                    <p:column headerText="Section"><h:outputText value="#{s.section.sectionTitle}"/></p:column>
+                    <p:column headerText="Type"><h:outputText value="#{s.section.sectionType}"/></p:column>
+                    <p:column headerText="Max Items"><h:outputText value="#{s.section.maxItems}"/></p:column>
+                    <p:column headerText="Products Loaded"><h:outputText value="#{s.products.size()}"/></p:column>
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="productTable" styleClass="card">
+                <h3>Active Products</h3>
+                <p:dataTable value="#{adminBean.products}" var="pItem" paginator="true" rows="6">
+                    <p:column headerText="Name"><h:outputText value="#{pItem.name}"/></p:column>
+                    <p:column headerText="Collection"><h:outputText value="#{empty pItem.collection ? '—' : pItem.collection.name}"/></p:column>
+                    <p:column headerText="Price"><h:outputText value="Rs. #{pItem.price}"/></p:column>
+                    <p:column headerText="Compare"><h:outputText value="#{empty pItem.comparePrice ? '—' : pItem.comparePrice}"/></p:column>
+                    <p:column headerText="Featured"><h:outputText value="#{pItem.featured ? 'Yes' : 'No'}"/></p:column>
+                </p:dataTable>
+            </h:form>
+
+            <h:link outcome="index.xhtml" value="Back to Storefront"/>
         </div>
-    </h:form>
-
-    <h:form id="sliderForm" styleClass="card">
-        <h3>2) Add Home Slider</h3>
-        <div class="grid">
-            <p:inputText value="#{adminBean.sliderForm.title}" placeholder="Slider Title"/>
-            <p:inputText value="#{adminBean.sliderForm.subtitle}" placeholder="Slider Subtitle"/>
-            <p:inputNumber value="#{adminBean.sliderForm.sortOrder}" placeholder="Sort Order" decimalPlaces="0"/>
-            <p:inputText value="#{adminBean.sliderForm.imageUrl}" placeholder="Image URL" styleClass="full"/>
-            <p:selectBooleanCheckbox value="#{adminBean.sliderForm.active}" itemLabel="Active"/>
-            <p:commandButton value="Save Slider" action="#{adminBean.saveSlider}" update="@form sliderTable"/>
-        </div>
-    </h:form>
-
-    <h:form id="sectionForm" styleClass="card">
-        <h3>3) Configure Homepage Section</h3>
-        <div class="grid">
-            <p:inputText value="#{adminBean.sectionForm.sectionTitle}" placeholder="Section Title (ex: Best Sellers)"/>
-            <p:selectOneMenu value="#{adminBean.sectionForm.sectionType}">
-                <f:selectItems value="#{adminBean.sectionTypes}"/>
-            </p:selectOneMenu>
-            <p:selectOneMenu value="#{adminBean.sectionForm.collection.id}">
-                <f:selectItem itemLabel="No Collection" itemValue="#{null}"/>
-                <f:selectItems value="#{adminBean.collections}" var="c" itemLabel="#{c.name}" itemValue="#{c.id}"/>
-            </p:selectOneMenu>
-            <p:inputNumber value="#{adminBean.sectionForm.maxItems}" placeholder="Max cards in home" decimalPlaces="0"/>
-            <p:inputNumber value="#{adminBean.sectionForm.sortOrder}" placeholder="Sort Order" decimalPlaces="0"/>
-            <p:selectBooleanCheckbox value="#{adminBean.sectionForm.active}" itemLabel="Active"/>
-            <p:commandButton value="Save Section" action="#{adminBean.saveSection}" update="@form sectionTable"/>
-        </div>
-    </h:form>
-
-    <h:form id="sliderTable" styleClass="card">
-        <h3>Active Sliders</h3>
-        <p:dataTable value="#{adminBean.sliders}" var="s" paginator="true" rows="5">
-            <p:column headerText="Order"><h:outputText value="#{s.sortOrder}"/></p:column>
-            <p:column headerText="Title"><h:outputText value="#{s.title}"/></p:column>
-            <p:column headerText="Image"><h:outputText value="#{s.imageUrl}"/></p:column>
-        </p:dataTable>
-    </h:form>
-
-    <h:form id="sectionTable" styleClass="card">
-        <h3>Configured Homepage Sections</h3>
-        <p:dataTable value="#{adminBean.sectionViews}" var="s" paginator="true" rows="5">
-            <p:column headerText="Section"><h:outputText value="#{s.section.sectionTitle}"/></p:column>
-            <p:column headerText="Type"><h:outputText value="#{s.section.sectionType}"/></p:column>
-            <p:column headerText="Max Items"><h:outputText value="#{s.section.maxItems}"/></p:column>
-            <p:column headerText="Products Loaded"><h:outputText value="#{s.products.size()}"/></p:column>
-        </p:dataTable>
-    </h:form>
-
-    <h:link outcome="index.xhtml" value="Back to Storefront"/>
-</div>
-</h:body>
+    </h:body>
 </html>
