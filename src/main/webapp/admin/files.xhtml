@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <div class="card">
+            <div class="card-head"><h3>Content Files</h3></div>
+            <div class="card-body">
+                <h:panelGrid columns="2" columnClasses="left-col,right-col" style="width:100%;" cellspacing="25">
+                    <h:panelGroup layout="block">
+                        <p:fileUpload listener="#{adminBean.handleFileUpload}"
+                                      mode="advanced"
+                                      auto="true"
+                                      update=":mainForm:messages :mainForm:fileTable :mainForm:fileStorageStats"
+                                      label="Add File"
+                                      accept="/(\.|\/)(pdf|png|jpg|jpeg|gif|webp|mp4|mov|avi|mkv)$/"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="fileStorageStats" layout="block" style="width:100%;">
+                        <center>
+                            <p><strong>Total Storage:</strong>#{adminBean.humanSize(adminBean.totalFileStorageBytes)}</p>
+                            <div style="width:100%; max-width:500px; height:280px;">
+                                <p:chart value="#{adminBean.fileTypeStorageChartModel}"
+                                         style="width:100%; height:100%;" />
+                            </div>
+                        </center>
+                    </h:panelGroup>
+                </h:panelGrid>
+
+                <div style="margin-top: 12px; display:flex; gap:8px;">
+                    <p:commandButton value="Delete Selected" icon="pi pi-trash" action="#{adminBean.deleteSelectedFiles}" update=":mainForm:messages :mainForm:fileTable :mainForm:fileStorageStats" styleClass="ui-button-danger">
+                        <p:confirm header="Confirm Delete" message="Delete selected files?" icon="pi pi-exclamation-triangle"/>
+                    </p:commandButton>
+                </div>
+                <p:dataTable id="fileTable" value="#{adminBean.mediaFiles}" var="fItem" paginator="true" rows="8" style="margin-top:12px;"
+                             selection="#{adminBean.selectedMediaFiles}" rowKey="#{fItem.id}">
+                    <p:column headerText="Preview">
+                        <h:graphicImage
+                            value="#{fItem.fileType eq 'IMAGE'
+                                     ? adminBean.fileThumbnail(fItem)
+                                     : 'https://cdn-icons-png.flaticon.com/512/337/337946.png'}"
+                            styleClass="thumb"/>
+                    </p:column>
+                    <p:column headerText="Name" sortBy="#{fItem.fileName}"><h:outputText value="#{fItem.fileName}"/></p:column>
+                    <p:column headerText="Type" sortBy="#{fItem.fileType}"><h:outputText value="#{fItem.fileType}"/></p:column>
+                    <p:column headerText="Size" sortBy="#{fItem.fileSize}"><h:outputText value="#{adminBean.humanSize(fItem.fileSize)}"/></p:column>
+                    <p:column headerText="Usage Count" sortBy="#{adminBean.fileUsageCount(fItem.id)}"><h:outputText value="#{adminBean.fileUsageCount(fItem.id)}"/></p:column>
+                    <p:column headerText="Actions" style="width:130px; text-align:center;">
+                        <p:commandButton value="Delete" icon="pi pi-trash" styleClass="ui-button-danger" process="@this"
+                                         action="#{adminBean.deleteFile(fItem)}"
+                                         update=":mainForm:messages :mainForm:fileTable :mainForm:fileStorageStats">
+                            <p:confirm header="Confirm Delete" message="Delete #{fItem.fileName}?" icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </div>
+    </h:body>
+</html>

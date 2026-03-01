@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:body>
+        <div class="card">
+            <div class="card-body">
+                <p:tabView   style="width: 80vw">
+                    <p:tab title="Home Section Order">
+                        <ui:include src="homeSectionOrder.xhtml"/>
+                    </p:tab>
+                    
+                    <p:tab title="Home Slider">
+                        <ui:include src="homeSlider.xhtml"/>
+                    </p:tab>
+                    
+                    <p:tab title="Div Section">
+                        <ui:include src="divSection.xhtml"/>
+                    </p:tab>
+                    
+                    <p:tab title="Video Carousel">
+                        <ui:include src="videoCarousel.xhtml"/>
+                    </p:tab>
+                    
+                    <p:tab title="Collections Maker">
+                        <ui:include src="collectionsMaker.xhtml"/>
+                    </p:tab>
+                    
+                    <p:tab title="Marquee">
+                        <ui:include src="marquee.xhtml"/>
+                    </p:tab>
+                </p:tabView>
+            </div>
+        </div>
+    </h:body>
+</html>

@@ -2,7 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
         <title>Admin | Commerce Console</title>
@@ -71,307 +70,33 @@
                     <div class="card-body">This module is added in sidebar as requested. We can enhance this one next.</div>
                 </h:panelGroup>
 
+                <!-- ═══════════════════════════════════════════════ PRODUCTS ═══════════════════════════════════════════════ -->
                 <h:panelGroup rendered="#{adminBean.activeMenu eq 'products'}" layout="block">
-                    <div class="card">
-                        <div class="card-head">
-                            <h3>All Products</h3>
-                            <p:commandButton value="Add Product" icon="pi pi-plus" action="#{adminBean.openNewProductForm}" update=":mainForm" process="@this"/>
-                        </div>
-                        <div class="card-body">
-                            <p:dataTable value="#{adminBean.products}" var="pItem" paginator="true" rows="8" rowKey="#{pItem.id}" emptyMessage="No products found.">
-                                <p:column headerText="Image">
-                                    <h:graphicImage value="#{adminBean.resolveMediaUrl(pItem.imageUrl)}" styleClass="thumb"/>
-                                </p:column>
-                                <p:column headerText="Title"><h:outputText value="#{pItem.name}"/></p:column>
-                                <p:column headerText="SKU"><h:outputText value="#{empty pItem.sku ? '—' : pItem.sku}"/></p:column>
-                                <p:column headerText="Price"><h:outputText value="Rs. #{pItem.price}"/></p:column>
-                                <p:column headerText="Status">
-                                    <span class="status-pill #{pItem.active ? 'active' : 'inactive'}">#{pItem.active ? 'Active' : 'Inactive'}</span>
-                                </p:column>
-                                <p:column headerText="Action" style="width: 120px;">
-                                    <p:commandButton value="Edit" action="#{adminBean.editProduct(pItem)}" update=":mainForm" process="@this"/>
-                                </p:column>
-                            </p:dataTable>
-                        </div>
-                    </div>
-
-                    <h:panelGroup rendered="#{adminBean.productEditorVisible}" layout="block" styleClass="card">
-                        <div class="card-head">
-                            <h3>#{empty adminBean.productForm.id ? 'Add Product' : 'Edit Product'}</h3>
-                            <p:messages id="productMessages" showDetail="true" showIcon="false" skipDetailIfEqualsSummary="true" />
-                            <p:commandButton value="Close" action="#{adminBean.cancelProductEditor}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
-                        </div>
-                        <div class="card-body">
-                            <div class="grid">
-                                <div class="field full">
-                                    <label for="title">Title *</label>
-                                    <p:inputText id="title" value="#{adminBean.productForm.name}" required="true"/>
-                                </div>
-                                <div class="field full">
-                                    <label for="desc">Description *</label>
-                                    <p:inputTextarea id="desc" value="#{adminBean.productForm.description}" rows="3" autoResize="false" required="true"/>
-                                </div>
-                                <div class="field">
-                                    <label for="price">Price *</label>
-                                    <p:inputNumber id="price" value="#{adminBean.productForm.price}" decimalPlaces="2" required="true"/>
-                                </div>
-                                <div class="field">
-                                    <label for="comparePrice">Compare Price</label>
-                                    <p:inputNumber id="comparePrice" value="#{adminBean.productForm.comparePrice}" decimalPlaces="2"/>
-                                </div>
-                                <div class="field">
-                                    <label for="sku">SKU *</label>
-                                    <p:inputText id="sku" value="#{adminBean.productForm.sku}" required="true" autocomplete="false"/>
-                                </div>
-                                <div class="field">
-                                    <label for="hsn">HSN</label>
-                                    <p:inputText id="hsn" value="#{adminBean.productForm.hsn}"/>
-                                </div>
-                                <div class="field">
-                                    <label for="collection">Collection</label>
-                                    <p:selectOneMenu id="collection" value="#{adminBean.productForm.collection.id}">
-                                        <f:selectItem itemLabel="No Collection" itemValue="#{null}"/>
-                                        <f:selectItems value="#{adminBean.collections}" var="c" itemLabel="#{c.name}" itemValue="#{c.id}"/>
-                                    </p:selectOneMenu>
-                                </div>
-                                <div class="field">
-                                    <label for="image">Primary Product Image *</label>
-                                    <p:inputText id="image" value="#{adminBean.productForm.imageUrl}" required="true" readonly="true"/>
-                                    <p:commandButton type="button" value="Select from Files" icon="pi pi-images" onclick="PF('filePicker').show()">
-                                        <p:ajax event="click" listener="#{adminBean.openFilePickerForPrimary}" update=":mainForm:filePickerTable :mainForm:messages"/>
-                                    </p:commandButton>
-                                    <small>#{adminBean.previewLabel(adminBean.productForm.imageUrl)}</small>
-                                </div>
-                                <div class="field full">
-                                    <label for="gallery">Product Images (multiple URLs comma separated)</label>
-                                    <p:inputTextarea id="gallery" value="#{adminBean.productForm.galleryImages}" rows="2" autoResize="false"/>
-                                    <p:commandButton type="button" value="Add from Files" icon="pi pi-images" onclick="PF('filePicker').show()">
-                                        <p:ajax event="click" listener="#{adminBean.openFilePickerForGallery}" update=":mainForm:filePickerTable :mainForm:messages"/>
-                                    </p:commandButton>
-                                </div>
-                                <div class="field">
-                                    <label for="weight">Weight (kg)</label>
-                                    <p:inputNumber id="weight" value="#{adminBean.productForm.weight}" decimalPlaces="3"/>
-                                </div>
-                                <div class="field">
-                                    <label for="featured">Featured</label>
-                                    <p:selectBooleanCheckbox id="featured" value="#{adminBean.productForm.featured}" itemLabel="Yes"/>
-                                </div>
-                                <div class="field">
-                                    <label for="active">Status</label>
-                                    <p:selectBooleanCheckbox id="active" value="#{adminBean.productForm.active}" itemLabel="Active"/>
-                                </div>
-                                <div class="field full">
-                                    <label for="hasVariants">Product with Variants</label>
-                                    <p:selectBooleanCheckbox id="hasVariants" value="#{adminBean.productForm.hasVariants}" itemLabel="Enable variants (color/price/weight/image)"/>
-                                </div>
-                            </div>
-
-                            <h:panelGroup rendered="#{adminBean.productForm.hasVariants}" layout="block" style="margin-top: 14px;">
-                                <div class="card" style="box-shadow:none; border:1px solid #e3e8f6;">
-                                    <div class="card-head">
-                                        <h3>Variants</h3>
-                                        <p:commandButton value="Add Variant" icon="pi pi-plus" action="#{adminBean.addVariantRow}" update=":mainForm" process="@this"/>
-                                    </div>
-                                    <div class="card-body">
-                                        <ui:repeat value="#{adminBean.variantInputs}" var="v" varStatus="vs">
-                                            <div class="variant-row">
-                                                <div class="grid">
-                                                    <div class="field">
-                                                        <label>Color *</label>
-                                                        <p:inputText value="#{v.color}"/>
-                                                    </div>
-                                                    <div class="field">
-                                                        <label>Variant Image *</label>
-                                                        <p:inputText value="#{v.imageUrl}" readonly="true"/>
-                                                        <p:commandButton type="button" value="Select" icon="pi pi-image" onclick="PF('filePicker').show()">
-                                                            <p:ajax event="click" listener="#{adminBean.openFilePickerForVariant(vs.index)}" update=":mainForm:filePickerTable :mainForm:messages"/>
-                                                        </p:commandButton>
-                                                    </div>
-                                                    <div class="field">
-                                                        <label>Variant Price *</label>
-                                                        <p:inputNumber value="#{v.price}" decimalPlaces="2"/>
-                                                    </div>
-                                                    <div class="field">
-                                                        <label>Variant Compare Price</label>
-                                                        <p:inputNumber value="#{v.comparePrice}" decimalPlaces="2"/>
-                                                    </div>
-                                                    <div class="field">
-                                                        <label>Variant Weight (kg)</label>
-                                                        <p:inputNumber value="#{v.weight}" decimalPlaces="3"/>
-                                                    </div>
-                                                    <div class="field">
-                                                        <label>Action</label>
-                                                        <p:commandButton value="Remove" action="#{adminBean.removeVariantRow(vs.index)}" update=":mainForm" process="@this" styleClass="ui-button-danger"/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </ui:repeat>
-                                    </div>
-                                </div>
-                            </h:panelGroup>
-
-                            <div style="margin-top: 12px; display:flex; gap:8px;">
-                                <p:commandButton value="#{empty adminBean.productForm.id ? 'Save Product' : 'Update Product'}" action="#{adminBean.saveProduct}" update=":mainForm"/>
-                                <p:commandButton value="Reset" action="#{adminBean.resetProductForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
-                            </div>
-                        </div>
-                    </h:panelGroup>
+                    <ui:include src="/admin/product/product.xhtml"/>
                 </h:panelGroup>
 
+                <!-- ═══════════════════════════════════════════════ COLLECTIONS ═══════════════════════════════════════════════ -->
                 <h:panelGroup rendered="#{adminBean.activeMenu eq 'collections'}" layout="block">
-                    <div class="card">
-                        <div class="card-head"><h3>Collections</h3></div>
-                        <div class="card-body">
-                            <div class="grid">
-                                <div class="field">
-                                    <label>Collection Name *</label>
-                                    <p:inputText value="#{adminBean.collectionForm.name}"/>
-                                </div>
-                                <div class="field">
-                                    <label>Slug *</label>
-                                    <p:inputText value="#{adminBean.collectionForm.slug}"/>
-                                </div>
-                                <div class="field">
-                                    <label>Status</label>
-                                    <p:selectBooleanCheckbox value="#{adminBean.collectionForm.active}" itemLabel="Active"/>
-                                </div>
-                                <div class="field full">
-                                    <label>Banner Image</label>
-                                    <p:inputText value="#{adminBean.collectionForm.bannerImage}" readonly="true"/>
-                                    <p:commandButton type="button" value="Select from Files" icon="pi pi-images" onclick="PF('filePicker').show()">
-                                        <p:ajax event="click" listener="#{adminBean.openFilePickerForCollectionBanner}" update=":mainForm:filePickerTable :mainForm:messages"/>
-                                    </p:commandButton>
-                                    <small>#{adminBean.previewLabel(adminBean.collectionForm.bannerImage)}</small>
-                                </div>
-                                <div class="field full">
-                                    <label>Description</label>
-                                    <p:inputTextarea value="#{adminBean.collectionForm.description}" rows="3" autoResize="false"/>
-                                </div>
-                            </div>
-                            <div style="margin-top: 12px; display:flex; gap:8px;">
-                                <p:commandButton value="Save Collection" action="#{adminBean.saveCollection}" update=":mainForm"/>
-                                <p:commandButton value="Reset" action="#{adminBean.resetCollectionForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
-                            </div>
-
-                            <p:dataTable value="#{adminBean.collections}" var="cItem" paginator="true" rows="6" style="margin-top:12px;">
-                                <p:column headerText="Banner"><h:graphicImage value="#{adminBean.resolveMediaUrl(cItem.bannerImage)}" styleClass="thumb"/></p:column>
-                                <p:column headerText="Name"><h:outputText value="#{cItem.name}"/></p:column>
-                                <p:column headerText="Slug"><h:outputText value="#{cItem.slug}"/></p:column>
-                                <p:column headerText="Status"><span class="status-pill #{cItem.active ? 'active' : 'inactive'}">#{cItem.active ? 'Active' : 'Inactive'}</span></p:column>
-                                <p:column headerText="Action"><p:commandButton value="Edit" action="#{adminBean.editCollection(cItem)}" update=":mainForm" process="@this"/></p:column>
-                            </p:dataTable>
-                        </div>
-                    </div>
+                    <ui:include src="/admin/collections.xhtml"/>
                 </h:panelGroup>
 
+                <!-- ═══════════════════════════════════════════════ HOME PAGE ═══════════════════════════════════════════════ -->
                 <h:panelGroup rendered="#{adminBean.activeMenu eq 'home-page'}" layout="block">
-                    <div class="card">
-                        <div class="card-head"><h3>Home Slider</h3></div>
-                        <div class="card-body">
-                            <div class="grid">
-                                <div class="field">
-                                    <label>Title *</label>
-                                    <p:inputText value="#{adminBean.sliderForm.title}"/>
-                                </div>
-                                <div class="field">
-                                    <label>Subtitle</label>
-                                    <p:inputText value="#{adminBean.sliderForm.subtitle}"/>
-                                </div>
-                                <div class="field">
-                                    <label>Sort Order *</label>
-                                    <p:inputNumber value="#{adminBean.sliderForm.sortOrder}" decimalPlaces="0"/>
-                                </div>
-                                <div class="field full">
-                                    <label>Slider Image *</label>
-                                    <p:inputText value="#{adminBean.sliderForm.imageUrl}" readonly="true"/>
-                                    <p:commandButton type="button" value="Select from Files" icon="pi pi-images" onclick="PF('filePicker').show()">
-                                        <p:ajax event="click" listener="#{adminBean.openFilePickerForSlider}" update=":mainForm:filePickerTable :mainForm:messages"/>
-                                    </p:commandButton>
-                                    <small>#{adminBean.previewLabel(adminBean.sliderForm.imageUrl)}</small>
-                                </div>
-                                <div class="field">
-                                    <label>Status</label>
-                                    <p:selectBooleanCheckbox value="#{adminBean.sliderForm.active}" itemLabel="Active"/>
-                                </div>
-                            </div>
-                            <div style="margin-top: 12px; display:flex; gap:8px;">
-                                <p:commandButton value="Save Slider" action="#{adminBean.saveSlider}" update=":mainForm"/>
-                                <p:commandButton value="Reset" action="#{adminBean.resetSliderForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
-                            </div>
-
-                            <p:dataTable value="#{adminBean.sliders}" var="sItem" paginator="true" rows="6" style="margin-top:12px;">
-                                <p:column headerText="Image"><h:graphicImage value="#{adminBean.resolveMediaUrl(sItem.imageUrl)}" styleClass="thumb"/></p:column>
-                                <p:column headerText="Title"><h:outputText value="#{sItem.title}"/></p:column>
-                                <p:column headerText="Order"><h:outputText value="#{sItem.sortOrder}"/></p:column>
-                                <p:column headerText="Status"><span class="status-pill #{sItem.active ? 'active' : 'inactive'}">#{sItem.active ? 'Active' : 'Inactive'}</span></p:column>
-                                <p:column headerText="Action" style="width:120px;"><p:commandButton value="Select" action="#{adminBean.editSlider(sItem)}" update=":mainForm" oncomplete="PF('filePicker').hide()" process="@this"/></p:column>
-                            </p:dataTable>
-                        </div>
-                    </div>
+                     <ui:include src="/admin/homePage/homePage.xhtml"/>
                 </h:panelGroup>
 
+                <!-- ═══════════════════════════════════════════════ FILES ═══════════════════════════════════════════════ -->
                 <h:panelGroup rendered="#{adminBean.activeMenu eq 'files'}" layout="block">
-                    <div class="card">
-                        <div class="card-head"><h3>Content Files</h3></div>
-                        <div class="card-body">
-                            <h:panelGrid columns="2" columnClasses="left-col,right-col" style="width:100%;" cellspacing="25">
-                                <h:panelGroup layout="block">
-                                    <p:fileUpload listener="#{adminBean.handleFileUpload}"
-                                                  mode="advanced"
-                                                  auto="true"
-                                                  update=":mainForm:messages :mainForm:fileTable :mainForm:fileStorageStats"
-                                                  label="Add File"
-                                                  accept="/(\.|\/)(pdf|png|jpg|jpeg|gif|webp|mp4|mov|avi|mkv)$/"/>
-                                </h:panelGroup>
-
-                                <h:panelGroup id="fileStorageStats" layout="block" style="width:100%;">
-                                    <center>
-                                        <p><strong>Total Storage:</strong>#{adminBean.humanSize(adminBean.totalFileStorageBytes)}</p>
-                                        <div style="width:100%; max-width:500px; height:280px;">
-                                            <p:chart value="#{adminBean.fileTypeStorageChartModel}"
-                                                     style="width:100%; height:100%;" />
-                                        </div>
-                                    </center>
-                                </h:panelGroup>
-
-                            </h:panelGrid>
-
-                            <div style="margin-top: 12px; display:flex; gap:8px;">
-                                <p:commandButton value="Delete Selected" icon="pi pi-trash"  action="#{adminBean.deleteSelectedFiles}" update=":mainForm:messages :mainForm:fileTable :mainForm:fileStorageStats" styleClass="ui-button-danger">
-                                    <p:confirm header="Confirm Delete" message="Delete selected files?" icon="pi pi-exclamation-triangle"/>
-                                </p:commandButton>
-                            </div>
-                            <p:dataTable id="fileTable" value="#{adminBean.mediaFiles}" var="fItem" paginator="true" rows="8" style="margin-top:12px;"
-                                         selection="#{adminBean.selectedMediaFiles}" rowKey="#{fItem.id}">
-                                <p:column headerText="Preview">
-                                    <h:graphicImage 
-                                        value="#{fItem.fileType eq 'IMAGE' 
-                                                 ? adminBean.fileThumbnail(fItem) 
-                                                 : 'https://cdn-icons-png.flaticon.com/512/337/337946.png'}"
-                                        styleClass="thumb"/>
-                                </p:column>
-                                <p:column headerText="Name" sortBy="#{fItem.fileName}"><h:outputText value="#{fItem.fileName}"/></p:column>
-                                <p:column headerText="Type" sortBy="#{fItem.fileType}"><h:outputText value="#{fItem.fileType}"/></p:column>
-                                <p:column headerText="Size" sortBy="#{fItem.fileSize}"><h:outputText value="#{adminBean.humanSize(fItem.fileSize)}"/></p:column>
-                                <p:column headerText="Usage Count" sortBy="#{adminBean.fileUsageCount(fItem.id)}"><h:outputText value="#{adminBean.fileUsageCount(fItem.id)}"/></p:column>
-                                <p:column headerText="Actions" style="width:130px; text-align:center;">
-                                    <p:commandButton value="Delete" icon="pi pi-trash" styleClass="ui-button-danger" process="@this"
-                                                     action="#{adminBean.deleteFile(fItem)}"
-                                                     update=":mainForm:messages :mainForm:fileTable :mainForm:fileStorageStats">
-                                        <p:confirm header="Confirm Delete" message="Delete #{fItem.fileName}?" icon="pi pi-exclamation-triangle"/>
-                                    </p:commandButton>
-                                </p:column>
-                            </p:dataTable>
-                        </div>
-                    </div>
+                    <ui:include src="/admin/files.xhtml"/>
                 </h:panelGroup>
 
+                <!-- ═══════════════════════════════════════════════ WARNING DIALOG ═══════════════════════════════════════════════ -->
                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" width="360">
                     <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes ui-button-danger" icon="pi pi-check"/>
                     <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times"/>
                 </p:confirmDialog>
 
+                <!-- ═══════════════════════════════════════════════ FILE PICKER ═══════════════════════════════════════════════ -->
                 <p:dialog id="filePickerDialog" header="Select File" widgetVar="filePicker" modal="true" width="900" appendTo="@(body)">
                     <p:dataTable id="filePickerTable" value="#{adminBean.mediaFiles}" var="fItem" paginator="true" rows="6" emptyMessage="No files uploaded yet.">
                         <p:column headerText="Preview"><h:graphicImage value="#{adminBean.fileThumbnail(fItem)}" styleClass="thumb"/></p:column>
@@ -382,8 +107,8 @@
                     </p:dataTable>
                 </p:dialog>
 
-
             </h:form>
         </div>
+
     </h:body>
 </html>
