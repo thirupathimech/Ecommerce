@@ -100,7 +100,17 @@ public class AdminBean implements Serializable {
         fileSelectionVariantIndex = index;
     }
 
-    public void selectFileForProduct(MediaFile file) {
+    public void openFilePickerForSlider() {
+        fileSelectionTarget = "slider";
+        fileSelectionVariantIndex = -1;
+    }
+
+    public void openFilePickerForCollectionBanner() {
+        fileSelectionTarget = "collection-banner";
+        fileSelectionVariantIndex = -1;
+    }
+
+    public void selectFile(MediaFile file) {
         String ref = toDbFileRef(file.getId());
         if ("primary".equals(fileSelectionTarget)) {
             productForm.setImageUrl(ref);
@@ -110,6 +120,10 @@ public class AdminBean implements Serializable {
             } else if (!productForm.getGalleryImages().contains(ref)) {
                 productForm.setGalleryImages(productForm.getGalleryImages() + "," + ref);
             }
+        } else if ("slider".equals(fileSelectionTarget)) {
+            sliderForm.setImageUrl(ref);
+        } else if ("collection-banner".equals(fileSelectionTarget)) {
+            collectionForm.setBannerImage(ref);
         } else if ("variant".equals(fileSelectionTarget)
                 && fileSelectionVariantIndex >= 0
                 && fileSelectionVariantIndex < variantInputs.size()) {
@@ -390,7 +404,7 @@ public class AdminBean implements Serializable {
         }
 
         if (sliderForm.getSortOrder() <= 0) {
-            addError("Slider sort order must be greater than 0.");
+            addError("Slider image selection is required.");
             return false;
         }
 

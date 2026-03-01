@@ -88,9 +88,9 @@ public class CatalogRepository {
         return entityManager.find(MediaFile.class, id);
     }
 
-    public long countProductsUsingFile(Long fileId) {
+    public long countFileUsage(Long fileId) {
         String ref = "dbfile:" + fileId;
-        return entityManager.createQuery("""
+        Long productUsage = entityManager.createQuery("""
                         select count(p) from Product p
                         where p.imageUrl = :ref
                            or p.galleryImages like :refLike
@@ -99,6 +99,21 @@ public class CatalogRepository {
                 .setParameter("ref", ref)
                 .setParameter("refLike", "%" + ref + "%")
                 .getSingleResult();
+        Long sliderUsage = entityManager.createQuery("""
+                        select count(s) from HomeSlider s
+                        where s.imageUrl = :ref
+                        """, Long.class)
+                .setParameter("ref", ref)
+                .getSingleResult();
+
+        Long collectionUsage = entityManager.createQuery("""
+                        select count(c) from ProductCollection c
+                        where c.bannerImage = :ref
+                        """, Long.class)
+                .setParameter("ref", ref)
+                .getSingleResult();
+
+        return productUsage + sliderUsage + collectionUsage;
     }
 
     @Transactional

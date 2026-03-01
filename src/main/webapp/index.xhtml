@@ -56,7 +56,7 @@
                 <section class="hero-slider" data-slide-seconds="3.5">
                     <ui:repeat value="#{homePageBean.sliders}" var="slide" varStatus="status">
                         <article class="hero-slide #{status.first ? 'active' : ''}">
-                            <h:graphicImage value="#{slide.imageUrl}" alt="#{slide.title}"/>
+                            <h:graphicImage value="#{homePageBean.resolveMediaUrl(slide.imageUrl)}" alt="#{slide.title}"/>
                             <div class="hero-overlay">
                                 <h3>#{slide.title}</h3>
                                 <p>#{slide.subtitle}</p>

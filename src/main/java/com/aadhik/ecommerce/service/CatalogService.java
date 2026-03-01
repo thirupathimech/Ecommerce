@@ -62,7 +62,7 @@ public class CatalogService {
     }
 
     public long getFileUsageCount(Long fileId) {
-        return repository.countProductsUsingFile(fileId);
+        return repository.countFileUsage(fileId);
     }
 
     public HomeSlider saveSlider(HomeSlider slider) {
