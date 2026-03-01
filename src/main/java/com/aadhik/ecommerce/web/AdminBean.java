@@ -13,6 +13,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.persistence.RollbackException;
 import org.primefaces.event.FileUploadEvent;
 
 import java.io.Serializable;
@@ -20,7 +21,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Named
 @ViewScoped
@@ -40,6 +43,7 @@ public class AdminBean implements Serializable {
 
     private String fileSelectionTarget;
     private int fileSelectionVariantIndex;
+    private List<MediaFile> selectedMediaFiles;
 
     @PostConstruct
     public void init() {
@@ -48,6 +52,7 @@ public class AdminBean implements Serializable {
         variantInputs = new ArrayList<>();
         fileSelectionTarget = "primary";
         fileSelectionVariantIndex = -1;
+        selectedMediaFiles = new ArrayList<>();
         resetSliderForm();
         resetSectionForm();
         resetCollectionForm();
@@ -88,6 +93,7 @@ public class AdminBean implements Serializable {
     public void openFilePickerForPrimary() {
         fileSelectionTarget = "primary";
         fileSelectionVariantIndex = -1;
+        selectedMediaFiles = new ArrayList<>();
     }
 
     public void openFilePickerForGallery() {
@@ -225,21 +231,141 @@ public class AdminBean implements Serializable {
         return catalogService.getFileUsageCount(fileId);
     }
 
+    public void deleteFile(MediaFile file) {
+        if (file == null || file.getId() == null) {
+            addError("Invalid file selection.");
+            return;
+        }
+
+        long usageCount = fileUsageCount(file.getId());
+        if (usageCount > 0) {
+            addWarn("Cannot delete file. It is currently used in " + usageCount + " place(s).");
+            return;
+        }
+
+        catalogService.deleteMediaFile(file.getId());
+        selectedMediaFiles.removeIf(selected -> selected.getId() != null && selected.getId().equals(file.getId()));
+        addInfo("File deleted successfully");
+    }
+
+    public void deleteSelectedFiles() {
+        if (selectedMediaFiles == null || selectedMediaFiles.isEmpty()) {
+            addWarn("Please select at least one file to delete.");
+            return;
+        }
+
+        int deleted = 0;
+        int skipped = 0;
+        for (MediaFile file : new ArrayList<>(selectedMediaFiles)) {
+            if (file == null || file.getId() == null) {
+                continue;
+            }
+            if (fileUsageCount(file.getId()) > 0) {
+                skipped++;
+                continue;
+            }
+            catalogService.deleteMediaFile(file.getId());
+            deleted++;
+        }
+
+        selectedMediaFiles.clear();
+        if (deleted > 0) {
+            addInfo(deleted + " file(s) deleted successfully.");
+        }
+        if (skipped > 0) {
+            addWarn(skipped + " file(s) skipped because they are in use.");
+        }
+    }
+
+    public String getFileTypeStorageChartModel() {
+
+        Map<String, Long> storageByType = new LinkedHashMap<>();
+        for (MediaFile file : getMediaFiles()) {
+            String key = isBlank(file.getFileType()) ? "OTHER" : file.getFileType();
+            storageByType.put(key,
+                    storageByType.getOrDefault(key, 0L) + Math.max(0L, file.getFileSize()));
+        }
+
+        StringBuilder labels = new StringBuilder();
+        StringBuilder values = new StringBuilder();
+        StringBuilder colors = new StringBuilder();
+
+        String[] bgColors = {
+            "'#4e79a7'", "'#f28e2b'", "'#e15759'",
+            "'#76b7b2'", "'#59a14f'", "'#edc949'"
+        };
+
+        int colorIndex = 0;
+        for (Map.Entry<String, Long> entry : storageByType.entrySet()) {
+
+            labels.append("'")
+                    .append(entry.getKey())
+                    .append(" (")
+                    .append(humanSize(entry.getValue()))
+                    .append(")'")
+                    .append(",");
+
+            values.append(entry.getValue()).append(",");
+            colors.append(bgColors[colorIndex % bgColors.length]).append(",");
+
+            colorIndex++;
+        }
+
+        // Remove last comma safely
+        if (labels.length() > 0) {
+            labels.setLength(labels.length() - 1);
+        }
+        if (values.length() > 0) {
+            values.setLength(values.length() - 1);
+        }
+        if (colors.length() > 0) {
+            colors.setLength(colors.length() - 1);
+        }
+
+        return "{"
+                + "type:'pie',"
+                + "data:{"
+                + "labels:[" + labels + "],"
+                + "datasets:[{"
+                + "label:'Storage Usage by File Type',"
+                + "data:[" + values + "],"
+                + "backgroundColor:[" + colors + "]"
+                + "}]"
+                + "},"
+                + "options:{"
+                + "plugins:{"
+                + "legend:{position:'right'},"
+                + "title:{display:true,text:'Storage Usage by File Type'}"
+                + "}"
+                + "}"
+                + "}";
+    }
+
+    public long getTotalFileStorageBytes() {
+        long total = 0L;
+        for (MediaFile file : getMediaFiles()) {
+            total += Math.max(0L, file.getFileSize());
+        }
+        return total;
+    }
+
     public void saveProduct() {
         if (!validateProduct()) {
             return;
         }
-
         if (productForm.isHasVariants()) {
             productForm.setVariantData(serializeVariants(variantInputs));
         } else {
             productForm.setVariantData(null);
         }
-
-        catalogService.saveProduct(productForm);
-        resetProductForm();
-        productEditorVisible = false;
-        addInfo("Product saved successfully");
+        try {
+            catalogService.saveProduct(productForm);
+            resetProductForm();
+            productEditorVisible = false;
+            addInfo("Product saved successfully");
+        } catch (Exception ex) {
+            addError("Product update failed.");
+        }
     }
 
     public void editProduct(Product product) {
@@ -367,13 +493,13 @@ public class AdminBean implements Serializable {
     public List<HomeSlider> getSliders() {
         return catalogService.getHomeSliders();
     }
-
+    
     public List<CatalogService.HomepageSectionView> getSectionViews() {
         return catalogService.getHomepageSectionsWithProducts();
     }
 
     public List<ProductCollection> getCollections() {
-        return catalogService.getActiveCollections();
+        return catalogService.getCollections();
     }
 
     public List<Product> getProducts() {
@@ -464,9 +590,9 @@ public class AdminBean implements Serializable {
             addError("SKU is required.");
             return false;
         }
-
-        if (isBlank(productForm.getHsn())) {
-            addError("HSN is required.");
+        
+        if(catalogService.isExistSKU(productForm.getSku(), productForm.getId())){
+            addError("Duplicate SKU cannot be allowed");
             return false;
         }
 
@@ -487,10 +613,6 @@ public class AdminBean implements Serializable {
         }
 
         if (!productForm.isHasVariants()) {
-            if (productForm.getWeight() == null || productForm.getWeight().compareTo(BigDecimal.ZERO) <= 0) {
-                addError("Weight is required for non-variant physical product.");
-                return false;
-            }
             return true;
         }
 
@@ -594,6 +716,10 @@ public class AdminBean implements Serializable {
         FacesContext.getCurrentInstance().validationFailed();
     }
 
+    private void addWarn(String message) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, message, message));
+    }
+
     public String getActiveMenu() {
         return activeMenu;
     }
@@ -636,6 +762,14 @@ public class AdminBean implements Serializable {
 
     public List<ProductVariantInput> getVariantInputs() {
         return variantInputs;
+    }
+
+    public List<MediaFile> getSelectedMediaFiles() {
+        return selectedMediaFiles;
+    }
+
+    public void setSelectedMediaFiles(List<MediaFile> selectedMediaFiles) {
+        this.selectedMediaFiles = selectedMediaFiles;
     }
 
     public static class ProductVariantInput implements Serializable {

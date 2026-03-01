@@ -19,8 +19,12 @@ public class CatalogService {
     @Inject
     private CatalogRepository repository;
 
-    public List<HomeSlider> getHomeSliders() {
-        return repository.findActiveSliders();
+    public List<HomeSlider> getHomeActiveSliders() {
+        return repository.findHomeSliders(true);
+    }
+    
+     public List<HomeSlider> getHomeSliders() {
+        return repository.findHomeSliders(false);
     }
 
     public List<HomepageSectionView> getHomepageSectionsWithProducts() {
@@ -46,7 +50,11 @@ public class CatalogService {
     }
 
     public List<ProductCollection> getActiveCollections() {
-        return repository.findCollections();
+        return repository.findCollections(true);
+    }
+    
+    public List<ProductCollection> getCollections() {
+        return repository.findCollections(false);
     }
 
     public List<Product> getProducts() {
@@ -83,6 +91,14 @@ public class CatalogService {
 
     public MediaFile saveMediaFile(MediaFile mediaFile) {
         return repository.saveMediaFile(mediaFile);
+    }
+
+    public void deleteMediaFile(Long id) {
+        repository.deleteMediaFileById(id);
+    }
+    
+    public boolean isExistSKU(String sku, Long ignoreProductId) {
+       return repository.isExistSKU(sku, ignoreProductId);
     }
 
     public static class HomepageSectionView {

@@ -8,6 +8,7 @@ import com.aadhik.ecommerce.model.ProductCollection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -18,13 +19,13 @@ public class CatalogRepository {
     @PersistenceContext(unitName = "my_persistence_unit")
     private EntityManager entityManager;
 
-    public List<HomeSlider> findActiveSliders() {
-        return entityManager.createQuery("""
-                        select s from HomeSlider s
-                        where s.active = true
-                        order by s.sortOrder asc, s.id asc
-                        """, HomeSlider.class)
-                .getResultList();
+    public List<HomeSlider> findHomeSliders(boolean activeOnly) {
+        StringBuilder query = new StringBuilder(" select s from HomeSlider s ");
+        if (activeOnly) {
+            query.append(" where s.active = true ");
+        }
+        query.append(" order by s.sortOrder asc, s.id asc ");
+        return entityManager.createQuery(query.toString(), HomeSlider.class).getResultList();
     }
 
     public List<HomepageSection> findActiveSections() {
@@ -58,13 +59,13 @@ public class CatalogRepository {
                 .getResultList();
     }
 
-    public List<ProductCollection> findCollections() {
-        return entityManager.createQuery("""
-                        select c from ProductCollection c
-                        where c.active = true
-                        order by c.id desc
-                        """, ProductCollection.class)
-                .getResultList();
+    public List<ProductCollection> findCollections(boolean activeCollection) {
+        StringBuilder queryBuilder = new StringBuilder(" select c from ProductCollection c ");
+        if (activeCollection) {
+            queryBuilder.append(" where c.active = true ");
+        }
+        queryBuilder.append(" order by c.id desc ");
+        return entityManager.createQuery(queryBuilder.toString(), ProductCollection.class).getResultList();
     }
 
     public List<Product> findProducts() {
@@ -86,6 +87,14 @@ public class CatalogRepository {
 
     public MediaFile findMediaFileById(Long id) {
         return entityManager.find(MediaFile.class, id);
+    }
+
+    @Transactional
+    public void deleteMediaFileById(Long id) {
+        MediaFile mediaFile = entityManager.find(MediaFile.class, id);
+        if (mediaFile != null) {
+            entityManager.remove(mediaFile);
+        }
     }
 
     public long countFileUsage(Long fileId) {
@@ -179,5 +188,20 @@ public class CatalogRepository {
             return mediaFile;
         }
         return entityManager.merge(mediaFile);
+    }
+
+    @Transactional
+    public boolean isExistSKU(String sku, Long ignoreProductId) {
+        StringBuilder jpql = new StringBuilder("SELECT COUNT(p) FROM Product p WHERE p.sku = :sku");
+        if (ignoreProductId != null) {
+            jpql.append(" AND p.id <> :id");
+        }
+        TypedQuery<Long> query = entityManager.createQuery(jpql.toString(), Long.class);
+        query.setParameter("sku", sku);
+        if (ignoreProductId != null) {
+            query.setParameter("id", ignoreProductId);
+        }
+        Long count = query.getSingleResult();
+        return count > 0;
     }
 }

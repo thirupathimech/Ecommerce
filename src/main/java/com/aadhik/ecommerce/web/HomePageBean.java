@@ -16,7 +16,7 @@ public class HomePageBean {
     private CatalogService catalogService;
 
     public List<HomeSlider> getSliders() {
-        return catalogService.getHomeSliders();
+        return catalogService.getHomeActiveSliders();
     }
 
     public List<CatalogService.HomepageSectionView> getSectionViews() {
