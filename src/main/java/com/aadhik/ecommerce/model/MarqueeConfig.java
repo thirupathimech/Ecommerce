@@ -15,7 +15,12 @@ public class MarqueeConfig {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "items_data", nullable = false, length = 4000)
+    @Column(
+            name = "items_data",
+            columnDefinition = "TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci",
+            nullable = false,
+            length = 4000
+    )
     private String itemsData;
 
     @Column(nullable = false, length = 3)
