@@ -11,7 +11,7 @@
                 <p:commandButton value="Add Product" icon="pi pi-plus" action="#{adminBean.openNewProductForm}" update=":mainForm" process="@this"/>
             </div>
             <div class="card-body">
-                <p:dataTable value="#{adminBean.products}" var="pItem" paginator="true" rows="8" rowKey="#{pItem.id}" emptyMessage="No products found.">
+                <p:dataTable value="#{adminBean.products}" var="pItem" paginatorPosition="bottom" rows="8" rowKey="#{pItem.id}" emptyMessage="No products found.">
                     <p:column headerText="Image">
                         <h:graphicImage value="#{adminBean.resolveMediaUrl(pItem.imageUrl)}" styleClass="thumb"/>
                     </p:column>

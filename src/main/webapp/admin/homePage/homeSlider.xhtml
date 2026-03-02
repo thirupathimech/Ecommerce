@@ -33,7 +33,7 @@
             <p:commandButton value="Save Slider" action="#{adminBean.saveSlider}" update=":mainForm"/>
             <p:commandButton value="Reset" action="#{adminBean.resetSliderForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
         </div>
-        <p:dataTable value="#{adminBean.sliders}" var="sItem" paginator="true" rows="6" style="margin-top:12px;">
+        <p:dataTable value="#{adminBean.sliders}" var="sItem" rows="6" paginatorPosition="bottom" style="margin-top:12px;">
             <p:column headerText="Image"><h:graphicImage value="#{adminBean.resolveMediaUrl(sItem.imageUrl)}" styleClass="thumb"/></p:column>
             <p:column headerText="Title"><h:outputText value="#{sItem.title}"/></p:column>
             <p:column headerText="Order"><h:outputText value="#{sItem.sortOrder}"/></p:column>
