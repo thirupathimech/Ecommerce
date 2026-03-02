@@ -6,28 +6,29 @@
     <h:body>
         <div class="card">
             <div class="card-body">
-                <p:tabView   style="width: 80vw">
-                    <p:tab title="Home Section Order">
+                <p:tabView id="homePageTabView" style="width: 80vw" activeIndex="#{adminBean.homeTabIndex}">
+                    <p:ajax event="tabChange" listener="#{adminBean.onHomeTabChange}" process="@this"/>
+                    <p:tab id="homeSectionTab" title="Home Section Order">
                         <ui:include src="homeSectionOrder.xhtml"/>
                     </p:tab>
                     
-                    <p:tab title="Home Slider">
+                    <p:tab id="homeSliderTab" title="Home Slider">
                         <ui:include src="homeSlider.xhtml"/>
                     </p:tab>
                     
-                    <p:tab title="Div Section">
+                    <p:tab id="divSectionTab" title="Div Section">
                         <ui:include src="divSection.xhtml"/>
                     </p:tab>
                     
-                    <p:tab title="Video Carousel">
+                    <p:tab id="videoCarouselTab" title="Video Carousel">
                         <ui:include src="videoCarousel.xhtml"/>
                     </p:tab>
                     
-                    <p:tab title="Collections Maker">
+                    <p:tab id="collectionsMakerTab" title="Collections Maker">
                         <ui:include src="collectionsMaker.xhtml"/>
                     </p:tab>
                     
-                    <p:tab title="Marquee">
+                    <p:tab id="marqueeTab" title="Marquee">
                         <ui:include src="marquee.xhtml"/>
                     </p:tab>
                 </p:tabView>

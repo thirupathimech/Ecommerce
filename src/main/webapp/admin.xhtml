@@ -9,17 +9,17 @@
         <h:outputStylesheet>
             body { margin: 0; font-family: "Inter", "Segoe UI", sans-serif; background: #f3f5fb; color: #1d2b54; }
             .layout { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
-            .sidebar { background: #0f1f49; color: #fff; padding: 20px 14px; }
-            .brand { font-size: 1.1rem; font-weight: 700; margin: 0 0 14px; }
+            .sidebar { background: #0f1f49; color: #fff; padding: 16px 12px; }
+            .brand { font-size: 1.05rem; font-weight: 700; margin: 0 0 10px; }
             .menu-group { display: grid; gap: 8px; }
             .menu-btn { width: 100%; justify-content: flex-start; border-radius: 10px !important; }
             .menu-btn.ui-button { background: rgba(255,255,255,.08) !important; border: 1px solid rgba(255,255,255,.12) !important; }
             .menu-btn.ui-state-hover { background: rgba(255,255,255,.2) !important; }
-            .content { padding: 24px; }
+            .content { padding: 16px; }
             .page-title { margin: 0; }
             .card { background: #fff; border-radius: 14px; box-shadow: 0 8px 18px rgba(21,40,70,.08); margin-top: 14px; }
-            .card-head { padding: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e8ecf8; }
-            .card-body { padding: 16px; }
+            .card-head { padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e8ecf8; }
+            .card-body { padding: 12px 14px; }
             .grid { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
             .field { display: flex; flex-direction: column; gap: 6px; }
             .field label { font-weight: 600; }
@@ -29,12 +29,24 @@
             .active { background: #e8f9ef; color: #1f7f43; }
             .inactive { background: #fff0f0; color: #a33333; }
             .thumb { width: 62px; height: 62px; object-fit: cover; border-radius: 8px; border: 1px solid #d9deed; }
+            .ui-inputfield,
+            .ui-inputnumber input,
+            .ui-inputtextarea,
+            .ui-selectonemenu { width: 100% !important; box-sizing: border-box; }
+            .ui-datatable .ui-datatable-tablewrapper { overflow-x: auto; }
+            .ui-datatable table { min-width: 760px; }
             @media (max-width: 1024px) {
             .layout { grid-template-columns: 1fr; }
-            .sidebar { position: sticky; top: 0; z-index: 10; }
+            .sidebar { position: sticky; top: 0; z-index: 10; padding: 10px 8px; }
+            .brand { margin: 0 0 8px; font-size: .95rem; }
+            .menu-group { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+            .menu-btn { width: auto; flex: 0 0 auto; }
+            .content { padding: 12px; }
             .grid { grid-template-columns: 1fr 1fr; }
             }
             @media (max-width: 720px) {
+            .content { padding: 10px; }
+            .card-head, .card-body { padding: 10px; }
             .grid { grid-template-columns: 1fr; }
             }
         </h:outputStylesheet>
@@ -82,7 +94,7 @@
 
                 <!-- ═══════════════════════════════════════════════ HOME PAGE ═══════════════════════════════════════════════ -->
                 <h:panelGroup rendered="#{adminBean.activeMenu eq 'home-page'}" layout="block">
-                     <ui:include src="/admin/homePage/homePage.xhtml"/>
+                    <ui:include src="/admin/homePage/homePage.xhtml"/>
                 </h:panelGroup>
 
                 <!-- ═══════════════════════════════════════════════ FILES ═══════════════════════════════════════════════ -->

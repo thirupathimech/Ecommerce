@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.primefaces.event.TabChangeEvent;
 
 @Named
 @ViewScoped
@@ -33,6 +34,7 @@ public class AdminBean implements Serializable {
 
     private String activeMenu;
     private boolean productEditorVisible;
+    private int homeTabIndex;
 
     private HomeSlider sliderForm;
     private HomepageSection sectionForm;
@@ -48,6 +50,7 @@ public class AdminBean implements Serializable {
     public void init() {
         activeMenu = "products";
         productEditorVisible = false;
+        homeTabIndex = 0;
         variantInputs = new ArrayList<>();
         fileSelectionTarget = "primary";
         fileSelectionVariantIndex = -1;
@@ -62,6 +65,12 @@ public class AdminBean implements Serializable {
         this.activeMenu = activeMenu;
         if (!"products".equals(activeMenu)) {
             productEditorVisible = false;
+        }
+    }
+
+    public void onHomeTabChange(TabChangeEvent event) {
+        if (event != null && event.getTab() != null) {
+            homeTabIndex = event.getIndex();
         }
     }
 
@@ -492,7 +501,7 @@ public class AdminBean implements Serializable {
     public List<HomeSlider> getSliders() {
         return catalogService.getHomeSliders();
     }
-    
+
     public List<CatalogService.HomepageSectionView> getSectionViews() {
         return catalogService.getHomepageSectionsWithProducts();
     }
@@ -589,8 +598,8 @@ public class AdminBean implements Serializable {
             addError("SKU is required.");
             return false;
         }
-        
-        if(catalogService.isExistSKU(productForm.getSku(), productForm.getId())){
+
+        if (catalogService.isExistSKU(productForm.getSku(), productForm.getId())) {
             addError("Duplicate SKU cannot be allowed");
             return false;
         }
@@ -725,6 +734,14 @@ public class AdminBean implements Serializable {
 
     public boolean isProductEditorVisible() {
         return productEditorVisible;
+    }
+
+    public int getHomeTabIndex() {
+        return homeTabIndex;
+    }
+
+    public void setHomeTabIndex(int homeTabIndex) {
+        this.homeTabIndex = homeTabIndex;
     }
 
     public HomeSlider getSliderForm() {

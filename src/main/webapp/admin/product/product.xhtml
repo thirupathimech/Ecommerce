@@ -11,7 +11,7 @@
                 <p:commandButton value="Add Product" icon="pi pi-plus" action="#{adminBean.openNewProductForm}" update=":mainForm" process="@this"/>
             </div>
             <div class="card-body">
-                <p:dataTable value="#{adminBean.products}" var="pItem" paginatorPosition="bottom" rows="8" rowKey="#{pItem.id}" emptyMessage="No products found.">
+                <p:dataTable value="#{adminBean.products}" var="pItem" paginatorPosition="bottom" rows="8" rowKey="#{pItem.id}" emptyMessage="No products found." reflow="true">
                     <p:column headerText="Image">
                         <h:graphicImage value="#{adminBean.resolveMediaUrl(pItem.imageUrl)}" styleClass="thumb"/>
                     </p:column>
@@ -96,11 +96,13 @@
                     </div>
                     <div class="field full">
                         <label for="hasVariants">Product with Variants</label>
-                        <p:selectBooleanCheckbox id="hasVariants" value="#{adminBean.productForm.hasVariants}" itemLabel="Enable variants (color/price/weight/image)"/>
+                        <p:selectBooleanCheckbox id="hasVariants" value="#{adminBean.productForm.hasVariants}" itemLabel="Enable variants (color/price/weight/image)">
+                            <p:ajax process="@this" update=":mainForm"/>
+                        </p:selectBooleanCheckbox>
                     </div>
                 </div>
 
-                <h:panelGroup rendered="#{adminBean.productForm.hasVariants}" layout="block" style="margin-top: 14px;">
+                <h:panelGroup id="variantPanel" rendered="#{adminBean.productForm.hasVariants}" layout="block" style="margin-top: 14px;">
                     <div class="card" style="box-shadow:none; border:1px solid #e3e8f6;">
                         <div class="card-head">
                             <h3>Variants</h3>
