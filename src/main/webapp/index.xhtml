@@ -31,6 +31,19 @@
             .old-price { color: #7a849f; text-decoration: line-through; margin-right: .4rem; }
             .new-price { color: #11357f; font-weight: 700; font-size: 1.15rem; }
             .admin-link { text-align: right; margin-top: 8px; }
+            .store-marquee { margin-bottom: 1rem; border-radius: 12px; overflow: hidden; padding: 10px 14px; }
+            .store-marquee.pause-on-hover:hover .store-marquee-track { animation-play-state: paused; }
+            .store-marquee-track { display: flex; gap: 16px; align-items: center; will-change: transform; transform: translate3d(0,0,0); }
+            .store-marquee-track.vertical { flex-direction: column; align-items: stretch; }
+            .store-marquee-item { color: #fff; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.15); white-space: nowrap; }
+            @keyframes marquee-horizontal-rtl { 0% { transform: translate3d(0,0,0);} 100% { transform: translate3d(-50%,0,0);} }
+            @keyframes marquee-horizontal-ltr { 0% { transform: translate3d(-50%,0,0);} 100% { transform: translate3d(0,0,0);} }
+            @keyframes marquee-vertical-ttb { 0% { transform: translate3d(0,-50%,0);} 100% { transform: translate3d(0,0,0);} }
+            @keyframes marquee-vertical-btt { 0% { transform: translate3d(0,0,0);} 100% { transform: translate3d(0,-50%,0);} }
+            .anim-horizontal-rtl { animation: marquee-horizontal-rtl linear infinite; }
+            .anim-horizontal-ltr { animation: marquee-horizontal-ltr linear infinite; }
+            .anim-vertical-ttb { animation: marquee-vertical-ttb linear infinite; }
+            .anim-vertical-btt { animation: marquee-vertical-btt linear infinite; }
             @media (max-width: 1024px) { .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hero-slide img {height: 300px;} }
             @media (max-width: 640px) { .products-grid { grid-template-columns: 1fr; } .hero-slide img {height: 220px;} }
         </h:outputStylesheet>
@@ -53,6 +66,18 @@
             </div>
 
             <main class="container">
+                
+                <h:panelGroup rendered="#{not empty homePageBean.activeMarqueeItems}" layout="block"
+                              styleClass="store-marquee #{homePageBean.activeMarquee.pauseOnHover ? 'pause-on-hover' : ''}"
+                              style="background:#{homePageBean.marqueeBackground()};">
+                    <div class="store-marquee-track #{homePageBean.marqueeAnimationClass()}"
+                         style="animation-duration:#{homePageBean.activeMarquee.speedSeconds}s; font-size:#{homePageBean.activeMarquee.fontSizePx}px; font-weight:#{homePageBean.activeMarquee.fontWeight}; color:#{homePageBean.activeMarquee.textColor};">
+                        <ui:repeat value="#{homePageBean.activeMarqueeLoopedItems}" var="mItem">
+                            <span class="store-marquee-item">#{mItem}</span>
+                        </ui:repeat>
+                    </div>
+                </h:panelGroup>
+                
                 <section class="hero-slider" data-slide-seconds="3.5">
                     <ui:repeat value="#{homePageBean.sliders}" var="slide" varStatus="status">
                         <article class="hero-slide #{status.first ? 'active' : ''}">

@@ -2,6 +2,7 @@ package com.aadhik.ecommerce.repository;
 
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
+import com.aadhik.ecommerce.model.MarqueeConfig;
 import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
@@ -75,6 +76,25 @@ public class CatalogRepository {
                         order by p.id desc
                         """, Product.class)
                 .getResultList();
+    }
+
+    public List<MarqueeConfig> findMarqueeConfigs() {
+        return entityManager.createQuery("""
+                        select m from MarqueeConfig m
+                        order by m.id desc
+                        """, MarqueeConfig.class)
+                .getResultList();
+    }
+
+    public MarqueeConfig findActiveMarqueeConfig() {
+        List<MarqueeConfig> configs = entityManager.createQuery("""
+                        select m from MarqueeConfig m
+                        where m.active = true
+                        order by m.id desc
+                        """, MarqueeConfig.class)
+                .setMaxResults(1)
+                .getResultList();
+        return configs.isEmpty() ? null : configs.get(0);
     }
 
     public List<MediaFile> findMediaFiles() {
@@ -179,6 +199,15 @@ public class CatalogRepository {
         }
 
         return entityManager.merge(product);
+    }
+
+    @Transactional
+    public MarqueeConfig saveMarqueeConfig(MarqueeConfig marqueeConfig) {
+        if (marqueeConfig.getId() == null) {
+            entityManager.persist(marqueeConfig);
+            return marqueeConfig;
+        }
+        return entityManager.merge(marqueeConfig);
     }
 
     @Transactional

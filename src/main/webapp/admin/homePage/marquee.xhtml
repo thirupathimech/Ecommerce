@@ -1,17 +1,185 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:body>
-        <div class="grid">
+        <div class="marquee-builder">
             <div class="card">
                 <div class="card-body">
-                    <div class="hp-coming-soon">
-                        <i class="pi pi-align-center" style="font-size:2.5rem; color:#c7d0ea;"></i>
-                        <h4>Marquee Module</h4>
-                        <p>Configure scrolling announcement banners for the home page. Coming soon.</p>
+                    <h3>Marquee Builder (DB Saved)</h3>
+                    <div class="builder-grid">
+                        <div class="control-row content-row">
+                            <label>Content</label>
+                            <div class="inline-input">
+                                <p:inputText value="#{adminBean.marqueeItemInput}" placeholder="Enter marquee text"/>
+                                <p:commandButton value="Add" action="#{adminBean.addMarqueeItem}" update=":mainForm:homePageTabView:marqueePanel :mainForm:messages" process="@parent"/>
+                            </div>
+                        </div>
+
+                        <div class="control-row">
+                            <label>Direction</label>
+                            <h:selectOneMenu value="#{adminBean.marqueeForm.direction}">
+                                <f:selectItem itemLabel="Right → Left" itemValue="rtl"/>
+                                <f:selectItem itemLabel="Left → Right" itemValue="ltr"/>
+                                <f:selectItem itemLabel="Top → Bottom" itemValue="ttb"/>
+                                <f:selectItem itemLabel="Bottom → Top" itemValue="btt"/>
+                                <p:ajax update=":mainForm:homePageTabView:marqueePanel"/>
+                            </h:selectOneMenu>
+                        </div>
+
+                        <div class="control-row">
+                            <label>Speed: #{adminBean.marqueeForm.speedSeconds}s</label>
+                            <p:slider for="speedInput" minValue="5" maxValue="30"/>
+                            <p:inputText id="speedInput" value="#{adminBean.marqueeForm.speedSeconds}">
+                                <p:ajax event="keyup" update=":mainForm:homePageTabView:marqueePanel"/>
+                            </p:inputText>
+                        </div>
+
+                        <div class="control-row">
+                            <label>Background mode</label>
+                            <h:selectOneMenu value="#{adminBean.marqueeForm.backgroundMode}">
+                                <f:selectItem itemLabel="Solid" itemValue="solid"/>
+                                <f:selectItem itemLabel="Gradient" itemValue="gradient"/>
+                                <p:ajax update=":mainForm:homePageTabView:marqueePanel"/>
+                            </h:selectOneMenu>
+                        </div>
+
+                        <h:panelGroup rendered="#{adminBean.marqueeForm.backgroundMode eq 'solid'}" layout="block" styleClass="control-row">
+                            <label>Solid color</label>
+                            <p:colorPicker value="#{adminBean.marqueeForm.solidColor}" format="hex">
+                                <p:ajax update=":mainForm:homePageTabView:marqueePanel"/>
+                            </p:colorPicker>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{adminBean.marqueeForm.backgroundMode eq 'gradient'}" layout="block" styleClass="control-row">
+                            <label>Gradient colors (2-5)</label>
+                            <div class="inline-input">
+                                <p:inputNumber value="#{adminBean.gradientColorCount}" decimalPlaces="0" minValue="2" maxValue="5"/>
+                                <p:commandButton value="Apply" action="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel" process="@parent"/>
+                            </div>
+                            <h:panelGroup rendered="#{adminBean.gradientColorCount ge 1}">
+                                <p:colorPicker value="#{adminBean.gradientColor1}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{adminBean.gradientColorCount ge 2}">
+                                <p:colorPicker value="#{adminBean.gradientColor2}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{adminBean.gradientColorCount ge 3}">
+                                <p:colorPicker value="#{adminBean.gradientColor3}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{adminBean.gradientColorCount ge 4}">
+                                <p:colorPicker value="#{adminBean.gradientColor4}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{adminBean.gradientColorCount ge 5}">
+                                <p:colorPicker value="#{adminBean.gradientColor5}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                            </h:panelGroup>
+                        </h:panelGroup>
+
+                        <div class="control-row">
+                            <label>Font size: #{adminBean.marqueeForm.fontSizePx}px</label>
+                            <p:slider for="fontInput" minValue="14" maxValue="60"/>
+                            <p:inputText id="fontInput" value="#{adminBean.marqueeForm.fontSizePx}">
+                                <p:ajax event="keyup" update=":mainForm:homePageTabView:marqueePanel"/>
+                            </p:inputText>
+                        </div>
+
+                        <div class="control-row">
+                            <label>Font weight</label>
+                            <h:selectOneMenu value="#{adminBean.marqueeForm.fontWeight}">
+                                <f:selectItem itemLabel="Regular (400)" itemValue="400"/>
+                                <f:selectItem itemLabel="Medium (500)" itemValue="500"/>
+                                <f:selectItem itemLabel="Semi Bold (600)" itemValue="600"/>
+                                <f:selectItem itemLabel="Bold (700)" itemValue="700"/>
+                                <f:selectItem itemLabel="Extra Bold (800)" itemValue="800"/>
+                                <p:ajax update=":mainForm:homePageTabView:marqueePanel"/>
+                            </h:selectOneMenu>
+                        </div>
+
+                        <div class="control-row">
+                            <label>Text color</label>
+                            <p:colorPicker value="#{adminBean.marqueeForm.textColor}" format="hex">
+                                <p:ajax update=":mainForm:homePageTabView:marqueePanel"/>
+                            </p:colorPicker>
+                        </div>
+
+                        <div class="control-row toggle-row">
+                            <label>Pause on hover</label>
+                            <p:selectBooleanCheckbox value="#{adminBean.marqueeForm.pauseOnHover}">
+                                <p:ajax update=":mainForm:homePageTabView:marqueePanel"/>
+                            </p:selectBooleanCheckbox>
+                        </div>
+
+                        <div class="control-row toggle-row">
+                            <label>Active</label>
+                            <p:selectBooleanCheckbox value="#{adminBean.marqueeForm.active}"/>
+                        </div>
+                    </div>
+                    <div style="margin-top:12px; display:flex; gap:8px;">
+                        <p:commandButton value="Save Marquee" action="#{adminBean.saveMarquee}" update=":mainForm"/>
+                        <p:commandButton value="Reset" action="#{adminBean.resetMarqueeForm}" update=":mainForm:homePageTabView:marqueePanel" styleClass="ui-button-secondary" process="@this"/>
                     </div>
                 </div>
             </div>
+
+            <p:outputPanel id="marqueePanel" styleClass="card preview-card">
+                <div class="card-body">
+                    <h3>Items</h3>
+                    <ul class="items-list">
+                        <ui:repeat value="#{adminBean.marqueeItems}" var="item" varStatus="status">
+                            <li>
+                                <span>#{item}</span>
+                                <p:commandButton value="Remove" action="#{adminBean.removeMarqueeItem(status.index)}" update=":mainForm:homePageTabView:marqueePanel" process="@this" styleClass="remove-item-btn"/>
+                            </li>
+                        </ui:repeat>
+                    </ul>
+
+                    <h3>Live Preview</h3>
+                    <div class="marquee-preview #{adminBean.marqueeForm.pauseOnHover ? 'pause-on-hover' : ''}" style="background:#{adminBean.buildMarqueePreviewBackground()};">
+                        <div class="marquee-track #{adminBean.marqueeAnimationClass}" style="animation-duration:#{adminBean.marqueeForm.speedSeconds}s; font-size:#{adminBean.marqueeForm.fontSizePx}px; font-weight:#{adminBean.marqueeForm.fontWeight}; color:#{adminBean.marqueeForm.textColor};">
+                            <ui:repeat value="#{adminBean.loopedMarqueeItems}" var="previewItem">
+                                <span class="marquee-item">#{previewItem}</span>
+                            </ui:repeat>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top:10px;">Saved Marquee Configurations</h3>
+                    <p:dataTable value="#{adminBean.marqueeConfigs}" var="mItem" rows="5" paginator="true" paginatorPosition="bottom">
+                        <p:column headerText="ID"><h:outputText value="#{mItem.id}"/></p:column>
+                        <p:column headerText="Direction"><h:outputText value="#{mItem.direction}"/></p:column>
+                        <p:column headerText="Speed"><h:outputText value="#{mItem.speedSeconds}s"/></p:column>
+                        <p:column headerText="Status"><h:outputText value="#{mItem.active ? 'Active' : 'Inactive'}"/></p:column>
+                        <p:column headerText="Action"><p:commandButton value="Edit" action="#{adminBean.editMarquee(mItem)}" update=":mainForm:homePageTabView:marqueePanel" process="@this"/></p:column>
+                    </p:dataTable>
+                </div>
+            </p:outputPanel>
         </div>
+
+        <style>
+            .marquee-builder { display: grid; gap: 14px; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); }
+            .builder-grid { display: grid; gap: 10px; }
+            .control-row { display: grid; gap: 6px; }
+            .inline-input { display: flex; gap: 8px; align-items: center; }
+            .toggle-row { grid-template-columns: 1fr auto; align-items: center; }
+            .preview-card h3 { margin: 6px 0 10px; }
+            .items-list { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 8px; max-height: 180px; overflow: auto; }
+            .items-list li { display: flex; justify-content: space-between; align-items: center; padding: 9px 10px; border-radius: 8px; border: 1px solid #dce4f7; background: #f8faff; }
+            .remove-item-btn { border: none; background: #ffe9e9; color: #af2b2b; border-radius: 6px; }
+            .marquee-preview { position: relative; min-height: 110px; border-radius: 12px; overflow: hidden; padding: 16px; display: flex; align-items: center; }
+            .marquee-track { display: flex; align-items: center; gap: 22px; will-change: transform; transform: translate3d(0,0,0); }
+            .marquee-track.vertical { flex-direction: column; align-items: stretch; width: 100%; }
+            .marquee-item { white-space: nowrap; padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,.15); }
+            .marquee-track.vertical .marquee-item { white-space: normal; text-align: center; }
+            @keyframes marquee-horizontal-rtl { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+            @keyframes marquee-horizontal-ltr { 0% { transform: translate3d(-50%, 0, 0); } 100% { transform: translate3d(0, 0, 0); } }
+            @keyframes marquee-vertical-ttb { 0% { transform: translate3d(0, -50%, 0); } 100% { transform: translate3d(0, 0, 0); } }
+            @keyframes marquee-vertical-btt { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(0, -50%, 0); } }
+            .marquee-track.anim-horizontal-rtl { animation: marquee-horizontal-rtl linear infinite; }
+            .marquee-track.anim-horizontal-ltr { animation: marquee-horizontal-ltr linear infinite; }
+            .marquee-track.anim-vertical-ttb { animation: marquee-vertical-ttb linear infinite; }
+            .marquee-track.anim-vertical-btt { animation: marquee-vertical-btt linear infinite; }
+            .marquee-preview.pause-on-hover:hover .marquee-track { animation-play-state: paused; }
+            @media (max-width: 920px) { .marquee-builder { grid-template-columns: 1fr; } }
+        </style>
     </h:body>
 </html>

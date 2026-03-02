@@ -2,6 +2,7 @@ package com.aadhik.ecommerce.web;
 
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
+import com.aadhik.ecommerce.model.MarqueeConfig;
 import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
@@ -40,6 +41,14 @@ public class AdminBean implements Serializable {
     private HomepageSection sectionForm;
     private ProductCollection collectionForm;
     private Product productForm;
+    private MarqueeConfig marqueeForm;
+    private String marqueeItemInput;
+    private int gradientColorCount;
+    private String gradientColor1;
+    private String gradientColor2;
+    private String gradientColor3;
+    private String gradientColor4;
+    private String gradientColor5;
     private List<ProductVariantInput> variantInputs;
 
     private String fileSelectionTarget;
@@ -55,6 +64,7 @@ public class AdminBean implements Serializable {
         fileSelectionTarget = "primary";
         fileSelectionVariantIndex = -1;
         selectedMediaFiles = new ArrayList<>();
+        marqueeForm = new MarqueeConfig();
         resetSliderForm();
         resetSectionForm();
         resetCollectionForm();
@@ -423,6 +433,203 @@ public class AdminBean implements Serializable {
         addInfo("Homepage section saved successfully");
     }
 
+    public void saveMarquee() {
+        if (!validateMarquee()) {
+            return;
+        }
+        marqueeForm.setGradientColors(String.join(",", getGradientColors()));
+        marqueeForm.setItemsData(String.join("\n", getMarqueeItems()));
+        catalogService.saveMarqueeConfig(marqueeForm);
+        resetMarqueeForm();
+        addInfo("Marquee saved successfully");
+    }
+
+    public void editMarquee(MarqueeConfig config) {
+        MarqueeConfig draft = new MarqueeConfig();
+        draft.setId(config.getId());
+        draft.setItemsData(config.getItemsData());
+        draft.setDirection(config.getDirection());
+        draft.setSpeedSeconds(config.getSpeedSeconds());
+        draft.setBackgroundMode(config.getBackgroundMode());
+        draft.setSolidColor(config.getSolidColor());
+        draft.setGradientColors(config.getGradientColors());
+        draft.setFontSizePx(config.getFontSizePx());
+        draft.setFontWeight(config.getFontWeight());
+        draft.setTextColor(config.getTextColor());
+        draft.setPauseOnHover(config.isPauseOnHover());
+        draft.setActive(config.isActive());
+        marqueeForm = draft;
+        loadGradientColorsFromString(config.getGradientColors());
+    }
+
+    public void resetMarqueeForm() {
+        marqueeForm = new MarqueeConfig();
+        marqueeForm.setItemsData("Free shipping above $50\nFlash sale live now");
+        marqueeForm.setDirection("rtl");
+        marqueeForm.setSpeedSeconds(12);
+        marqueeForm.setBackgroundMode("solid");
+        marqueeForm.setSolidColor("#0f1f49");
+        marqueeForm.setGradientColors("#0f1f49,#325ac7");
+        gradientColor1 = "#0f1f49";
+        gradientColor2 = "#325ac7";
+        gradientColor3 = "#5f85ee";
+        gradientColor4 = "#7f9bff";
+        gradientColor5 = "#b7c8ff";
+        marqueeForm.setFontSizePx(22);
+        marqueeForm.setFontWeight("700");
+        marqueeForm.setTextColor("#ffffff");
+        marqueeForm.setPauseOnHover(true);
+        marqueeForm.setActive(true);
+        marqueeItemInput = "";
+        gradientColorCount = 2;
+    }
+
+    public void addMarqueeItem() {
+        if (isBlank(marqueeItemInput)) {
+            addWarn("Please enter marquee content.");
+            return;
+        }
+        List<String> items = getMarqueeItems();
+        items.add(marqueeItemInput.trim());
+        marqueeForm.setItemsData(String.join("\n", items));
+        marqueeItemInput = "";
+    }
+
+    public void removeMarqueeItem(int index) {
+        List<String> items = getMarqueeItems();
+        if (index >= 0 && index < items.size()) {
+            items.remove(index);
+            marqueeForm.setItemsData(String.join("\n", items));
+        }
+    }
+
+    public void applyGradientColorCount() {
+        if (gradientColorCount < 2) {
+            gradientColorCount = 2;
+        }
+        if (gradientColorCount > 5) {
+            gradientColorCount = 5;
+        }
+        marqueeForm.setGradientColors(String.join(",", getGradientColors()));
+    }
+
+    public List<String> getMarqueeItems() {
+        List<String> items = new ArrayList<>();
+        if(marqueeForm == null){
+            marqueeForm = new MarqueeConfig();
+        }
+        if (isBlank(marqueeForm.getItemsData())) {
+            return items;
+        }
+        String[] lines = marqueeForm.getItemsData().split("\\n");
+        for (String line : lines) {
+            if (!isBlank(line)) {
+                items.add(line.trim());
+            }
+        }
+        return items;
+    }
+
+    public List<String> getLoopedMarqueeItems() {
+        List<String> items = getMarqueeItems();
+        if (items.isEmpty()) {
+            items.add("Add marquee content");
+        }
+        List<String> looped = new ArrayList<>(items);
+        looped.addAll(items);
+        return looped;
+    }
+
+    public List<String> getGradientColors() {
+        List<String> colors = new ArrayList<>();
+        colors.add(defaultColor(gradientColor1, "#0f1f49"));
+        colors.add(defaultColor(gradientColor2, "#325ac7"));
+        if (gradientColorCount >= 3) {
+            colors.add(defaultColor(gradientColor3, "#5f85ee"));
+        }
+        if (gradientColorCount >= 4) {
+            colors.add(defaultColor(gradientColor4, "#7f9bff"));
+        }
+        if (gradientColorCount >= 5) {
+            colors.add(defaultColor(gradientColor5, "#b7c8ff"));
+        }
+        return colors;
+    }
+
+    private String defaultColor(String value, String fallback) {
+        return isBlank(value) ? fallback : value;
+    }
+
+    private void loadGradientColorsFromString(String text) {
+        gradientColor1 = "#0f1f49";
+        gradientColor2 = "#325ac7";
+        gradientColor3 = "#5f85ee";
+        gradientColor4 = "#7f9bff";
+        gradientColor5 = "#b7c8ff";
+        gradientColorCount = 2;
+        if (isBlank(text)) {
+            return;
+        }
+        String[] colors = text.split(",");
+        gradientColorCount = Math.max(2, Math.min(5, colors.length));
+        if (colors.length > 0 && !isBlank(colors[0])) {
+            gradientColor1 = colors[0].trim();
+        }
+        if (colors.length > 1 && !isBlank(colors[1])) {
+            gradientColor2 = colors[1].trim();
+        }
+        if (colors.length > 2 && !isBlank(colors[2])) {
+            gradientColor3 = colors[2].trim();
+        }
+        if (colors.length > 3 && !isBlank(colors[3])) {
+            gradientColor4 = colors[3].trim();
+        }
+        if (colors.length > 4 && !isBlank(colors[4])) {
+            gradientColor5 = colors[4].trim();
+        }
+    }
+
+    public String buildMarqueePreviewBackground() {
+        if ("gradient".equals(marqueeForm.getBackgroundMode())) {
+            String angle = isVerticalDirection() ? "180deg" : "90deg";
+            return "linear-gradient(" + angle + "," + String.join(",", getGradientColors()) + ")";
+        }
+        return marqueeForm.getSolidColor();
+    }
+
+    public String getMarqueeAnimationClass() {
+        if ("ltr".equals(marqueeForm.getDirection())) {
+            return "anim-horizontal-ltr";
+        }
+        if ("ttb".equals(marqueeForm.getDirection())) {
+            return "vertical anim-vertical-ttb";
+        }
+        if ("btt".equals(marqueeForm.getDirection())) {
+            return "vertical anim-vertical-btt";
+        }
+        return "anim-horizontal-rtl";
+    }
+
+    public boolean isVerticalDirection() {
+        return "ttb".equals(marqueeForm.getDirection()) || "btt".equals(marqueeForm.getDirection());
+    }
+
+    private boolean validateMarquee() {
+        if (getMarqueeItems().isEmpty()) {
+            addError("Add at least one marquee item.");
+            return false;
+        }
+        if (marqueeForm.getSpeedSeconds() < 5 || marqueeForm.getSpeedSeconds() > 30) {
+            addError("Speed must be between 5 and 30 seconds.");
+            return false;
+        }
+        if (marqueeForm.getFontSizePx() < 14 || marqueeForm.getFontSizePx() > 60) {
+            addError("Font size must be between 14 and 60 px.");
+            return false;
+        }
+        return true;
+    }
+
     public void saveCollection() {
         if (!validateCollection()) {
             return;
@@ -492,6 +699,10 @@ public class AdminBean implements Serializable {
         productForm.setHasVariants(false);
         variantInputs = new ArrayList<>();
         variantInputs.add(new ProductVariantInput());
+    }
+
+    public List<MarqueeConfig> getMarqueeConfigs() {
+        return catalogService.getMarqueeConfigs();
     }
 
     public List<MediaFile> getMediaFiles() {
@@ -766,6 +977,70 @@ public class AdminBean implements Serializable {
 
     public void setCollectionForm(ProductCollection collectionForm) {
         this.collectionForm = collectionForm;
+    }
+
+    public MarqueeConfig getMarqueeForm() {
+        return marqueeForm;
+    }
+
+    public void setMarqueeForm(MarqueeConfig marqueeForm) {
+        this.marqueeForm = marqueeForm;
+    }
+
+    public String getMarqueeItemInput() {
+        return marqueeItemInput;
+    }
+
+    public void setMarqueeItemInput(String marqueeItemInput) {
+        this.marqueeItemInput = marqueeItemInput;
+    }
+
+    public int getGradientColorCount() {
+        return gradientColorCount;
+    }
+
+    public void setGradientColorCount(int gradientColorCount) {
+        this.gradientColorCount = gradientColorCount;
+    }
+
+    public String getGradientColor1() {
+        return gradientColor1;
+    }
+
+    public void setGradientColor1(String gradientColor1) {
+        this.gradientColor1 = gradientColor1;
+    }
+
+    public String getGradientColor2() {
+        return gradientColor2;
+    }
+
+    public void setGradientColor2(String gradientColor2) {
+        this.gradientColor2 = gradientColor2;
+    }
+
+    public String getGradientColor3() {
+        return gradientColor3;
+    }
+
+    public void setGradientColor3(String gradientColor3) {
+        this.gradientColor3 = gradientColor3;
+    }
+
+    public String getGradientColor4() {
+        return gradientColor4;
+    }
+
+    public void setGradientColor4(String gradientColor4) {
+        this.gradientColor4 = gradientColor4;
+    }
+
+    public String getGradientColor5() {
+        return gradientColor5;
+    }
+
+    public void setGradientColor5(String gradientColor5) {
+        this.gradientColor5 = gradientColor5;
     }
 
     public Product getProductForm() {

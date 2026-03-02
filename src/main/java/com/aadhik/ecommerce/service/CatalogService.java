@@ -2,6 +2,7 @@ package com.aadhik.ecommerce.service;
 
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
+import com.aadhik.ecommerce.model.MarqueeConfig;
 import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
@@ -22,8 +23,8 @@ public class CatalogService {
     public List<HomeSlider> getHomeActiveSliders() {
         return repository.findHomeSliders(true);
     }
-    
-     public List<HomeSlider> getHomeSliders() {
+
+    public List<HomeSlider> getHomeSliders() {
         return repository.findHomeSliders(false);
     }
 
@@ -52,13 +53,21 @@ public class CatalogService {
     public List<ProductCollection> getActiveCollections() {
         return repository.findCollections(true);
     }
-    
+
     public List<ProductCollection> getCollections() {
         return repository.findCollections(false);
     }
 
     public List<Product> getProducts() {
         return repository.findProducts();
+    }
+
+    public List<MarqueeConfig> getMarqueeConfigs() {
+        return repository.findMarqueeConfigs();
+    }
+
+    public MarqueeConfig getActiveMarqueeConfig() {
+        return repository.findActiveMarqueeConfig();
     }
 
     public List<MediaFile> getMediaFiles() {
@@ -89,6 +98,10 @@ public class CatalogService {
         return repository.saveProduct(product);
     }
 
+    public MarqueeConfig saveMarqueeConfig(MarqueeConfig marqueeConfig) {
+        return repository.saveMarqueeConfig(marqueeConfig);
+    }
+
     public MediaFile saveMediaFile(MediaFile mediaFile) {
         return repository.saveMediaFile(mediaFile);
     }
@@ -96,9 +109,9 @@ public class CatalogService {
     public void deleteMediaFile(Long id) {
         repository.deleteMediaFileById(id);
     }
-    
+
     public boolean isExistSKU(String sku, Long ignoreProductId) {
-       return repository.isExistSKU(sku, ignoreProductId);
+        return repository.isExistSKU(sku, ignoreProductId);
     }
 
     public static class HomepageSectionView {
