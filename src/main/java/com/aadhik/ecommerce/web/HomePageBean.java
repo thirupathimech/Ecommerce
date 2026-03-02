@@ -41,9 +41,19 @@ public class HomePageBean {
         if (items.isEmpty()) {
             return List.of();
         }
-        java.util.ArrayList<String> looped = new java.util.ArrayList<>(items);
-        looped.addAll(items);
-        return looped;
+        return buildContinuousItems(items, 18);
+    }
+
+    private List<String> buildContinuousItems(List<String> source, int minimumVisibleItems) {
+        if (source == null || source.isEmpty()) {
+            return List.of();
+        }
+        int repeatCount = Math.max(2, (int) Math.ceil((double) minimumVisibleItems / source.size()));
+        java.util.ArrayList<String> repeated = new java.util.ArrayList<>(source.size() * repeatCount);
+        for (int i = 0; i < repeatCount; i++) {
+            repeated.addAll(source);
+        }
+        return repeated;
     }
 
     public String marqueeAnimationClass() {
@@ -73,7 +83,7 @@ public class HomePageBean {
             String angle = vertical ? "180deg" : "90deg";
             return "linear-gradient(" + angle + "," + marquee.getGradientColors() + ")";
         }
-        return marquee.getSolidColor();
+        return (marquee.getSolidColor() == null || marquee.getSolidColor().isBlank()) ? "#0f1f49" : marquee.getSolidColor();
     }
 
     public String resolveMediaUrl(String source) {

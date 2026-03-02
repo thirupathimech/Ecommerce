@@ -29,71 +29,96 @@
                             </h:selectOneMenu>
                         </div>
 
-                        <div class="control-row">
+                        <div class="control-row knob-row">
                             <label>Speed: #{adminBean.marqueeForm.speedSeconds}s</label>
-                            <p:slider for="speedInput" minValue="5" maxValue="30"/>
-                            <p:inputText id="speedInput" value="#{adminBean.marqueeForm.speedSeconds}">
-                                <p:ajax event="keyup" update=":mainForm:homePageTabView:marqueePanel"/>
-                            </p:inputText>
+                            <p:knob value="#{adminBean.marqueeForm.speedSeconds}" min="5" max="30" step="1" showLabel="true" foregroundColor="#173676" backgroundColor="#d9e1f7">
+                                <p:ajax event="change" update=":mainForm:homePageTabView:marqueePanel"/>
+                            </p:knob>
                         </div>
 
-                        <div class="control-row">
-                            <label>Background mode</label>
-                            <h:selectOneMenu value="#{adminBean.marqueeForm.backgroundMode}">
-                                <f:selectItem itemLabel="Solid" itemValue="solid"/>
-                                <f:selectItem itemLabel="Gradient" itemValue="gradient"/>
-                                <p:ajax update=":mainForm:homePageTabView:marqueePanel"/>
-                            </h:selectOneMenu>
-                        </div>
+                        <p:outputPanel id="backgroundConfigWrapper" layout="block">
 
-                        <h:panelGroup rendered="#{adminBean.marqueeForm.backgroundMode eq 'solid'}" layout="block" styleClass="control-row">
-                            <label>Solid color</label>
-                            <p:colorPicker value="#{adminBean.marqueeForm.solidColor}" format="hex">
-                                <p:ajax update=":mainForm:homePageTabView:marqueePanel"/>
-                            </p:colorPicker>
-                        </h:panelGroup>
+                            <!-- Background Mode -->
+                            <div class="control-row">
+                                <p:outputLabel for="bgMode" value="Background mode"/>
+                                <h:selectOneMenu id="bgMode"
+                                                 value="#{adminBean.marqueeForm.backgroundMode}">
+                                    <f:selectItem itemLabel="Solid" itemValue="solid"/>
+                                    <f:selectItem itemLabel="Gradient" itemValue="gradient"/>
 
-                        <h:panelGroup rendered="#{adminBean.marqueeForm.backgroundMode eq 'gradient'}" layout="block" styleClass="control-row">
-                            <label>Gradient colors (2-5)</label>
-                            <div class="inline-input">
-                                <p:inputNumber value="#{adminBean.gradientColorCount}" decimalPlaces="0" minValue="2" maxValue="5"/>
-                                <p:commandButton value="Apply" action="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel" process="@parent"/>
+                                    <p:ajax process="@this"
+                                            update="backgroundConfigWrapper :mainForm:homePageTabView:marqueePanel"/>
+                                </h:selectOneMenu>
                             </div>
-                            <h:panelGroup rendered="#{adminBean.gradientColorCount ge 1}">
-                                <p:colorPicker value="#{adminBean.gradientColor1}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{adminBean.gradientColorCount ge 2}">
-                                <p:colorPicker value="#{adminBean.gradientColor2}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{adminBean.gradientColorCount ge 3}">
-                                <p:colorPicker value="#{adminBean.gradientColor3}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{adminBean.gradientColorCount ge 4}">
-                                <p:colorPicker value="#{adminBean.gradientColor4}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{adminBean.gradientColorCount ge 5}">
-                                <p:colorPicker value="#{adminBean.gradientColor5}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
-                            </h:panelGroup>
-                        </h:panelGroup>
 
-                        <div class="control-row">
+                            <!-- SOLID MODE -->
+                            <h:panelGroup rendered="#{adminBean.marqueeForm.backgroundMode eq 'solid'}"
+                                          layout="block"
+                                          styleClass="control-row">
+
+                                <p:outputLabel for="solidColor" value="Solid color"/>
+
+                                <p:colorPicker id="solidColor"
+                                               value="#{adminBean.marqueeForm.solidColor}"
+                                               format="hex">
+                                    <p:ajax event="change"
+                                            process="@this"
+                                            update=":mainForm:homePageTabView:marqueePanel"/>
+                                </p:colorPicker>
+                            </h:panelGroup>
+
+
+                            <!-- GRADIENT MODE -->
+                            <h:panelGroup rendered="#{adminBean.marqueeForm.backgroundMode eq 'gradient'}"
+                                          layout="block"
+                                          styleClass="control-row">
+
+                                <p:outputLabel value="Gradient colors (2–5)"/>
+
+                                <div class="inline-input">
+                                    <p:inputNumber value="#{adminBean.gradientColorCount}"
+                                                   decimalPlaces="0"
+                                                   minValue="2"
+                                                   maxValue="5"/>
+
+                                    <p:commandButton value="Apply"
+                                                     action="#{adminBean.applyGradientColorCount}"
+                                                     process="@parent"
+                                                     update="backgroundConfigWrapper :mainForm:homePageTabView:marqueePanel"/>
+                                </div>
+
+                                <h:panelGroup rendered="#{adminBean.gradientColorCount ge 1}">
+                                    <p:colorPicker value="#{adminBean.gradientColor1}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{adminBean.gradientColorCount ge 2}">
+                                    <p:colorPicker value="#{adminBean.gradientColor2}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{adminBean.gradientColorCount ge 3}">
+                                    <p:colorPicker value="#{adminBean.gradientColor3}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{adminBean.gradientColorCount ge 4}">
+                                    <p:colorPicker value="#{adminBean.gradientColor4}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{adminBean.gradientColorCount ge 5}">
+                                    <p:colorPicker value="#{adminBean.gradientColor5}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                                </h:panelGroup>
+
+                            </h:panelGroup>
+
+                        </p:outputPanel>
+
+                        <div class="control-row knob-row">
                             <label>Font size: #{adminBean.marqueeForm.fontSizePx}px</label>
-                            <p:slider for="fontInput" minValue="14" maxValue="60"/>
-                            <p:inputText id="fontInput" value="#{adminBean.marqueeForm.fontSizePx}">
-                                <p:ajax event="keyup" update=":mainForm:homePageTabView:marqueePanel"/>
-                            </p:inputText>
+                            <p:knob value="#{adminBean.marqueeForm.fontSizePx}" min="8" max="60" step="1" showLabel="true" foregroundColor="#173676" backgroundColor="#d9e1f7">
+                                <p:ajax event="change" update=":mainForm:homePageTabView:marqueePanel"/>
+                            </p:knob>
                         </div>
 
-                        <div class="control-row">
-                            <label>Font weight</label>
-                            <h:selectOneMenu value="#{adminBean.marqueeForm.fontWeight}">
-                                <f:selectItem itemLabel="Regular (400)" itemValue="400"/>
-                                <f:selectItem itemLabel="Medium (500)" itemValue="500"/>
-                                <f:selectItem itemLabel="Semi Bold (600)" itemValue="600"/>
-                                <f:selectItem itemLabel="Bold (700)" itemValue="700"/>
-                                <f:selectItem itemLabel="Extra Bold (800)" itemValue="800"/>
-                                <p:ajax update=":mainForm:homePageTabView:marqueePanel"/>
-                            </h:selectOneMenu>
+                        <div class="control-row knob-row">
+                            <label>Font weight: #{adminBean.marqueeFontWeightValue}</label>
+                            <p:knob value="#{adminBean.marqueeFontWeightValue}" min="400" max="800" step="100" showLabel="true" foregroundColor="#173676" backgroundColor="#d9e1f7">
+                                <p:ajax event="change" update=":mainForm:homePageTabView:marqueePanel"/>
+                            </p:knob>
                         </div>
 
                         <div class="control-row">
@@ -136,7 +161,9 @@
 
                     <h3>Live Preview</h3>
                     <div class="marquee-preview #{adminBean.marqueeForm.pauseOnHover ? 'pause-on-hover' : ''}" style="background:#{adminBean.buildMarqueePreviewBackground()};">
-                        <div class="marquee-track #{adminBean.marqueeAnimationClass}" style="animation-duration:#{adminBean.marqueeForm.speedSeconds}s; font-size:#{adminBean.marqueeForm.fontSizePx}px; font-weight:#{adminBean.marqueeForm.fontWeight}; color:#{adminBean.marqueeForm.textColor};">
+                        <div class="marquee-track #{adminBean.marqueeAnimationClass}" style="animation-duration:#{adminBean.marqueeForm.speedSeconds}s; font-size:#{adminBean.marqueeForm.fontSizePx}px;
+                             font-weight:#{adminBean.marqueeFontWeightValue};
+                             color:#{adminBean.marqueeForm.textColor};">
                             <ui:repeat value="#{adminBean.loopedMarqueeItems}" var="previewItem">
                                 <span class="marquee-item">#{previewItem}</span>
                             </ui:repeat>
@@ -156,30 +183,143 @@
         </div>
 
         <style>
-            .marquee-builder { display: grid; gap: 14px; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); }
-            .builder-grid { display: grid; gap: 10px; }
-            .control-row { display: grid; gap: 6px; }
-            .inline-input { display: flex; gap: 8px; align-items: center; }
-            .toggle-row { grid-template-columns: 1fr auto; align-items: center; }
-            .preview-card h3 { margin: 6px 0 10px; }
-            .items-list { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 8px; max-height: 180px; overflow: auto; }
-            .items-list li { display: flex; justify-content: space-between; align-items: center; padding: 9px 10px; border-radius: 8px; border: 1px solid #dce4f7; background: #f8faff; }
-            .remove-item-btn { border: none; background: #ffe9e9; color: #af2b2b; border-radius: 6px; }
-            .marquee-preview { position: relative; min-height: 110px; border-radius: 12px; overflow: hidden; padding: 16px; display: flex; align-items: center; }
-            .marquee-track { display: flex; align-items: center; gap: 22px; will-change: transform; transform: translate3d(0,0,0); }
-            .marquee-track.vertical { flex-direction: column; align-items: stretch; width: 100%; }
-            .marquee-item { white-space: nowrap; padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,.15); }
-            .marquee-track.vertical .marquee-item { white-space: normal; text-align: center; }
-            @keyframes marquee-horizontal-rtl { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
-            @keyframes marquee-horizontal-ltr { 0% { transform: translate3d(-50%, 0, 0); } 100% { transform: translate3d(0, 0, 0); } }
-            @keyframes marquee-vertical-ttb { 0% { transform: translate3d(0, -50%, 0); } 100% { transform: translate3d(0, 0, 0); } }
-            @keyframes marquee-vertical-btt { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(0, -50%, 0); } }
-            .marquee-track.anim-horizontal-rtl { animation: marquee-horizontal-rtl linear infinite; }
-            .marquee-track.anim-horizontal-ltr { animation: marquee-horizontal-ltr linear infinite; }
-            .marquee-track.anim-vertical-ttb { animation: marquee-vertical-ttb linear infinite; }
-            .marquee-track.anim-vertical-btt { animation: marquee-vertical-btt linear infinite; }
-            .marquee-preview.pause-on-hover:hover .marquee-track { animation-play-state: paused; }
-            @media (max-width: 920px) { .marquee-builder { grid-template-columns: 1fr; } }
+            .marquee-builder {
+                display: grid;
+                gap: 14px;
+                grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+            }
+            .builder-grid {
+                display: grid;
+                gap: 10px;
+            }
+            .control-row {
+                display: grid;
+                gap: 6px;
+            }
+            .knob-row {
+                justify-items: center;
+                text-align: center;
+            }
+            .inline-input {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+            .toggle-row {
+                grid-template-columns: 1fr auto;
+                align-items: center;
+            }
+            .preview-card h3 {
+                margin: 6px 0 10px;
+            }
+            .items-list {
+                list-style: none;
+                padding: 0;
+                margin: 0 0 14px;
+                display: grid;
+                gap: 8px;
+                max-height: 180px;
+                overflow: auto;
+            }
+            .items-list li {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 9px 10px;
+                border-radius: 8px;
+                border: 1px solid #dce4f7;
+                background: #f8faff;
+            }
+            .remove-item-btn {
+                border: none;
+                background: #ffe9e9;
+                color: #af2b2b;
+                border-radius: 6px;
+            }
+            .marquee-preview {
+                position: relative;
+                min-height: 110px;
+                border-radius: 12px;
+                overflow: hidden;
+                padding: 16px;
+                display: flex;
+                align-items: center;
+            }
+            .marquee-track {
+                display: flex;
+                align-items: center;
+                gap: 22px;
+                width: max-content;
+                min-width: 100%;
+                will-change: transform;
+                transform: translate3d(0,0,0);
+            }
+            .marquee-track.vertical {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+            }
+            .marquee-item {
+                white-space: nowrap;
+                padding: 8px 14px;
+                border-radius: 999px;
+            }
+            .marquee-track.vertical .marquee-item {
+                white-space: normal;
+                text-align: center;
+            }
+            @keyframes marquee-horizontal-rtl {
+                0% {
+                    transform: translate3d(0, 0, 0);
+                }
+                100% {
+                    transform: translate3d(-50%, 0, 0);
+                }
+            }
+            @keyframes marquee-horizontal-ltr {
+                0% {
+                    transform: translate3d(-50%, 0, 0);
+                }
+                100% {
+                    transform: translate3d(0, 0, 0);
+                }
+            }
+            @keyframes marquee-vertical-ttb {
+                0% {
+                    transform: translate3d(0, -50%, 0);
+                }
+                100% {
+                    transform: translate3d(0, 0, 0);
+                }
+            }
+            @keyframes marquee-vertical-btt {
+                0% {
+                    transform: translate3d(0, 0, 0);
+                }
+                100% {
+                    transform: translate3d(0, -50%, 0);
+                }
+            }
+            .marquee-track.anim-horizontal-rtl {
+                animation: marquee-horizontal-rtl linear infinite;
+            }
+            .marquee-track.anim-horizontal-ltr {
+                animation: marquee-horizontal-ltr linear infinite;
+            }
+            .marquee-track.anim-vertical-ttb {
+                animation: marquee-vertical-ttb linear infinite;
+            }
+            .marquee-track.anim-vertical-btt {
+                animation: marquee-vertical-btt linear infinite;
+            }
+            .marquee-preview.pause-on-hover:hover .marquee-track {
+                animation-play-state: paused;
+            }
+            @media (max-width: 920px) {
+                .marquee-builder {
+                    grid-template-columns: 1fr;
+                }
+            }
         </style>
     </h:body>
 </html>

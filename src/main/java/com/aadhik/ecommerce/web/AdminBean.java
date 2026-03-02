@@ -500,6 +500,8 @@ public class AdminBean implements Serializable {
         if (index >= 0 && index < items.size()) {
             items.remove(index);
             marqueeForm.setItemsData(String.join("\n", items));
+        } else {
+            marqueeForm.setItemsData(String.join("\n", items));
         }
     }
 
@@ -515,7 +517,7 @@ public class AdminBean implements Serializable {
 
     public List<String> getMarqueeItems() {
         List<String> items = new ArrayList<>();
-        if(marqueeForm == null){
+        if (marqueeForm == null) {
             marqueeForm = new MarqueeConfig();
         }
         if (isBlank(marqueeForm.getItemsData())) {
@@ -535,9 +537,16 @@ public class AdminBean implements Serializable {
         if (items.isEmpty()) {
             items.add("Add marquee content");
         }
-        List<String> looped = new ArrayList<>(items);
-        looped.addAll(items);
-        return looped;
+        return buildContinuousItems(items, 18);
+    }
+
+    private List<String> buildContinuousItems(List<String> source, int minimumVisibleItems) {
+        int repeatCount = Math.max(2, (int) Math.ceil((double) minimumVisibleItems / source.size()));
+        List<String> repeated = new ArrayList<>(source.size() * repeatCount);
+        for (int i = 0; i < repeatCount; i++) {
+            repeated.addAll(source);
+        }
+        return repeated;
     }
 
     public List<String> getGradientColors() {
@@ -554,6 +563,21 @@ public class AdminBean implements Serializable {
             colors.add(defaultColor(gradientColor5, "#b7c8ff"));
         }
         return colors;
+    }
+
+    public void setGradientColorByIndex(int index, String value) {
+        switch (index) {
+            case 0 ->
+                gradientColor1 = value;
+            case 1 ->
+                gradientColor2 = value;
+            case 2 ->
+                gradientColor3 = value;
+            case 3 ->
+                gradientColor4 = value;
+            case 4 ->
+                gradientColor5 = value;
+        }
     }
 
     private String defaultColor(String value, String fallback) {
@@ -594,7 +618,7 @@ public class AdminBean implements Serializable {
             String angle = isVerticalDirection() ? "180deg" : "90deg";
             return "linear-gradient(" + angle + "," + String.join(",", getGradientColors()) + ")";
         }
-        return marqueeForm.getSolidColor();
+        return isBlank(marqueeForm.getSolidColor()) ? "#0f1f49" : marqueeForm.getSolidColor();
     }
 
     public String getMarqueeAnimationClass() {
@@ -614,6 +638,24 @@ public class AdminBean implements Serializable {
         return "ttb".equals(marqueeForm.getDirection()) || "btt".equals(marqueeForm.getDirection());
     }
 
+    public int getMarqueeFontWeightValue() {
+        if (isBlank(marqueeForm.getFontWeight())) {
+            return 700;
+        }
+        try {
+            int parsed = Integer.parseInt(marqueeForm.getFontWeight());
+            return Math.max(400, Math.min(800, parsed));
+        } catch (NumberFormatException exception) {
+            return 700;
+        }
+    }
+
+    public void setMarqueeFontWeightValue(int value) {
+        int bounded = Math.max(400, Math.min(800, value));
+        int normalized = (bounded / 100) * 100;
+        marqueeForm.setFontWeight(String.valueOf(normalized));
+    }
+
     private boolean validateMarquee() {
         if (getMarqueeItems().isEmpty()) {
             addError("Add at least one marquee item.");
@@ -623,8 +665,8 @@ public class AdminBean implements Serializable {
             addError("Speed must be between 5 and 30 seconds.");
             return false;
         }
-        if (marqueeForm.getFontSizePx() < 14 || marqueeForm.getFontSizePx() > 60) {
-            addError("Font size must be between 14 and 60 px.");
+        if (marqueeForm.getFontSizePx() < 8 || marqueeForm.getFontSizePx() > 60) {
+            addError("Font size must be between 8 and 60 px.");
             return false;
         }
         return true;
