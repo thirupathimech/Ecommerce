@@ -50,6 +50,9 @@
     </h:head>
     <h:body>
         <h:form>
+            <div class="admin-link">
+                <h:outputLink value="admin.xhtml">Go to Admin Setup</h:outputLink>
+            </div>
             <div class="top-strip">Sip Your Way To Health</div>
             <div class="nav-shell">
                 <div class="nav-row">
@@ -109,10 +112,6 @@
                         </div>
                     </section>
                 </ui:repeat>
-
-                <div class="admin-link">
-                    <h:outputLink value="admin.xhtml">Go to Admin Setup</h:outputLink>
-                </div>
             </main>
         </h:form>
         <h:outputScript target="body">

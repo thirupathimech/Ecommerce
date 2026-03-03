@@ -101,6 +101,10 @@ public class CatalogService {
     public MarqueeConfig saveMarqueeConfig(MarqueeConfig marqueeConfig) {
         return repository.saveMarqueeConfig(marqueeConfig);
     }
+    
+    public boolean deleteMarqueeConfig(Long id) {
+        return repository.deleteMarqueeConfig(id);
+    }
 
     public MediaFile saveMediaFile(MediaFile mediaFile) {
         return repository.saveMediaFile(mediaFile);

@@ -211,6 +211,16 @@ public class CatalogRepository {
     }
 
     @Transactional
+    public boolean deleteMarqueeConfig(Long id) {
+        MarqueeConfig entity = entityManager.find(MarqueeConfig.class, id);
+        if (entity == null) {
+            return false;
+        }
+        entityManager.remove(entity);
+        return true;
+    }
+
+    @Transactional
     public MediaFile saveMediaFile(MediaFile mediaFile) {
         if (mediaFile.getId() == null) {
             entityManager.persist(mediaFile);

@@ -49,7 +49,7 @@
                         <p:commandButton value="Delete" icon="pi pi-trash" styleClass="ui-button-danger" process="@this"
                                          action="#{adminBean.deleteFile(fItem)}"
                                          update=":mainForm:messages :mainForm:fileTable :mainForm:fileStorageStats">
-                            <p:confirm header="Confirm Delete" message="Delete #{fItem.fileName}?" icon="pi pi-exclamation-triangle"/>
+                            <p:confirm type="popup" header="Confirm Delete" message="Delete #{fItem.fileName}?" icon="pi pi-exclamation-triangle"/>
                         </p:commandButton>
                     </p:column>
                 </p:dataTable>

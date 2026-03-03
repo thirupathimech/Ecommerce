@@ -461,6 +461,11 @@ public class AdminBean implements Serializable {
         marqueeForm = draft;
         loadGradientColorsFromString(config.getGradientColors());
     }
+    
+    public void deleteMarqueeConfig(MarqueeConfig config){
+        catalogService.deleteMarqueeConfig(config.getId());
+        addInfo("Marquee deleted successfully.");
+    }
 
     public void resetMarqueeForm() {
         marqueeForm = new MarqueeConfig();
