@@ -2,6 +2,7 @@ package com.aadhik.ecommerce.web;
 
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.MarqueeConfig;
+import com.aadhik.ecommerce.model.VideoCarouselItem;
 import com.aadhik.ecommerce.service.CatalogService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -22,6 +23,10 @@ public class HomePageBean {
 
     public List<CatalogService.HomepageSectionView> getSectionViews() {
         return catalogService.getHomepageSectionsWithProducts();
+    }
+
+    public List<VideoCarouselItem> getVideoCarouselItems() {
+        return catalogService.getHomeActiveVideoCarouselItems();
     }
 
     public MarqueeConfig getActiveMarquee() {

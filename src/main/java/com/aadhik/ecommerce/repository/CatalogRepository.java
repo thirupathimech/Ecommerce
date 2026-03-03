@@ -6,6 +6,7 @@ import com.aadhik.ecommerce.model.MarqueeConfig;
 import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
+import com.aadhik.ecommerce.model.VideoCarouselItem;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -27,6 +28,15 @@ public class CatalogRepository {
         }
         query.append(" order by s.sortOrder asc, s.id asc ");
         return entityManager.createQuery(query.toString(), HomeSlider.class).getResultList();
+    }
+
+    public List<VideoCarouselItem> findVideoCarouselItems(boolean activeOnly) {
+        StringBuilder query = new StringBuilder(" select v from VideoCarouselItem v ");
+        if (activeOnly) {
+            query.append(" where v.active = true ");
+        }
+        query.append(" order by v.sortOrder asc, v.id asc ");
+        return entityManager.createQuery(query.toString(), VideoCarouselItem.class).getResultList();
     }
 
     public List<HomepageSection> findActiveSections() {
@@ -142,7 +152,32 @@ public class CatalogRepository {
                 .setParameter("ref", ref)
                 .getSingleResult();
 
-        return productUsage + sliderUsage + collectionUsage;
+        Long videoCarouselUsage = entityManager.createQuery("""
+                        select count(v) from VideoCarouselItem v
+                        where v.thumbnailUrl = :ref
+                           or v.videoUrl = :ref
+                        """, Long.class)
+                .setParameter("ref", ref)
+                .getSingleResult();
+
+        return productUsage + sliderUsage + collectionUsage + videoCarouselUsage;
+    }
+
+    @Transactional
+    public VideoCarouselItem saveVideoCarouselItem(VideoCarouselItem item) {
+        if (item.getId() == null) {
+            entityManager.persist(item);
+            return item;
+        }
+        return entityManager.merge(item);
+    }
+
+    @Transactional
+    public void deleteVideoCarouselItem(Long id) {
+        VideoCarouselItem item = entityManager.find(VideoCarouselItem.class, id);
+        if (item != null) {
+            entityManager.remove(item);
+        }
     }
 
     @Transactional

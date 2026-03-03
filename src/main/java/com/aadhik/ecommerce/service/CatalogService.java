@@ -7,6 +7,7 @@ import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.SectionType;
+import com.aadhik.ecommerce.model.VideoCarouselItem;
 import com.aadhik.ecommerce.repository.CatalogRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -26,6 +27,14 @@ public class CatalogService {
 
     public List<HomeSlider> getHomeSliders() {
         return repository.findHomeSliders(false);
+    }
+
+    public List<VideoCarouselItem> getHomeActiveVideoCarouselItems() {
+        return repository.findVideoCarouselItems(true);
+    }
+
+    public List<VideoCarouselItem> getVideoCarouselItems() {
+        return repository.findVideoCarouselItems(false);
     }
 
     public List<HomepageSectionView> getHomepageSectionsWithProducts() {
@@ -86,6 +95,14 @@ public class CatalogService {
         return repository.saveSlider(slider);
     }
 
+    public VideoCarouselItem saveVideoCarouselItem(VideoCarouselItem item) {
+        return repository.saveVideoCarouselItem(item);
+    }
+
+    public void deleteVideoCarouselItem(Long id) {
+        repository.deleteVideoCarouselItem(id);
+    }
+
     public HomepageSection saveSection(HomepageSection section) {
         return repository.saveSection(section);
     }
@@ -101,7 +118,7 @@ public class CatalogService {
     public MarqueeConfig saveMarqueeConfig(MarqueeConfig marqueeConfig) {
         return repository.saveMarqueeConfig(marqueeConfig);
     }
-    
+
     public boolean deleteMarqueeConfig(Long id) {
         return repository.deleteMarqueeConfig(id);
     }

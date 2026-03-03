@@ -7,6 +7,7 @@ import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.SectionType;
+import com.aadhik.ecommerce.model.VideoCarouselItem;
 import com.aadhik.ecommerce.service.CatalogService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
@@ -38,6 +39,7 @@ public class AdminBean implements Serializable {
     private int homeTabIndex;
 
     private HomeSlider sliderForm;
+    private VideoCarouselItem videoCarouselForm;
     private HomepageSection sectionForm;
     private ProductCollection collectionForm;
     private Product productForm;
@@ -66,6 +68,7 @@ public class AdminBean implements Serializable {
         selectedMediaFiles = new ArrayList<>();
         marqueeForm = new MarqueeConfig();
         resetSliderForm();
+        resetVideoCarouselForm();
         resetSectionForm();
         resetCollectionForm();
         resetProductForm();
@@ -134,6 +137,16 @@ public class AdminBean implements Serializable {
         fileSelectionVariantIndex = -1;
     }
 
+    public void openFilePickerForVideoCarouselThumbnail() {
+        fileSelectionTarget = "video-carousel-thumbnail";
+        fileSelectionVariantIndex = -1;
+    }
+
+    public void openFilePickerForVideoCarouselVideo() {
+        fileSelectionTarget = "video-carousel-video";
+        fileSelectionVariantIndex = -1;
+    }
+
     public void selectFile(MediaFile file) {
         String ref = toDbFileRef(file.getId());
         if ("primary".equals(fileSelectionTarget)) {
@@ -148,6 +161,18 @@ public class AdminBean implements Serializable {
             sliderForm.setImageUrl(ref);
         } else if ("collection-banner".equals(fileSelectionTarget)) {
             collectionForm.setBannerImage(ref);
+        } else if ("video-carousel-thumbnail".equals(fileSelectionTarget)) {
+            if (!"IMAGE".equals(file.getFileType())) {
+                addWarn("Please select an image file for thumbnail.");
+                return;
+            }
+            videoCarouselForm.setThumbnailUrl(ref);
+        } else if ("video-carousel-video".equals(fileSelectionTarget)) {
+            if (!"VIDEO".equals(file.getFileType())) {
+                addWarn("Please select a video file.");
+                return;
+            }
+            videoCarouselForm.setVideoUrl(ref);
         } else if ("variant".equals(fileSelectionTarget)
                 && fileSelectionVariantIndex >= 0
                 && fileSelectionVariantIndex < variantInputs.size()) {
@@ -424,6 +449,40 @@ public class AdminBean implements Serializable {
         addInfo("Slider saved successfully");
     }
 
+    public void saveVideoCarouselItem() {
+        if (!validateVideoCarouselItem()) {
+            return;
+        }
+
+        catalogService.saveVideoCarouselItem(videoCarouselForm);
+        resetVideoCarouselForm();
+        addInfo("Video carousel item saved successfully");
+    }
+
+    public void editVideoCarouselItem(VideoCarouselItem item) {
+        VideoCarouselItem draft = new VideoCarouselItem();
+        draft.setId(item.getId());
+        draft.setTitle(item.getTitle());
+        draft.setThumbnailUrl(item.getThumbnailUrl());
+        draft.setVideoUrl(item.getVideoUrl());
+        draft.setSortOrder(item.getSortOrder());
+        draft.setActive(item.isActive());
+        videoCarouselForm = draft;
+    }
+
+    public void deleteVideoCarouselItem(VideoCarouselItem item) {
+        if (item == null || item.getId() == null) {
+            addError("Invalid video carousel selection.");
+            return;
+        }
+
+        catalogService.deleteVideoCarouselItem(item.getId());
+        if (videoCarouselForm != null && item.getId().equals(videoCarouselForm.getId())) {
+            resetVideoCarouselForm();
+        }
+        addInfo("Video carousel item deleted successfully");
+    }
+
     public void saveSection() {
         if (!validateSection()) {
             return;
@@ -461,8 +520,8 @@ public class AdminBean implements Serializable {
         marqueeForm = draft;
         loadGradientColorsFromString(config.getGradientColors());
     }
-    
-    public void deleteMarqueeConfig(MarqueeConfig config){
+
+    public void deleteMarqueeConfig(MarqueeConfig config) {
         catalogService.deleteMarqueeConfig(config.getId());
         addInfo("Marquee deleted successfully.");
     }
@@ -726,6 +785,12 @@ public class AdminBean implements Serializable {
         sliderForm.setSortOrder(1);
     }
 
+    public void resetVideoCarouselForm() {
+        videoCarouselForm = new VideoCarouselItem();
+        videoCarouselForm.setActive(true);
+        videoCarouselForm.setSortOrder(1);
+    }
+
     public void resetSectionForm() {
         sectionForm = new HomepageSection();
         sectionForm.setCollection(new ProductCollection());
@@ -758,6 +823,10 @@ public class AdminBean implements Serializable {
 
     public List<HomeSlider> getSliders() {
         return catalogService.getHomeSliders();
+    }
+
+    public List<VideoCarouselItem> getVideoCarouselItems() {
+        return catalogService.getVideoCarouselItems();
     }
 
     public List<CatalogService.HomepageSectionView> getSectionViews() {
@@ -800,6 +869,26 @@ public class AdminBean implements Serializable {
             return false;
         }
 
+        return true;
+    }
+
+    private boolean validateVideoCarouselItem() {
+        if (isBlank(videoCarouselForm.getTitle())) {
+            addError("Video title is required.");
+            return false;
+        }
+        if (isBlank(videoCarouselForm.getThumbnailUrl())) {
+            addError("Thumbnail image is required.");
+            return false;
+        }
+        if (isBlank(videoCarouselForm.getVideoUrl())) {
+            addError("Video file is required.");
+            return false;
+        }
+        if (videoCarouselForm.getSortOrder() <= 0) {
+            addError("Sort order must be greater than 0.");
+            return false;
+        }
         return true;
     }
 
@@ -1008,6 +1097,14 @@ public class AdminBean implements Serializable {
 
     public void setSliderForm(HomeSlider sliderForm) {
         this.sliderForm = sliderForm;
+    }
+
+    public VideoCarouselItem getVideoCarouselForm() {
+        return videoCarouselForm;
+    }
+
+    public void setVideoCarouselForm(VideoCarouselItem videoCarouselForm) {
+        this.videoCarouselForm = videoCarouselForm;
     }
 
     public HomepageSection getSectionForm() {

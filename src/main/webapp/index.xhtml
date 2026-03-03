@@ -46,6 +46,65 @@
             .anim-vertical-btt { animation: marquee-vertical-btt linear infinite; }
             @media (max-width: 1024px) { .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hero-slide img {height: 300px;} }
             @media (max-width: 640px) { .products-grid { grid-template-columns: 1fr; } .hero-slide img {height: 220px;} }
+            .store-video-section {
+            margin: 2rem 0;
+            }
+
+            .store-video-track {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding-bottom: 0.5rem;
+            }
+
+            .store-video-track::-webkit-scrollbar {
+            height: 6px;
+            }
+            .store-video-track::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+            }
+
+            .video-card {
+            flex: 0 0 280px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+            }
+
+            .video-card video {
+            width: 100%;
+            height: 420px;
+            object-fit: cover;
+            display: block;
+            }
+
+            /* Tablet */
+            @media (max-width: 1024px) {
+            .video-card {
+            flex: 0 0 240px;
+            }
+            .video-card video {
+            height: 360px;
+            }
+            }
+
+            /* Mobile */
+            @media (max-width: 640px) {
+            .store-video-track {
+            gap: 0.75rem;
+            }
+
+            .video-card {
+            flex: 0 0 75%;
+            }
+
+            .video-card video {
+            height: 320px;
+            }
+            }
         </h:outputStylesheet>
     </h:head>
     <h:body>
@@ -92,6 +151,21 @@
                         </article>
                     </ui:repeat>
                 </section>
+
+                <h:panelGroup rendered="#{not empty homePageBean.videoCarouselItems}" 
+                              layout="block" 
+                              styleClass="store-video-section">
+                    <h2 class="section-title">Our Videos</h2>
+                    <div class="store-video-track">
+                        <ui:repeat value="#{homePageBean.videoCarouselItems}" var="videoItem">
+                            <h:panelGroup rendered="#{videoItem.active}" layout="block" styleClass="video-card">
+                                <p:video value="#{homePageBean.resolveMediaUrl(videoItem.videoUrl)}" controls="play" player="mp4" autoplay="true"
+                                         disablepictureinpicture="true" disableremoteplayback="true" preload="metadata" controlslist="nodownload nofullscreen" loop="true"/>
+                            </h:panelGroup>
+                        </ui:repeat>
+
+                    </div>
+                </h:panelGroup>
 
                 <ui:repeat value="#{homePageBean.sectionViews}" var="sectionView">
                     <section>
