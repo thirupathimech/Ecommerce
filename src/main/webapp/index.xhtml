@@ -31,6 +31,19 @@
             .old-price { color: #7a849f; text-decoration: line-through; margin-right: .4rem; }
             .new-price { color: #11357f; font-weight: 700; font-size: 1.15rem; }
             .admin-link { text-align: right; margin-top: 8px; }
+            .home-div-section { margin: 2rem 0; }
+            .home-div-card { background:#f2f2f5; border-radius:20px; overflow:hidden; display:flex; min-height:420px; }
+            .home-div-card.right { flex-direction: row-reverse; }
+            .home-div-image-wrap { flex:0 0 32%; min-width:260px; }
+            .home-div-image-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+            .home-div-content { flex:1; display:flex; align-items:center; justify-content:center; padding:2rem 2.25rem; }
+            .home-div-content-inner { max-width:650px; }
+            .home-div-content-inner.align-left { text-align:left; }
+            .home-div-content-inner.align-center { text-align:center; }
+            .home-div-content-inner.align-right { text-align:right; margin-left:auto; }
+            .home-div-heading { margin:0; font-size:clamp(1.6rem,2.8vw,2.45rem); color:#1f2342; font-weight:700; }
+            .home-div-desc { margin:1rem 0 1.4rem; color:#67697f; font-size:1.05rem; line-height:1.7; }
+            .home-div-btn { display:inline-flex; align-items:center; justify-content:center; min-width:120px; border-radius:999px; background:#e5c229; color:#1f233b; font-weight:600; text-decoration:none; padding:.8rem 1.6rem; }
             .store-marquee { margin-bottom: 1rem; border-radius: 12px; overflow: hidden; padding: 10px 14px; }
             .store-marquee.pause-on-hover:hover .store-marquee-track { animation-play-state: paused; }
             .store-marquee-track { display: flex; gap: 16px; align-items: center; width: max-content; min-width: 100%; will-change: transform; transform: translate3d(0,0,0); }
@@ -45,7 +58,7 @@
             .anim-vertical-ttb { animation: marquee-vertical-ttb linear infinite; }
             .anim-vertical-btt { animation: marquee-vertical-btt linear infinite; }
             @media (max-width: 1024px) { .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hero-slide img {height: 300px;} }
-            @media (max-width: 640px) { .products-grid { grid-template-columns: 1fr; } .hero-slide img {height: 220px;} }
+            @media (max-width: 640px) { .products-grid { grid-template-columns: 1fr; } .hero-slide img {height: 220px;} .home-div-card,.home-div-card.right { flex-direction:column; } .home-div-image-wrap { min-width:100%; height:300px; } .home-div-content { padding:1.5rem; } }
             .store-video-section {
             margin: 2rem 0;
             }
@@ -166,6 +179,25 @@
 
                     </div>
                 </h:panelGroup>
+                
+                  <ui:repeat value="#{homePageBean.homeDivSections}" var="divSection">
+                    <h:panelGroup rendered="#{divSection.active}" layout="block" styleClass="home-div-section">
+                        <article class="home-div-card #{divSection.imageSide eq 'RIGHT' ? 'right' : ''}">
+                            <div class="home-div-image-wrap">
+                                <h:graphicImage value="#{homePageBean.resolveMediaUrl(divSection.imageUrl)}" alt="#{divSection.heading}"/>
+                            </div>
+                            <div class="home-div-content">
+                                <div class="home-div-content-inner #{divSection.contentAlign eq 'LEFT' ? 'align-left' : divSection.contentAlign eq 'RIGHT' ? 'align-right' : 'align-center'}">
+                                    <h2 class="home-div-heading">#{divSection.heading}</h2>
+                                    <p class="home-div-desc">#{divSection.description}</p>
+                                    <h:panelGroup rendered="#{not empty divSection.buttonLabel}">
+                                        <h:outputLink value="#{empty divSection.buttonLink ? '#' : divSection.buttonLink}" styleClass="home-div-btn">#{divSection.buttonLabel}</h:outputLink>
+                                    </h:panelGroup>
+                                </div>
+                            </div>
+                        </article>
+                    </h:panelGroup>
+                </ui:repeat>
 
                 <ui:repeat value="#{homePageBean.sectionViews}" var="sectionView">
                     <section>

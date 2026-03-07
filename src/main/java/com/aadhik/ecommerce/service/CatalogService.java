@@ -1,5 +1,6 @@
 package com.aadhik.ecommerce.service;
 
+import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
 import com.aadhik.ecommerce.model.MarqueeConfig;
@@ -27,6 +28,14 @@ public class CatalogService {
 
     public List<HomeSlider> getHomeSliders() {
         return repository.findHomeSliders(false);
+    }
+
+    public List<HomeDivSection> getHomeActiveDivSections() {
+        return repository.findHomeDivSections(true);
+    }
+
+    public List<HomeDivSection> getHomeDivSections() {
+        return repository.findHomeDivSections(false);
     }
 
     public List<VideoCarouselItem> getHomeActiveVideoCarouselItems() {
@@ -97,6 +106,14 @@ public class CatalogService {
 
     public VideoCarouselItem saveVideoCarouselItem(VideoCarouselItem item) {
         return repository.saveVideoCarouselItem(item);
+    }
+
+    public HomeDivSection saveHomeDivSection(HomeDivSection section) {
+        return repository.saveHomeDivSection(section);
+    }
+
+    public void deleteHomeDivSection(Long id) {
+        repository.deleteHomeDivSection(id);
     }
 
     public void deleteVideoCarouselItem(Long id) {

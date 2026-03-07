@@ -1,5 +1,6 @@
 package com.aadhik.ecommerce.repository;
 
+import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
 import com.aadhik.ecommerce.model.MarqueeConfig;
@@ -28,6 +29,15 @@ public class CatalogRepository {
         }
         query.append(" order by s.sortOrder asc, s.id asc ");
         return entityManager.createQuery(query.toString(), HomeSlider.class).getResultList();
+    }
+
+    public List<HomeDivSection> findHomeDivSections(boolean activeOnly) {
+        StringBuilder query = new StringBuilder(" select d from HomeDivSection d ");
+        if (activeOnly) {
+            query.append(" where d.active = true ");
+        }
+        query.append(" order by d.sortOrder asc, d.id asc ");
+        return entityManager.createQuery(query.toString(), HomeDivSection.class).getResultList();
     }
 
     public List<VideoCarouselItem> findVideoCarouselItems(boolean activeOnly) {
@@ -160,7 +170,31 @@ public class CatalogRepository {
                 .setParameter("ref", ref)
                 .getSingleResult();
 
-        return productUsage + sliderUsage + collectionUsage + videoCarouselUsage;
+        Long divSectionUsage = entityManager.createQuery("""
+                        select count(d) from HomeDivSection d
+                        where d.imageUrl = :ref
+                        """, Long.class)
+                .setParameter("ref", ref)
+                .getSingleResult();
+
+        return productUsage + sliderUsage + collectionUsage + videoCarouselUsage + divSectionUsage;
+    }
+
+    @Transactional
+    public HomeDivSection saveHomeDivSection(HomeDivSection section) {
+        if (section.getId() == null) {
+            entityManager.persist(section);
+            return section;
+        }
+        return entityManager.merge(section);
+    }
+
+    @Transactional
+    public void deleteHomeDivSection(Long id) {
+        HomeDivSection section = entityManager.find(HomeDivSection.class, id);
+        if (section != null) {
+            entityManager.remove(section);
+        }
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.aadhik.ecommerce.service;
 
+import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
 import com.aadhik.ecommerce.model.Product;
@@ -60,6 +61,15 @@ public class DataSeeder {
 
         createSection("Best Sellers", SectionType.BEST_SELLERS, null, 4, 1);
         createSection("Nutrition Drinks", SectionType.COLLECTION, nutrition, 4, 2);
+        createHomeDivSection(
+                "From mother's heart to baby's first smile 😇",
+                "The Mothers Care brings you 100% pure, organic baby essentials crafted with love and nature's finest ingredients",
+                "Visit",
+                "#",
+                "https://images.unsplash.com/photo-1544126592-807ade215a0b?w=900&h=1000&fit=crop",
+                "LEFT",
+                "CENTER",
+                1);
     }
 
     private ProductCollection createCollection(String name, String slug, String image, String description) {
@@ -84,7 +94,7 @@ public class DataSeeder {
     }
 
     private void createProduct(String name, String image, BigDecimal price, BigDecimal comparePrice,
-                               boolean featured, ProductCollection collection) {
+            boolean featured, ProductCollection collection) {
         Product product = new Product();
         product.setName(name);
         product.setImageUrl(image);
@@ -102,6 +112,21 @@ public class DataSeeder {
         section.setSectionType(type);
         section.setCollection(collection);
         section.setMaxItems(maxItems);
+        section.setSortOrder(sortOrder);
+        section.setActive(true);
+        entityManager.persist(section);
+    }
+
+    private void createHomeDivSection(String heading, String description, String buttonLabel, String buttonLink,
+            String imageUrl, String imageSide, String contentAlign, int sortOrder) {
+        HomeDivSection section = new HomeDivSection();
+        section.setHeading(heading);
+        section.setDescription(description);
+        section.setButtonLabel(buttonLabel);
+        section.setButtonLink(buttonLink);
+        section.setImageUrl(imageUrl);
+        section.setImageSide(imageSide);
+        section.setContentAlign(contentAlign);
         section.setSortOrder(sortOrder);
         section.setActive(true);
         entityManager.persist(section);

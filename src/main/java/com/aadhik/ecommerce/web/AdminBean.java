@@ -1,5 +1,6 @@
 package com.aadhik.ecommerce.web;
 
+import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
 import com.aadhik.ecommerce.model.MarqueeConfig;
@@ -39,6 +40,7 @@ public class AdminBean implements Serializable {
     private int homeTabIndex;
 
     private HomeSlider sliderForm;
+    private HomeDivSection homeDivSectionForm;
     private VideoCarouselItem videoCarouselForm;
     private HomepageSection sectionForm;
     private ProductCollection collectionForm;
@@ -69,6 +71,7 @@ public class AdminBean implements Serializable {
         marqueeForm = new MarqueeConfig();
         resetSliderForm();
         resetVideoCarouselForm();
+        resetHomeDivSectionForm();
         resetSectionForm();
         resetCollectionForm();
         resetProductForm();
@@ -147,6 +150,11 @@ public class AdminBean implements Serializable {
         fileSelectionVariantIndex = -1;
     }
 
+    public void openFilePickerForHomeDivSectionImage() {
+        fileSelectionTarget = "home-div-section-image";
+        fileSelectionVariantIndex = -1;
+    }
+
     public void selectFile(MediaFile file) {
         String ref = toDbFileRef(file.getId());
         if ("primary".equals(fileSelectionTarget)) {
@@ -173,6 +181,12 @@ public class AdminBean implements Serializable {
                 return;
             }
             videoCarouselForm.setVideoUrl(ref);
+        } else if ("home-div-section-image".equals(fileSelectionTarget)) {
+            if (!"IMAGE".equals(file.getFileType())) {
+                addWarn("Please select an image file.");
+                return;
+            }
+            homeDivSectionForm.setImageUrl(ref);
         } else if ("variant".equals(fileSelectionTarget)
                 && fileSelectionVariantIndex >= 0
                 && fileSelectionVariantIndex < variantInputs.size()) {
@@ -459,6 +473,44 @@ public class AdminBean implements Serializable {
         addInfo("Video carousel item saved successfully");
     }
 
+    public void saveHomeDivSection() {
+        if (!validateHomeDivSection()) {
+            return;
+        }
+
+        catalogService.saveHomeDivSection(homeDivSectionForm);
+        resetHomeDivSectionForm();
+        addInfo("Div section saved successfully");
+    }
+
+    public void editHomeDivSection(HomeDivSection section) {
+        HomeDivSection draft = new HomeDivSection();
+        draft.setId(section.getId());
+        draft.setHeading(section.getHeading());
+        draft.setDescription(section.getDescription());
+        draft.setButtonLabel(section.getButtonLabel());
+        draft.setButtonLink(section.getButtonLink());
+        draft.setImageUrl(section.getImageUrl());
+        draft.setImageSide(section.getImageSide());
+        draft.setContentAlign(section.getContentAlign());
+        draft.setSortOrder(section.getSortOrder());
+        draft.setActive(section.isActive());
+        homeDivSectionForm = draft;
+    }
+
+    public void deleteHomeDivSection(HomeDivSection section) {
+        if (section == null || section.getId() == null) {
+            addError("Invalid div section selection.");
+            return;
+        }
+
+        catalogService.deleteHomeDivSection(section.getId());
+        if (homeDivSectionForm != null && section.getId().equals(homeDivSectionForm.getId())) {
+            resetHomeDivSectionForm();
+        }
+        addInfo("Div section deleted successfully");
+    }
+
     public void editVideoCarouselItem(VideoCarouselItem item) {
         VideoCarouselItem draft = new VideoCarouselItem();
         draft.setId(item.getId());
@@ -481,6 +533,18 @@ public class AdminBean implements Serializable {
             resetVideoCarouselForm();
         }
         addInfo("Video carousel item deleted successfully");
+    }
+
+    public void resetHomeDivSectionForm() {
+        homeDivSectionForm = new HomeDivSection();
+        homeDivSectionForm.setHeading("From mother's heart to baby's first smile 😇");
+        homeDivSectionForm.setDescription("The Mothers Care brings you 100% pure, organic baby essentials crafted with love and nature's finest ingredients");
+        homeDivSectionForm.setButtonLabel("Visit");
+        homeDivSectionForm.setButtonLink("#");
+        homeDivSectionForm.setImageSide("LEFT");
+        homeDivSectionForm.setContentAlign("CENTER");
+        homeDivSectionForm.setSortOrder(1);
+        homeDivSectionForm.setActive(true);
     }
 
     public void saveSection() {
@@ -829,6 +893,18 @@ public class AdminBean implements Serializable {
         return catalogService.getVideoCarouselItems();
     }
 
+    public List<HomeDivSection> getHomeDivSections() {
+        return catalogService.getHomeDivSections();
+    }
+
+    public List<String> getImageSideOptions() {
+        return Arrays.asList("LEFT", "RIGHT");
+    }
+
+    public List<String> getContentAlignOptions() {
+        return Arrays.asList("LEFT", "CENTER", "RIGHT");
+    }
+
     public List<CatalogService.HomepageSectionView> getSectionViews() {
         return catalogService.getHomepageSectionsWithProducts();
     }
@@ -887,6 +963,36 @@ public class AdminBean implements Serializable {
         }
         if (videoCarouselForm.getSortOrder() <= 0) {
             addError("Sort order must be greater than 0.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateHomeDivSection() {
+        if (isBlank(homeDivSectionForm.getHeading())) {
+            addError("Heading is required.");
+            return false;
+        }
+        if (isBlank(homeDivSectionForm.getDescription())) {
+            addError("Description is required.");
+            return false;
+        }
+        if (isBlank(homeDivSectionForm.getImageUrl())) {
+            addError("Image is required.");
+            return false;
+        }
+        if (homeDivSectionForm.getSortOrder() <= 0) {
+            addError("Sort order must be greater than 0.");
+            return false;
+        }
+        if (!"LEFT".equals(homeDivSectionForm.getImageSide()) && !"RIGHT".equals(homeDivSectionForm.getImageSide())) {
+            addError("Invalid image side.");
+            return false;
+        }
+        if (!"LEFT".equals(homeDivSectionForm.getContentAlign())
+                && !"CENTER".equals(homeDivSectionForm.getContentAlign())
+                && !"RIGHT".equals(homeDivSectionForm.getContentAlign())) {
+            addError("Invalid content alignment.");
             return false;
         }
         return true;
@@ -1097,6 +1203,14 @@ public class AdminBean implements Serializable {
 
     public void setSliderForm(HomeSlider sliderForm) {
         this.sliderForm = sliderForm;
+    }
+
+    public HomeDivSection getHomeDivSectionForm() {
+        return homeDivSectionForm;
+    }
+
+    public void setHomeDivSectionForm(HomeDivSection homeDivSectionForm) {
+        this.homeDivSectionForm = homeDivSectionForm;
     }
 
     public VideoCarouselItem getVideoCarouselForm() {

@@ -1,15 +1,80 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:body>
-        <div class="card">
-            <div class="card-body">
-                <div class="hp-coming-soon">
-                    <i class="pi pi-th-large" style="font-size:2.5rem; color:#c7d0ea;"></i>
-                    <h4>Div Section Module</h4>
-                    <p>Build custom HTML / content blocks to embed anywhere on the home page. Coming soon.</p>
-                </div>
+        <div class="grid">
+            <div class="field full">
+                <label>Heading *</label>
+                <p:inputText value="#{adminBean.homeDivSectionForm.heading}"/>
+            </div>
+
+            <div class="field full">
+                <label>Description *</label>
+                <p:inputTextarea value="#{adminBean.homeDivSectionForm.description}" autoResize="true" rows="4"/>
+            </div>
+
+            <div class="field">
+                <label>Button Label</label>
+                <p:inputText value="#{adminBean.homeDivSectionForm.buttonLabel}"/>
+            </div>
+
+            <div class="field">
+                <label>Button Link</label>
+                <p:inputText value="#{adminBean.homeDivSectionForm.buttonLink}"/>
+            </div>
+
+            <div class="field">
+                <label>Sort Order *</label>
+                <p:inputNumber value="#{adminBean.homeDivSectionForm.sortOrder}" decimalPlaces="0"/>
+            </div>
+
+            <div class="field">
+                <label>Image Side *</label>
+                <p:selectOneMenu value="#{adminBean.homeDivSectionForm.imageSide}">
+                    <f:selectItems value="#{adminBean.imageSideOptions}"/>
+                </p:selectOneMenu>
+            </div>
+
+            <div class="field">
+                <label>Content Alignment *</label>
+                <p:selectOneMenu value="#{adminBean.homeDivSectionForm.contentAlign}">
+                    <f:selectItems value="#{adminBean.contentAlignOptions}"/>
+                </p:selectOneMenu>
+            </div>
+
+            <div class="field">
+                <label>Status</label>
+                <p:selectBooleanCheckbox value="#{adminBean.homeDivSectionForm.active}" itemLabel="Active"/>
+            </div>
+
+            <div class="field full">
+                <label>Image *</label>
+                <p:inputText value="#{adminBean.homeDivSectionForm.imageUrl}" readonly="true"/>
+                <p:commandButton type="button" value="Choose Image" icon="pi pi-image" onclick="PF('filePicker').show()">
+                    <p:ajax event="click" listener="#{adminBean.openFilePickerForHomeDivSectionImage}" update=":mainForm:filePickerTable :mainForm:messages"/>
+                </p:commandButton>
+                <small>#{adminBean.previewLabel(adminBean.homeDivSectionForm.imageUrl)}</small>
             </div>
         </div>
+
+        <div style="margin-top: 12px; display:flex; gap:8px;">
+            <p:commandButton value="Save Div Section" action="#{adminBean.saveHomeDivSection}" update=":mainForm"/>
+            <p:commandButton value="Reset" action="#{adminBean.resetHomeDivSectionForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
+        </div>
+
+        <p:dataTable value="#{adminBean.homeDivSections}" var="dItem" paginatorPosition="bottom" rows="6" style="margin-top:12px;">
+            <p:column headerText="Image"><h:graphicImage value="#{adminBean.resolveMediaUrl(dItem.imageUrl)}" styleClass="thumb"/></p:column>
+            <p:column headerText="Heading"><h:outputText value="#{dItem.heading}"/></p:column>
+            <p:column headerText="Image Side"><h:outputText value="#{dItem.imageSide}"/></p:column>
+            <p:column headerText="Content Align"><h:outputText value="#{dItem.contentAlign}"/></p:column>
+            <p:column headerText="Order"><h:outputText value="#{dItem.sortOrder}"/></p:column>
+            <p:column headerText="Status"><span class="status-pill #{dItem.active ? 'active' : 'inactive'}">#{dItem.active ? 'Active' : 'Inactive'}</span></p:column>
+            <p:column headerText="Action" style="width:170px;">
+                <p:commandButton value="Edit" action="#{adminBean.editHomeDivSection(dItem)}" process="@this" update=":mainForm" style="margin-right:6px;"/>
+                <p:commandButton value="Delete" action="#{adminBean.deleteHomeDivSection(dItem)}" process="@this" update=":mainForm" styleClass="ui-button-danger"/>
+            </p:column>
+        </p:dataTable>
     </h:body>
 </html>

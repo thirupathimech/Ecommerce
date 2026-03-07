@@ -1,5 +1,6 @@
 package com.aadhik.ecommerce.web;
 
+import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.MarqueeConfig;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
@@ -19,6 +20,10 @@ public class HomePageBean {
 
     public List<HomeSlider> getSliders() {
         return catalogService.getHomeActiveSliders();
+    }
+
+    public List<HomeDivSection> getHomeDivSections() {
+        return catalogService.getHomeActiveDivSections();
     }
 
     public List<CatalogService.HomepageSectionView> getSectionViews() {
