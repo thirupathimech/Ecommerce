@@ -44,7 +44,7 @@
             .home-div-heading { margin:0; font-size:clamp(1.6rem,2.8vw,2.45rem); color:#1f2342; font-weight:700; }
             .home-div-desc { margin:1rem 0 1.4rem; color:#67697f; font-size:1.05rem; line-height:1.7; }
             .home-div-btn { display:inline-flex; align-items:center; justify-content:center; min-width:120px; border-radius:999px; background:#e5c229; color:#1f233b; font-weight:600; text-decoration:none; padding:.8rem 1.6rem; }
-            .store-marquee { margin-bottom: 1rem; border-radius: 12px; overflow: hidden; padding: 10px 14px; }
+            .store-marquee { margin-bottom: 1rem; overflow: hidden; padding: 5px 5px; }
             .store-marquee.pause-on-hover:hover .store-marquee-track { animation-play-state: paused; }
             .store-marquee-track { display: flex; gap: 16px; align-items: center; width: max-content; min-width: 100%; will-change: transform; transform: translate3d(0,0,0); }
             .store-marquee-track.vertical { flex-direction: column; align-items: stretch; }
@@ -141,83 +141,86 @@
             </div>
 
             <main class="container">
-
-                <h:panelGroup rendered="#{not empty homePageBean.activeMarqueeItems}" layout="block"
-                              styleClass="store-marquee #{homePageBean.activeMarquee.pauseOnHover ? 'pause-on-hover' : ''}"
-                              style="background:#{homePageBean.marqueeBackground()};">
-                    <div class="store-marquee-track #{homePageBean.marqueeAnimationClass()}"
-                         style="animation-duration:#{homePageBean.activeMarquee.speedSeconds}s; font-size:#{homePageBean.activeMarquee.fontSizePx}px; font-weight:#{homePageBean.activeMarquee.fontWeight}; color:#{homePageBean.activeMarquee.textColor};">
-                        <ui:repeat value="#{homePageBean.activeMarqueeLoopedItems}" var="mItem">
-                            <span class="store-marquee-item">#{mItem}</span>
-                        </ui:repeat>
-                    </div>
-                </h:panelGroup>
-
-                <section class="hero-slider" data-slide-seconds="3.5">
-                    <ui:repeat value="#{homePageBean.sliders}" var="slide" varStatus="status">
-                        <article class="hero-slide #{status.first ? 'active' : ''}">
-                            <h:graphicImage value="#{homePageBean.resolveMediaUrl(slide.imageUrl)}" alt="#{slide.title}"/>
-                            <div class="hero-overlay">
-                                <h3>#{slide.title}</h3>
-                                <p>#{slide.subtitle}</p>
-                            </div>
-                        </article>
-                    </ui:repeat>
-                </section>
-
-                <h:panelGroup rendered="#{not empty homePageBean.videoCarouselItems}" 
-                              layout="block" 
-                              styleClass="store-video-section">
-                    <h2 class="section-title">Our Videos</h2>
-                    <div class="store-video-track">
-                        <ui:repeat value="#{homePageBean.videoCarouselItems}" var="videoItem">
-                            <h:panelGroup rendered="#{videoItem.active}" layout="block" styleClass="video-card">
-                                <p:video value="#{homePageBean.resolveMediaUrl(videoItem.videoUrl)}" controls="play" player="mp4" autoplay="true"
-                                         disablepictureinpicture="true" disableremoteplayback="true" preload="metadata" controlslist="nodownload nofullscreen" loop="true"/>
-                            </h:panelGroup>
-                        </ui:repeat>
-
-                    </div>
-                </h:panelGroup>
-                
-                  <ui:repeat value="#{homePageBean.homeDivSections}" var="divSection">
-                    <h:panelGroup rendered="#{divSection.active}" layout="block" styleClass="home-div-section">
-                        <article class="home-div-card #{divSection.imageSide eq 'RIGHT' ? 'right' : ''}">
-                            <div class="home-div-image-wrap">
-                                <h:graphicImage value="#{homePageBean.resolveMediaUrl(divSection.imageUrl)}" alt="#{divSection.heading}"/>
-                            </div>
-                            <div class="home-div-content">
-                                <div class="home-div-content-inner #{divSection.contentAlign eq 'LEFT' ? 'align-left' : divSection.contentAlign eq 'RIGHT' ? 'align-right' : 'align-center'}">
-                                    <h2 class="home-div-heading">#{divSection.heading}</h2>
-                                    <p class="home-div-desc">#{divSection.description}</p>
-                                    <h:panelGroup rendered="#{not empty divSection.buttonLabel}">
-                                        <h:outputLink value="#{empty divSection.buttonLink ? '#' : divSection.buttonLink}" styleClass="home-div-btn">#{divSection.buttonLabel}</h:outputLink>
-                                    </h:panelGroup>
+                <ui:fragment id="hero-slider-fragment" rendered="#{not empty homePageBean.sliders}">
+                    <section id="hero-slider" class="hero-slider" data-slide-seconds="3.5">
+                        <ui:repeat value="#{homePageBean.sliders}" var="slide" varStatus="status">
+                            <article class="hero-slide #{status.first ? 'active' : ''}">
+                                <h:graphicImage value="#{homePageBean.resolveMediaUrl(slide.imageUrl)}" alt="#{slide.title}"/>
+                                <div class="hero-overlay">
+                                    <h3>#{slide.title}</h3>
+                                    <p>#{slide.subtitle}</p>
                                 </div>
-                            </div>
-                        </article>
-                    </h:panelGroup>
-                </ui:repeat>
-
-                <ui:repeat value="#{homePageBean.sectionViews}" var="sectionView">
-                    <section>
-                        <h2 class="section-title">#{sectionView.section.sectionTitle}</h2>
-                        <div class="products-grid">
-                            <ui:repeat value="#{sectionView.products}" var="product">
-                                <article class="product-card">
-                                    <h:graphicImage value="#{homePageBean.resolveMediaUrl(product.imageUrl)}" alt="#{product.name}"/>
-                                    <div class="product-info">
-                                        <p class="product-title">#{product.name}</p>
-                                        <h:panelGroup rendered="#{not empty product.comparePrice}">
-                                            <span class="old-price">Rs. #{product.comparePrice}</span>
-                                        </h:panelGroup>
-                                        <span class="new-price">Rs. #{product.price}</span>
-                                    </div>
-                                </article>
-                            </ui:repeat>
-                        </div>
+                            </article>
+                        </ui:repeat>
                     </section>
-                </ui:repeat>
+                </ui:fragment>
+
+                <ui:fragment rendered="#{homePageBean.hasOrderedHomeSections()}">
+                    <ui:repeat value="#{homePageBean.orderedHomeSections}" var="orderedSection">
+                        <h:panelGroup rendered="#{orderedSection.type.name() eq 'MARQUEE' and not empty homePageBean.getMarqueeItems(orderedSection.marquee)}"
+                                      layout="block"
+                                      styleClass="store-marquee #{orderedSection.marquee.pauseOnHover ? 'pause-on-hover' : ''}"
+                                      style="background:#{homePageBean.marqueeBackground(orderedSection.marquee)};">
+                            <div class="store-marquee-track #{homePageBean.marqueeAnimationClass(orderedSection.marquee)}"
+                                 style="animation-duration:#{orderedSection.marquee.speedSeconds}s; font-size:#{orderedSection.marquee.fontSizePx}px; font-weight:#{orderedSection.marquee.fontWeight}; color:#{orderedSection.marquee.textColor};">
+                                <ui:repeat value="#{homePageBean.getMarqueeLoopedItems(orderedSection.marquee)}" var="mItem">
+                                    <span class="store-marquee-item">#{mItem}</span>
+                                </ui:repeat>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{orderedSection.type.name() eq 'VIDEO_CAROUSEL'}" layout="block" styleClass="store-video-section">
+                            <h2 class="section-title">#{orderedSection.videoItem.title}</h2>
+                            <div class="store-video-track">
+                                <article class="video-card">
+                                    <p:video value="#{homePageBean.resolveMediaUrl(orderedSection.videoItem.videoUrl)}" controls="play" player="mp4" autoplay="true"
+                                             disablepictureinpicture="true" disableremoteplayback="true" preload="metadata" controlslist="nodownload nofullscreen" loop="true"/>
+                                </article>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{orderedSection.type.name() eq 'DIV_SECTION'}" layout="block" styleClass="home-div-section">
+                            <article class="home-div-card #{orderedSection.divSection.imageSide eq 'RIGHT' ? 'right' : ''}">
+                                <div class="home-div-image-wrap">
+                                    <h:graphicImage value="#{homePageBean.resolveMediaUrl(orderedSection.divSection.imageUrl)}" alt="#{orderedSection.divSection.heading}"/>
+                                </div>
+                                <div class="home-div-content">
+                                    <div class="home-div-content-inner #{orderedSection.divSection.contentAlign eq 'LEFT' ? 'align-left' : orderedSection.divSection.contentAlign eq 'RIGHT' ? 'align-right' : 'align-center'}">
+                                        <h2 class="home-div-heading">#{orderedSection.divSection.heading}</h2>
+                                        <p class="home-div-desc">#{orderedSection.divSection.description}</p>
+                                        <h:panelGroup rendered="#{not empty orderedSection.divSection.buttonLabel}">
+                                            <h:outputLink value="#{empty orderedSection.divSection.buttonLink ? '#' : orderedSection.divSection.buttonLink}" styleClass="home-div-btn">#{orderedSection.divSection.buttonLabel}</h:outputLink>
+                                        </h:panelGroup>
+                                    </div>
+                                </div>
+                            </article>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{orderedSection.type.name() eq 'COLLECTION_SECTION'}" layout="block">
+                            <section>
+                                <h2 class="section-title">#{orderedSection.collectionSection.sectionTitle}</h2>
+                                <div class="products-grid">
+                                    <ui:repeat value="#{orderedSection.products}" var="product">
+                                        <article class="product-card">
+                                            <h:graphicImage value="#{homePageBean.resolveMediaUrl(product.imageUrl)}" alt="#{product.name}"/>
+                                            <div class="product-info">
+                                                <p class="product-title">#{product.name}</p>
+                                                <h:panelGroup rendered="#{not empty product.comparePrice}">
+                                                    <span class="old-price">Rs. #{product.comparePrice}</span>
+                                                </h:panelGroup>
+                                                <span class="new-price">Rs. #{product.price}</span>
+                                            </div>
+                                        </article>
+                                    </ui:repeat>
+                                </div>
+                            </section>
+                        </h:panelGroup>
+                    </ui:repeat>
+                </ui:fragment>
+
+                <ui:fragment rendered="#{not homePageBean.hasOrderedHomeSections()}">
+                    <p:outputLabel value="Please contact administrator"/>
+                </ui:fragment>
             </main>
         </h:form>
         <h:outputScript target="body">

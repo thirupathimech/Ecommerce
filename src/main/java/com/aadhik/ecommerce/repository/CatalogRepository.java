@@ -1,6 +1,7 @@
 package com.aadhik.ecommerce.repository;
 
 import com.aadhik.ecommerce.model.HomeDivSection;
+import com.aadhik.ecommerce.model.HomeSectionOrderItem;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
 import com.aadhik.ecommerce.model.MarqueeConfig;
@@ -49,13 +50,24 @@ public class CatalogRepository {
         return entityManager.createQuery(query.toString(), VideoCarouselItem.class).getResultList();
     }
 
+    public List<HomepageSection> findSections(boolean activeOnly) {
+        StringBuilder query = new StringBuilder(" select hs from HomepageSection hs left join fetch hs.collection c ");
+        if (activeOnly) {
+            query.append(" where hs.active = true ");
+        }
+        query.append(" order by hs.sortOrder asc, hs.id asc ");
+        return entityManager.createQuery(query.toString(), HomepageSection.class).getResultList();
+    }
+
     public List<HomepageSection> findActiveSections() {
+        return findSections(true);
+    }
+
+    public List<HomeSectionOrderItem> findHomeSectionOrderItems() {
         return entityManager.createQuery("""
-                        select hs from HomepageSection hs
-                        left join fetch hs.collection c
-                        where hs.active = true
-                        order by hs.sortOrder asc, hs.id asc
-                        """, HomepageSection.class)
+                        select o from HomeSectionOrderItem o
+                        order by o.sortOrder asc, o.id asc
+                        """, HomeSectionOrderItem.class)
                 .getResultList();
     }
 
@@ -178,6 +190,34 @@ public class CatalogRepository {
                 .getSingleResult();
 
         return productUsage + sliderUsage + collectionUsage + videoCarouselUsage + divSectionUsage;
+    }
+
+    public HomeSlider findHomeSliderById(Long id) {
+        return entityManager.find(HomeSlider.class, id);
+    }
+
+    public HomeDivSection findHomeDivSectionById(Long id) {
+        return entityManager.find(HomeDivSection.class, id);
+    }
+
+    public VideoCarouselItem findVideoCarouselItemById(Long id) {
+        return entityManager.find(VideoCarouselItem.class, id);
+    }
+
+    public HomepageSection findHomepageSectionById(Long id) {
+        return entityManager.find(HomepageSection.class, id);
+    }
+
+    public MarqueeConfig findMarqueeConfigById(Long id) {
+        return entityManager.find(MarqueeConfig.class, id);
+    }
+
+    @Transactional
+    public void replaceHomeSectionOrderItems(List<HomeSectionOrderItem> items) {
+        entityManager.createQuery("delete from HomeSectionOrderItem").executeUpdate();
+        for (HomeSectionOrderItem item : items) {
+            entityManager.persist(item);
+        }
     }
 
     @Transactional

@@ -1,6 +1,13 @@
 package com.aadhik.ecommerce.service;
 
 import com.aadhik.ecommerce.model.HomeDivSection;
+import com.aadhik.ecommerce.model.HomeSectionOrderItem;
+import com.aadhik.ecommerce.model.HomeSectionType;
+import static com.aadhik.ecommerce.model.HomeSectionType.COLLECTION_SECTION;
+import static com.aadhik.ecommerce.model.HomeSectionType.DIV_SECTION;
+import static com.aadhik.ecommerce.model.HomeSectionType.HOME_SLIDER;
+import static com.aadhik.ecommerce.model.HomeSectionType.MARQUEE;
+import static com.aadhik.ecommerce.model.HomeSectionType.VIDEO_CAROUSEL;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
 import com.aadhik.ecommerce.model.MarqueeConfig;
@@ -46,6 +53,10 @@ public class CatalogService {
         return repository.findVideoCarouselItems(false);
     }
 
+    public List<HomepageSection> getHomepageSections() {
+        return repository.findSections(false);
+    }
+
     public List<HomepageSectionView> getHomepageSectionsWithProducts() {
         List<HomepageSectionView> result = new ArrayList<>();
         List<HomepageSection> sections = repository.findActiveSections();
@@ -66,6 +77,67 @@ public class CatalogService {
         }
 
         return result;
+    }
+
+    public List<HomeSectionOrderItem> getHomeSectionOrderItems() {
+        return repository.findHomeSectionOrderItems();
+    }
+
+    public void saveHomeSectionOrderItems(List<HomeSectionOrderItem> items) {
+        repository.replaceHomeSectionOrderItems(items);
+    }
+
+    public List<HomeRenderSection> getOrderedHomeRenderSections() {
+        List<HomeRenderSection> sections = new ArrayList<>();
+        for (HomeSectionOrderItem item : repository.findHomeSectionOrderItems()) {
+            if (item.getSectionType() == null || item.getRecordId() == null) {
+                continue;
+            }
+            switch (item.getSectionType()) {
+                case HOME_SLIDER -> {
+                    HomeSlider slider = repository.findHomeSliderById(item.getRecordId());
+                    if (slider != null && slider.isActive()) {
+                        sections.add(HomeRenderSection.forSlider(slider));
+                    }
+                }
+                case DIV_SECTION -> {
+                    HomeDivSection divSection = repository.findHomeDivSectionById(item.getRecordId());
+                    if (divSection != null && divSection.isActive()) {
+                        sections.add(HomeRenderSection.forDivSection(divSection));
+                    }
+                }
+                case VIDEO_CAROUSEL -> {
+                    VideoCarouselItem videoItem = repository.findVideoCarouselItemById(item.getRecordId());
+                    if (videoItem != null && videoItem.isActive()) {
+                        sections.add(HomeRenderSection.forVideoCarousel(videoItem));
+                    }
+                }
+                case COLLECTION_SECTION -> {
+                    HomepageSection collectionSection = repository.findHomepageSectionById(item.getRecordId());
+                    if (collectionSection != null && collectionSection.isActive()) {
+                        int limit = Math.max(1, collectionSection.getMaxItems());
+                        List<Product> products;
+                        if (collectionSection.getSectionType() == SectionType.COLLECTION
+                                && collectionSection.getCollection() != null
+                                && collectionSection.getCollection().getId() != null) {
+                            products = repository.findProductsByCollection(collectionSection.getCollection().getId(), limit);
+                        } else {
+                            products = repository.findFeaturedProducts(limit);
+                        }
+                        sections.add(HomeRenderSection.forCollectionSection(collectionSection, products));
+                    }
+                }
+                case MARQUEE -> {
+                    MarqueeConfig marquee = repository.findMarqueeConfigById(item.getRecordId());
+                    if (marquee != null && marquee.isActive()) {
+                        sections.add(HomeRenderSection.forMarquee(marquee));
+                    }
+                }
+                default -> {
+                }
+            }
+        }
+        return sections;
     }
 
     public List<ProductCollection> getActiveCollections() {
@@ -150,6 +222,61 @@ public class CatalogService {
 
     public boolean isExistSKU(String sku, Long ignoreProductId) {
         return repository.isExistSKU(sku, ignoreProductId);
+    }
+    
+    public static class HomeRenderSection {
+
+        private HomeSectionType type;
+        private HomeSlider slider;
+        private HomeDivSection divSection;
+        private VideoCarouselItem videoItem;
+        private HomepageSection collectionSection;
+        private List<Product> products = List.of();
+        private MarqueeConfig marquee;
+
+        public static HomeRenderSection forSlider(HomeSlider slider) {
+            HomeRenderSection section = new HomeRenderSection();
+            section.type = HomeSectionType.HOME_SLIDER;
+            section.slider = slider;
+            return section;
+        }
+
+        public static HomeRenderSection forDivSection(HomeDivSection divSection) {
+            HomeRenderSection section = new HomeRenderSection();
+            section.type = HomeSectionType.DIV_SECTION;
+            section.divSection = divSection;
+            return section;
+        }
+
+        public static HomeRenderSection forVideoCarousel(VideoCarouselItem videoItem) {
+            HomeRenderSection section = new HomeRenderSection();
+            section.type = HomeSectionType.VIDEO_CAROUSEL;
+            section.videoItem = videoItem;
+            return section;
+        }
+
+        public static HomeRenderSection forCollectionSection(HomepageSection collectionSection, List<Product> products) {
+            HomeRenderSection section = new HomeRenderSection();
+            section.type = HomeSectionType.COLLECTION_SECTION;
+            section.collectionSection = collectionSection;
+            section.products = products == null ? List.of() : products;
+            return section;
+        }
+
+        public static HomeRenderSection forMarquee(MarqueeConfig marquee) {
+            HomeRenderSection section = new HomeRenderSection();
+            section.type = HomeSectionType.MARQUEE;
+            section.marquee = marquee;
+            return section;
+        }
+
+        public HomeSectionType getType() { return type; }
+        public HomeSlider getSlider() { return slider; }
+        public HomeDivSection getDivSection() { return divSection; }
+        public VideoCarouselItem getVideoItem() { return videoItem; }
+        public HomepageSection getCollectionSection() { return collectionSection; }
+        public List<Product> getProducts() { return products; }
+        public MarqueeConfig getMarquee() { return marquee; }
     }
 
     public static class HomepageSectionView {

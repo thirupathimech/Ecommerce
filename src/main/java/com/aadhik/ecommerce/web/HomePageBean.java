@@ -8,8 +8,10 @@ import com.aadhik.ecommerce.service.CatalogService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.util.ArrayList;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Named
 @RequestScoped
@@ -30,6 +32,14 @@ public class HomePageBean {
         return catalogService.getHomepageSectionsWithProducts();
     }
 
+    public List<CatalogService.HomeRenderSection> getOrderedHomeSections() {
+        return catalogService.getOrderedHomeRenderSections();
+    }
+
+    public boolean hasOrderedHomeSections() {
+        return !getOrderedHomeSections().isEmpty();
+    }
+
     public List<VideoCarouselItem> getVideoCarouselItems() {
         return catalogService.getHomeActiveVideoCarouselItems();
     }
@@ -38,20 +48,27 @@ public class HomePageBean {
         return catalogService.getActiveMarqueeConfig();
     }
 
-    public List<String> getActiveMarqueeItems() {
-        MarqueeConfig marquee = getActiveMarquee();
+    public List<String> getMarqueeItems(MarqueeConfig marquee) {
         if (marquee == null || marquee.getItemsData() == null || marquee.getItemsData().isBlank()) {
             return List.of();
         }
-        return marquee.getItemsData().lines().map(String::trim).filter(text -> !text.isBlank()).collect(java.util.stream.Collectors.toList());
+        return marquee.getItemsData().lines().map(String::trim).filter(text -> !text.isBlank()).collect(Collectors.toList());
     }
 
-    public List<String> getActiveMarqueeLoopedItems() {
-        List<String> items = getActiveMarqueeItems();
+    public List<String> getActiveMarqueeItems() {
+        return getMarqueeItems(getActiveMarquee());
+    }
+
+    public List<String> getMarqueeLoopedItems(MarqueeConfig marquee) {
+        List<String> items = getMarqueeItems(marquee);
         if (items.isEmpty()) {
             return List.of();
         }
         return buildContinuousItems(items, 18);
+    }
+
+    public List<String> getActiveMarqueeLoopedItems() {
+        return getMarqueeLoopedItems(getActiveMarquee());
     }
 
     private List<String> buildContinuousItems(List<String> source, int minimumVisibleItems) {
@@ -59,15 +76,14 @@ public class HomePageBean {
             return List.of();
         }
         int repeatCount = Math.max(2, (int) Math.ceil((double) minimumVisibleItems / source.size()));
-        java.util.ArrayList<String> repeated = new java.util.ArrayList<>(source.size() * repeatCount);
+        ArrayList<String> repeated = new ArrayList<>(source.size() * repeatCount);
         for (int i = 0; i < repeatCount; i++) {
             repeated.addAll(source);
         }
         return repeated;
     }
 
-    public String marqueeAnimationClass() {
-        MarqueeConfig marquee = getActiveMarquee();
+    public String marqueeAnimationClass(MarqueeConfig marquee) {
         if (marquee == null) {
             return "anim-horizontal-rtl";
         }
@@ -83,8 +99,11 @@ public class HomePageBean {
         return "anim-horizontal-rtl";
     }
 
-    public String marqueeBackground() {
-        MarqueeConfig marquee = getActiveMarquee();
+    public String marqueeAnimationClass() {
+        return marqueeAnimationClass(getActiveMarquee());
+    }
+
+    public String marqueeBackground(MarqueeConfig marquee) {
         if (marquee == null) {
             return "#0f1f49";
         }
@@ -94,6 +113,10 @@ public class HomePageBean {
             return "linear-gradient(" + angle + "," + marquee.getGradientColors() + ")";
         }
         return (marquee.getSolidColor() == null || marquee.getSolidColor().isBlank()) ? "#0f1f49" : marquee.getSolidColor();
+    }
+
+    public String marqueeBackground() {
+        return marqueeBackground(getActiveMarquee());
     }
 
     public String resolveMediaUrl(String source) {

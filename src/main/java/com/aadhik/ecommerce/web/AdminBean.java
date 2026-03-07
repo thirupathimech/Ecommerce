@@ -1,6 +1,8 @@
 package com.aadhik.ecommerce.web;
 
 import com.aadhik.ecommerce.model.HomeDivSection;
+import com.aadhik.ecommerce.model.HomeSectionOrderItem;
+import com.aadhik.ecommerce.model.HomeSectionType;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.HomepageSection;
 import com.aadhik.ecommerce.model.MarqueeConfig;
@@ -27,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.primefaces.event.TabChangeEvent;
+import org.primefaces.model.DualListModel;
 
 @Named
 @ViewScoped
@@ -58,6 +61,8 @@ public class AdminBean implements Serializable {
     private String fileSelectionTarget;
     private int fileSelectionVariantIndex;
     private List<MediaFile> selectedMediaFiles;
+    private DualListModel<String> homeSectionOrderPickList;
+    private Map<String, String> homeSectionOrderOptionLabelMap;
 
     @PostConstruct
     public void init() {
@@ -88,6 +93,94 @@ public class AdminBean implements Serializable {
         if (event != null && event.getTab() != null) {
             homeTabIndex = event.getIndex();
         }
+    }
+
+    public void loadHomeSectionOrderPickList() {
+        homeSectionOrderOptionLabelMap = new LinkedHashMap<>();
+        List<String> source = new ArrayList<>();
+
+        for (HomeSlider slider : getSliders()) {
+            addHomeSectionOrderOption(source, HomeSectionType.HOME_SLIDER, slider.getId(), "Home Slider", slider.getTitle());
+        }
+        for (HomeDivSection divSection : getHomeDivSections()) {
+            addHomeSectionOrderOption(source, HomeSectionType.DIV_SECTION, divSection.getId(), "Div Section", divSection.getHeading());
+        }
+        for (VideoCarouselItem videoItem : getVideoCarouselItems()) {
+            addHomeSectionOrderOption(source, HomeSectionType.VIDEO_CAROUSEL, videoItem.getId(), "Video Carousel", videoItem.getTitle());
+        }
+        for (HomepageSection section : catalogService.getHomepageSections()) {
+            addHomeSectionOrderOption(source, HomeSectionType.COLLECTION_SECTION, section.getId(), "Collections Maker", section.getSectionTitle());
+        }
+        for (MarqueeConfig marqueeConfig : getMarqueeConfigs()) {
+            addHomeSectionOrderOption(source, HomeSectionType.MARQUEE, marqueeConfig.getId(), "Marquee", buildMarqueeLabel(marqueeConfig));
+        }
+
+        List<String> target = new ArrayList<>();
+        for (HomeSectionOrderItem orderItem : catalogService.getHomeSectionOrderItems()) {
+            String key = toHomeSectionOrderKey(orderItem.getSectionType(), orderItem.getRecordId());
+            if (homeSectionOrderOptionLabelMap.containsKey(key) && !target.contains(key)) {
+                target.add(key);
+            }
+        }
+        source.removeAll(target);
+        homeSectionOrderPickList = new DualListModel<>(source, target);
+    }
+
+    private void addHomeSectionOrderOption(List<String> source, HomeSectionType sectionType, Long id, String sectionLabel, String recordLabel) {
+        if (id == null) {
+            return;
+        }
+        String key = toHomeSectionOrderKey(sectionType, id);
+        String display = sectionLabel + " - " + (isBlank(recordLabel) ? ("Record #" + id) : recordLabel);
+        homeSectionOrderOptionLabelMap.put(key, display);
+        source.add(key);
+    }
+
+    private String buildMarqueeLabel(MarqueeConfig marqueeConfig) {
+        if (marqueeConfig == null || isBlank(marqueeConfig.getItemsData())) {
+            return "Marquee #" + (marqueeConfig == null ? "" : marqueeConfig.getId());
+        }
+        return marqueeConfig.getItemsData().lines().map(String::trim).filter(text -> !text.isBlank()).findFirst().orElse("Marquee #" + marqueeConfig.getId());
+    }
+
+    private String toHomeSectionOrderKey(HomeSectionType sectionType, Long id) {
+        return sectionType.name() + ":" + id;
+    }
+
+    public String resolveHomeSectionOrderLabel(String key) {
+        if (homeSectionOrderOptionLabelMap == null || homeSectionOrderOptionLabelMap.isEmpty()) {
+            loadHomeSectionOrderPickList();
+        }
+        return homeSectionOrderOptionLabelMap.getOrDefault(key, key);
+    }
+
+    public void saveHomeSectionOrder() {
+        if (homeSectionOrderPickList == null) {
+            loadHomeSectionOrderPickList();
+            return;
+        }
+
+        List<HomeSectionOrderItem> items = new ArrayList<>();
+        int sortOrder = 1;
+        for (String key : homeSectionOrderPickList.getTarget()) {
+            String[] values = key.split(":");
+            if (values.length != 2) {
+                continue;
+            }
+            try {
+                HomeSectionType type = HomeSectionType.valueOf(values[0]);
+                Long recordId = Long.parseLong(values[1]);
+                HomeSectionOrderItem item = new HomeSectionOrderItem();
+                item.setSectionType(type);
+                item.setRecordId(recordId);
+                item.setSortOrder(sortOrder++);
+                items.add(item);
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
+        catalogService.saveHomeSectionOrderItems(items);
+        addInfo("Home section order saved successfully");
     }
 
     public void openNewProductForm() {
@@ -1319,6 +1412,17 @@ public class AdminBean implements Serializable {
 
     public void setSelectedMediaFiles(List<MediaFile> selectedMediaFiles) {
         this.selectedMediaFiles = selectedMediaFiles;
+    }
+
+    public DualListModel<String> getHomeSectionOrderPickList() {
+        if (homeSectionOrderPickList == null) {
+            loadHomeSectionOrderPickList();
+        }
+        return homeSectionOrderPickList;
+    }
+
+    public void setHomeSectionOrderPickList(DualListModel<String> homeSectionOrderPickList) {
+        this.homeSectionOrderPickList = homeSectionOrderPickList;
     }
 
     public static class ProductVariantInput implements Serializable {
