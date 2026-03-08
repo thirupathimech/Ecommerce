@@ -56,6 +56,7 @@
             <h:form id="menuForm" styleClass="sidebar">
                 <p class="brand">Admin Console</p>
                 <div class="menu-group">
+                    <p:commandButton value="Dashboard" action="#{adminBean.setActiveMenu('dashboard')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                     <p:commandButton value="Orders" action="#{adminBean.setActiveMenu('orders')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                     <p:commandButton value="Customers" action="#{adminBean.setActiveMenu('customers')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                     <p:commandButton value="Discounts" action="#{adminBean.setActiveMenu('discounts')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
@@ -115,7 +116,7 @@
                         <p:column headerText="Name" sortBy="#{fItem.fileName}"><h:outputText value="#{fItem.fileName}"/></p:column>
                         <p:column headerText="Type" sortBy="#{fItem.fileType}"><h:outputText value="#{fItem.fileType}"/></p:column>
                         <p:column headerText="Size" sortBy="#{fItem.fileSize}"><h:outputText value="#{adminBean.humanSize(fItem.fileSize)}"/></p:column>
-                        <p:column headerText="Action" style="width:120px;"><p:commandButton value="Select" action="#{adminBean.selectFile(fItem)}" update="@parent" oncomplete="PF('filePicker').hide()" process="@this"/></p:column>
+                        <p:column headerText="Action" style="width:120px;"><p:commandButton value="Select" action="#{adminBean.selectFile(fItem)}" update=":mainForm" oncomplete="PF('filePicker').hide()" process="@this"/></p:column>
                     </p:dataTable>
                 </p:dialog>
 

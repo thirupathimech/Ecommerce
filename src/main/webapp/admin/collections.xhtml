@@ -43,10 +43,10 @@
                     <p:column headerText="Name"><h:outputText value="#{cItem.name}"/></p:column>
                     <p:column headerText="Slug"><h:outputText value="#{cItem.slug}"/></p:column>
                     <p:column headerText="Products">
-                        <ui:repeat value="#{adminBean.productNamesByCollection(cItem)}" var="productName" varStatus="ps">
+                        <ui:repeat value="#{adminBean.getProductNamesByCollection(cItem)}" var="productName" varStatus="ps">
                             <h:outputText value="#{productName}#{ps.last ? '' : ', '}"/>
                         </ui:repeat>
-                        <h:outputText value="No products" rendered="#{empty adminBean.productNamesByCollection(cItem)}"/>
+                        <h:outputText value="No products" rendered="#{empty adminBean.getProductNamesByCollection(cItem)}"/>
                     </p:column>
                     <p:column headerText="Status"><span class="status-pill #{cItem.active ? 'active' : 'inactive'}">#{cItem.active ? 'Active' : 'Inactive'}</span></p:column>
                     <p:column headerText="Action" style="white-space:nowrap;">

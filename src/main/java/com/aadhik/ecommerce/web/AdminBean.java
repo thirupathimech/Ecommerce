@@ -73,7 +73,7 @@ public class AdminBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        activeMenu = "products";
+        activeMenu = activeMenu == null ? "dashboard" : activeMenu;
         productEditorVisible = false;
         homeTabIndex = 0;
         variantInputs = new ArrayList<>();
