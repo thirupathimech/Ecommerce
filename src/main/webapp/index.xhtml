@@ -121,26 +121,26 @@
         </h:outputStylesheet>
     </h:head>
     <h:body>
-        <h:form>
+        <h:form id="mainForm">
             <div class="admin-link">
                 <h:outputLink value="admin.xhtml">Go to Admin Setup</h:outputLink>
             </div>
-            <div class="top-strip">Sip Your Way To Health</div>
-            <div class="nav-shell">
+            <div id="announcementBar" class="top-strip">Sip Your Way To Health</div>
+            <div id="nav-shell" class="nav-shell">
                 <div class="nav-row">
                     <div class="nav-left">
-                        <p:commandButton type="button" icon="pi pi-bars" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
-                        <p:commandButton type="button" icon="pi pi-search" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
+                        <p:commandButton id="bar" type="button" icon="pi pi-bars" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
+                        <p:commandButton id="searchBtn" type="button" icon="pi pi-search" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                     </div>
-                    <h:graphicImage styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="logo"/>
+                    <h:graphicImage id="logo" styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="logo"/>
                     <div class="nav-right">
-                        <p:commandButton type="button" icon="pi pi-user" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
-                        <p:commandButton type="button" icon="pi pi-shopping-bag" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
+                        <p:commandButton id="userBtn" type="button" icon="pi pi-user" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
+                        <p:commandButton id="shoppingBtn" type="button" icon="pi pi-shopping-bag" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                     </div>
                 </div>
             </div>
 
-            <main class="container">
+            <main id="mainContainer" class="container">
                 <ui:fragment id="hero-slider-fragment" rendered="#{not empty homePageBean.sliders}">
                     <section id="hero-slider" class="hero-slider" data-slide-seconds="3.5">
                         <ui:repeat value="#{homePageBean.sliders}" var="slide" varStatus="status">
@@ -155,21 +155,21 @@
                     </section>
                 </ui:fragment>
 
-                <ui:fragment rendered="#{homePageBean.hasOrderedHomeSections()}">
-                    <ui:repeat value="#{homePageBean.orderedHomeSections}" var="orderedSection">
-                        <h:panelGroup rendered="#{orderedSection.type.name() eq 'MARQUEE' and not empty homePageBean.getMarqueeItems(orderedSection.marquee)}"
+                <ui:fragment id="marquee_fragment" rendered="#{homePageBean.hasOrderedHomeSections()}">
+                    <ui:repeat id="marquee_panel_repeat" value="#{homePageBean.orderedHomeSections}" var="orderedSection" varStatus="orderstatus">
+                        <h:panelGroup id="marqueePanelGroup" rendered="#{orderedSection.type.name() eq 'MARQUEE' and not empty homePageBean.getMarqueeItems(orderedSection.marquee)}"
                                       layout="block"
                                       styleClass="store-marquee #{orderedSection.marquee.pauseOnHover ? 'pause-on-hover' : ''}"
                                       style="background:#{homePageBean.marqueeBackground(orderedSection.marquee)};">
                             <div class="store-marquee-track #{homePageBean.marqueeAnimationClass(orderedSection.marquee)}"
                                  style="animation-duration:#{orderedSection.marquee.speedSeconds}s; font-size:#{orderedSection.marquee.fontSizePx}px; font-weight:#{orderedSection.marquee.fontWeight}; color:#{orderedSection.marquee.textColor};">
-                                <ui:repeat value="#{homePageBean.getMarqueeLoopedItems(orderedSection.marquee)}" var="mItem">
-                                    <span class="store-marquee-item">#{mItem}</span>
+                                <ui:repeat value="#{homePageBean.getMarqueeLoopedItems(orderedSection.marquee)}" var="mItem" varStatus="marq_item_status">
+                                    <span id="marquee_#{marq_item_status.index + 1}" class="store-marquee-item">#{mItem}</span>
                                 </ui:repeat>
                             </div>
                         </h:panelGroup>
 
-                        <h:panelGroup rendered="#{orderedSection.type.name() eq 'VIDEO_CAROUSEL'}" layout="block" styleClass="store-video-section">
+                        <h:panelGroup id="video_carousel_panelgroup" rendered="#{orderedSection.type.name() eq 'VIDEO_CAROUSEL'}" layout="block" styleClass="store-video-section">
                             <h2 class="section-title">#{orderedSection.videoItem.title}</h2>
                             <div class="store-video-track">
                                 <article class="video-card">
@@ -179,24 +179,24 @@
                             </div>
                         </h:panelGroup>
 
-                        <h:panelGroup rendered="#{orderedSection.type.name() eq 'DIV_SECTION'}" layout="block" styleClass="home-div-section">
+                        <h:panelGroup id="div_section_panelgroup" rendered="#{orderedSection.type.name() eq 'DIV_SECTION'}" layout="block" styleClass="home-div-section">
                             <article class="home-div-card #{orderedSection.divSection.imageSide eq 'RIGHT' ? 'right' : ''}">
                                 <div class="home-div-image-wrap">
-                                    <h:graphicImage value="#{homePageBean.resolveMediaUrl(orderedSection.divSection.imageUrl)}" alt="#{orderedSection.divSection.heading}"/>
+                                    <h:graphicImage id="div_section_image" value="#{homePageBean.resolveMediaUrl(orderedSection.divSection.imageUrl)}" alt="#{orderedSection.divSection.heading}"/>
                                 </div>
                                 <div class="home-div-content">
                                     <div class="home-div-content-inner #{orderedSection.divSection.contentAlign eq 'LEFT' ? 'align-left' : orderedSection.divSection.contentAlign eq 'RIGHT' ? 'align-right' : 'align-center'}">
                                         <h2 class="home-div-heading">#{orderedSection.divSection.heading}</h2>
                                         <p class="home-div-desc">#{orderedSection.divSection.description}</p>
-                                        <h:panelGroup rendered="#{not empty orderedSection.divSection.buttonLabel}">
-                                            <h:outputLink value="#{empty orderedSection.divSection.buttonLink ? '#' : orderedSection.divSection.buttonLink}" styleClass="home-div-btn">#{orderedSection.divSection.buttonLabel}</h:outputLink>
+                                        <h:panelGroup id="div_section_button_label_panelgroup" rendered="#{not empty orderedSection.divSection.buttonLabel}">
+                                            <h:outputLink id="div_section_button_link" value="#{empty orderedSection.divSection.buttonLink ? '#' : orderedSection.divSection.buttonLink}" styleClass="home-div-btn">#{orderedSection.divSection.buttonLabel}</h:outputLink>
                                         </h:panelGroup>
                                     </div>
                                 </div>
                             </article>
                         </h:panelGroup>
 
-                        <h:panelGroup rendered="#{orderedSection.type.name() eq 'COLLECTION_SECTION'}" layout="block">
+                        <h:panelGroup id="collection_section_panelgroup" rendered="#{orderedSection.type.name() eq 'COLLECTION_SECTION'}" layout="block">
                             <section>
                                 <h2 class="section-title">#{orderedSection.collectionSection.sectionTitle}</h2>
                                 <div class="products-grid">
