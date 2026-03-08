@@ -7,10 +7,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -59,9 +62,11 @@ public class Product {
     @Column(nullable = false)
     private boolean featured = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "collection_id")
-    private ProductCollection collection;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "product_collection_map",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "collection_id"))
+    private List<ProductCollection> collections = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -175,11 +180,23 @@ public class Product {
         this.featured = featured;
     }
 
+    public List<ProductCollection> getCollections() {
+        return collections;
+    }
+
+    public void setCollections(List<ProductCollection> collections) {
+        this.collections = collections == null ? new ArrayList<>() : collections;
+    }
+
     public ProductCollection getCollection() {
-        return collection;
+        return collections.isEmpty() ? null : collections.get(0);
     }
 
     public void setCollection(ProductCollection collection) {
-        this.collection = collection;
+        this.collections = new ArrayList<>();
+        if (collection != null) {
+            this.collections.add(collection);
+        }
     }
+
 }

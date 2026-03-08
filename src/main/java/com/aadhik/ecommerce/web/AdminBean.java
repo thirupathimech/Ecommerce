@@ -67,6 +67,9 @@ public class AdminBean implements Serializable {
     private DualListModel<String> homeSectionOrderPickList;
     private Map<String, String> homeSectionOrderOptionLabelMap;
     private DualListModel<String> collectionGroupPickList;
+    private DualListModel<String> productCollectionPickList;
+    private DualListModel<String> collectionProductsPickList;
+    private ProductCollection selectedCollectionForProducts;
 
     @PostConstruct
     public void init() {
@@ -500,6 +503,7 @@ public class AdminBean implements Serializable {
             productForm.setVariantData(null);
         }
         try {
+            productForm.setCollections(resolveCollectionsFromPickList(productCollectionPickList));
             catalogService.saveProduct(productForm);
             resetProductForm();
             productEditorVisible = false;
@@ -525,8 +529,9 @@ public class AdminBean implements Serializable {
         draft.setVariantData(product.getVariantData());
         draft.setFeatured(product.isFeatured());
         draft.setActive(product.isActive());
-        draft.setCollection(toCollectionReference(product.getCollection()));
+        draft.setCollections(toCollectionReferences(product.getCollections()));
         productForm = draft;
+        loadProductCollectionPickList(product.getCollections());
 
         variantInputs = deserializeVariants(product.getVariantData());
         if (variantInputs.isEmpty()) {
@@ -1002,11 +1007,12 @@ public class AdminBean implements Serializable {
 
     public void resetProductForm() {
         productForm = new Product();
-        productForm.setCollection(new ProductCollection());
+        productForm.setCollections(new ArrayList<>());
         productForm.setActive(true);
         productForm.setHasVariants(false);
         variantInputs = new ArrayList<>();
         variantInputs.add(new ProductVariantInput());
+        productCollectionPickList = null;
     }
 
     public List<MarqueeConfig> getMarqueeConfigs() {
@@ -1113,12 +1119,162 @@ public class AdminBean implements Serializable {
         return "Collection #" + idText;
     }
 
+    public String resolveProductNameById(String idText) {
+        if (isBlank(idText)) {
+            return "Unknown";
+        }
+        try {
+            Long id = Long.parseLong(idText);
+            for (Product product : getProducts()) {
+                if (product.getId() != null && product.getId().equals(id)) {
+                    return product.getName();
+                }
+            }
+        } catch (NumberFormatException ignored) {
+        }
+        return "Product #" + idText;
+    }
+
     private ProductCollection toCollectionReference(ProductCollection sourceCollection) {
         ProductCollection collection = new ProductCollection();
         if (sourceCollection != null) {
             collection.setId(sourceCollection.getId());
         }
         return collection;
+    }
+
+    private List<ProductCollection> toCollectionReferences(List<ProductCollection> sourceCollections) {
+        List<ProductCollection> references = new ArrayList<>();
+        if (sourceCollections == null) {
+            return references;
+        }
+        for (ProductCollection sourceCollection : sourceCollections) {
+            if (sourceCollection == null || sourceCollection.getId() == null) {
+                continue;
+            }
+            references.add(toCollectionReference(sourceCollection));
+        }
+        return references;
+    }
+
+    private void loadProductCollectionPickList(List<ProductCollection> selectedCollections) {
+        List<String> source = getCollections().stream()
+                .filter(ProductCollection::isActive)
+                .map(collection -> String.valueOf(collection.getId()))
+                .collect(Collectors.toCollection(ArrayList::new));
+        List<String> target = new ArrayList<>();
+        if (selectedCollections != null) {
+            for (ProductCollection collection : selectedCollections) {
+                if (collection == null || collection.getId() == null) {
+                    continue;
+                }
+                String idText = String.valueOf(collection.getId());
+                if (source.contains(idText) && !target.contains(idText)) {
+                    target.add(idText);
+                }
+            }
+        }
+        source.removeAll(target);
+        productCollectionPickList = new DualListModel<>(source, target);
+    }
+
+    private List<ProductCollection> resolveCollectionsFromPickList(DualListModel<String> pickList) {
+        List<ProductCollection> selectedCollections = new ArrayList<>();
+        if (pickList == null) {
+            return selectedCollections;
+        }
+        for (String idText : pickList.getTarget()) {
+            if (isBlank(idText)) {
+                continue;
+            }
+            try {
+                Long id = Long.parseLong(idText);
+                ProductCollection collection = new ProductCollection();
+                collection.setId(id);
+                selectedCollections.add(collection);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return selectedCollections;
+    }
+
+    public String resolveCollectionNames(Product product) {
+        if (product == null || product.getCollections() == null || product.getCollections().isEmpty()) {
+            return "No Collection";
+        }
+        return product.getCollections().stream()
+                .filter(collection -> collection != null && collection.getId() != null)
+                .map(collection -> resolveCollectionNameById(String.valueOf(collection.getId())))
+                .collect(Collectors.joining(", "));
+    }
+
+    public void openCollectionProductsManager(ProductCollection collection) {
+        if (collection == null || collection.getId() == null) {
+            addError("Invalid collection.");
+            return;
+        }
+        selectedCollectionForProducts = collection;
+        loadCollectionProductsPickList(collection);
+    }
+
+    private void loadCollectionProductsPickList(ProductCollection collection) {
+        List<String> source = getProducts().stream()
+                .map(product -> String.valueOf(product.getId()))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        List<String> target = new ArrayList<>();
+        for (Product product : getProducts()) {
+            boolean inCollection = product.getCollections() != null
+                    && product.getCollections().stream().anyMatch(c -> c != null
+                    && c.getId() != null
+                    && c.getId().equals(collection.getId()));
+            if (inCollection) {
+                target.add(String.valueOf(product.getId()));
+            }
+        }
+        source.removeAll(target);
+        collectionProductsPickList = new DualListModel<>(source, target);
+    }
+
+    public void saveCollectionProducts() {
+        if (selectedCollectionForProducts == null || selectedCollectionForProducts.getId() == null) {
+            addError("Select a collection first.");
+            return;
+        }
+        List<String> selectedProductIds = collectionProductsPickList == null ? List.of() : collectionProductsPickList.getTarget();
+
+        for (Product product : getProducts()) {
+            List<ProductCollection> existingCollections = new ArrayList<>();
+            if (product.getCollections() != null) {
+                for (ProductCollection existing : product.getCollections()) {
+                    if (existing != null && existing.getId() != null
+                            && !existing.getId().equals(selectedCollectionForProducts.getId())) {
+                        existingCollections.add(toCollectionReference(existing));
+                    }
+                }
+            }
+
+            if (selectedProductIds.contains(String.valueOf(product.getId()))) {
+                existingCollections.add(toCollectionReference(selectedCollectionForProducts));
+            }
+            product.setCollections(existingCollections);
+            catalogService.saveProduct(product);
+        }
+
+        loadCollectionProductsPickList(selectedCollectionForProducts);
+        addInfo("Collection products updated successfully");
+    }
+
+    public List<String> getProductNamesByCollection(ProductCollection collection) {
+        if (collection == null || collection.getId() == null) {
+            return List.of();
+        }
+        return getProducts().stream()
+                .filter(product -> product.getCollections() != null && product.getCollections().stream().anyMatch(c -> c != null
+                && c.getId() != null
+                && c.getId().equals(collection.getId())))
+                .map(Product::getName)
+                .collect(Collectors.toList());
     }
 
     private boolean validateSlider() {
@@ -1572,6 +1728,29 @@ public class AdminBean implements Serializable {
 
     public void setCollectionGroupPickList(DualListModel<String> collectionGroupPickList) {
         this.collectionGroupPickList = collectionGroupPickList;
+    }
+
+    public DualListModel<String> getProductCollectionPickList() {
+        if (productCollectionPickList == null) {
+            loadProductCollectionPickList(productForm == null ? null : productForm.getCollections());
+        }
+        return productCollectionPickList;
+    }
+
+    public void setProductCollectionPickList(DualListModel<String> productCollectionPickList) {
+        this.productCollectionPickList = productCollectionPickList;
+    }
+
+    public DualListModel<String> getCollectionProductsPickList() {
+        return collectionProductsPickList;
+    }
+
+    public void setCollectionProductsPickList(DualListModel<String> collectionProductsPickList) {
+        this.collectionProductsPickList = collectionProductsPickList;
+    }
+
+    public ProductCollection getSelectedCollectionForProducts() {
+        return selectedCollectionForProducts;
     }
 
     public static class ProductVariantInput implements Serializable {

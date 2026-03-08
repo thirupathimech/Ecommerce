@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:body>
         <div class="card">
             <div class="card-head"><h3>Collections</h3></div>
@@ -41,10 +42,36 @@
                     <p:column headerText="Banner"><h:graphicImage value="#{adminBean.resolveMediaUrl(cItem.bannerImage)}" styleClass="thumb"/></p:column>
                     <p:column headerText="Name"><h:outputText value="#{cItem.name}"/></p:column>
                     <p:column headerText="Slug"><h:outputText value="#{cItem.slug}"/></p:column>
+                    <p:column headerText="Products">
+                        <ui:repeat value="#{adminBean.productNamesByCollection(cItem)}" var="productName" varStatus="ps">
+                            <h:outputText value="#{productName}#{ps.last ? '' : ', '}"/>
+                        </ui:repeat>
+                        <h:outputText value="No products" rendered="#{empty adminBean.productNamesByCollection(cItem)}"/>
+                    </p:column>
                     <p:column headerText="Status"><span class="status-pill #{cItem.active ? 'active' : 'inactive'}">#{cItem.active ? 'Active' : 'Inactive'}</span></p:column>
-                    <p:column headerText="Action"><p:commandButton value="Edit" action="#{adminBean.editCollection(cItem)}" update=":mainForm" process="@this"/></p:column>
+                    <p:column headerText="Action" style="white-space:nowrap;">
+                        <p:commandButton value="Edit" action="#{adminBean.editCollection(cItem)}" update=":mainForm" process="@this"/>
+                        <p:commandButton value="Manage Products" action="#{adminBean.openCollectionProductsManager(cItem)}"
+                                         update=":mainForm:collectionProductsDialog" process="@this"
+                                         oncomplete="PF('collectionProductsDialog').show()" styleClass="ui-button-secondary"/>
+                    </p:column>
                 </p:dataTable>
             </div>
         </div>
+
+        <p:dialog id="collectionProductsDialog" widgetVar="collectionProductsDialog" header="Manage Collection Products"
+                  modal="true" width="760" responsive="true">
+            <h:panelGroup rendered="#{not empty adminBean.selectedCollectionForProducts}">
+                <p style="margin-top:0;">Collection: <strong>#{adminBean.selectedCollectionForProducts.name}</strong></p>
+                <p:pickList value="#{adminBean.collectionProductsPickList}" var="productId"
+                            itemLabel="#{adminBean.resolveProductNameById(productId)}" itemValue="#{productId}"
+                            showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" responsive="true"/>
+                <div style="margin-top:10px; display:flex; gap:8px; justify-content:flex-end;">
+                    <p:commandButton value="Save" action="#{adminBean.saveCollectionProducts}" update=":mainForm" oncomplete="PF('collectionProductsDialog').hide()"/>
+                    <p:commandButton type="button" value="Cancel" onclick="PF('collectionProductsDialog').hide()" styleClass="ui-button-secondary"/>
+                </div>
+            </h:panelGroup>
+        </p:dialog>
+
     </h:body>
 </html>

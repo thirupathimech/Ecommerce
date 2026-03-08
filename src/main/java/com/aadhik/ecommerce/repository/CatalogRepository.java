@@ -94,7 +94,7 @@ public class CatalogRepository {
     public List<Product> findProductsByCollection(Long collectionId, int limit) {
         return entityManager.createQuery("""
                         select p from Product p
-                        where p.active = true and p.collection.id = :collectionId
+                        where p.active = true and exists (select c.id from p.collections c where c.id = :collectionId)
                         order by p.id desc
                         """, Product.class)
                 .setParameter("collectionId", collectionId)
@@ -113,8 +113,8 @@ public class CatalogRepository {
 
     public List<Product> findProducts() {
         return entityManager.createQuery("""
-                        select p from Product p
-                        left join fetch p.collection c
+                        select distinct p from Product p
+                        left join fetch p.collections c
                         order by p.id desc
                         """, Product.class)
                 .getResultList();
@@ -327,15 +327,19 @@ public class CatalogRepository {
 
     @Transactional
     public Product saveProduct(Product product) {
-        if (product.getCollection() != null) {
-            if (product.getCollection().getId() != null) {
-                ProductCollection managedCollection = entityManager.find(ProductCollection.class, product.getCollection().getId());
-                product.setCollection(managedCollection);
-            } else {
-                product.setCollection(null);
+        List<ProductCollection> managedCollections = new java.util.ArrayList<>();
+        if (product.getCollections() != null) {
+            for (ProductCollection collection : product.getCollections()) {
+                if (collection == null || collection.getId() == null) {
+                    continue;
+                }
+                ProductCollection managedCollection = entityManager.find(ProductCollection.class, collection.getId());
+                if (managedCollection != null) {
+                    managedCollections.add(managedCollection);
+                }
             }
         }
-
+        product.setCollections(managedCollections);
         if (product.getId() == null) {
             entityManager.persist(product);
             return product;

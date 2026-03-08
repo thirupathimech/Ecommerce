@@ -18,6 +18,7 @@
                     <p:column headerText="Title"><h:outputText value="#{pItem.name}"/></p:column>
                     <p:column headerText="SKU"><h:outputText value="#{empty pItem.sku ? '—' : pItem.sku}"/></p:column>
                     <p:column headerText="Price"><h:outputText value="Rs. #{pItem.price}"/></p:column>
+                    <p:column headerText="Collections"><h:outputText value="#{adminBean.resolveCollectionNames(pItem)}"/></p:column>
                     <p:column headerText="Status">
                         <span class="status-pill #{pItem.active ? 'active' : 'inactive'}">#{pItem.active ? 'Active' : 'Inactive'}</span>
                     </p:column>
@@ -60,12 +61,12 @@
                         <label for="hsn">HSN</label>
                         <p:inputText id="hsn" value="#{adminBean.productForm.hsn}"/>
                     </div>
-                    <div class="field">
-                        <label for="collection">Collection</label>
-                        <p:selectOneMenu id="collection" value="#{adminBean.productForm.collection.id}">
-                            <f:selectItem itemLabel="No Collection" itemValue="#{null}"/>
-                            <f:selectItems value="#{adminBean.collections}" var="c" itemLabel="#{c.name}" itemValue="#{c.id}"/>
-                        </p:selectOneMenu>
+                    <div class="field full">
+                        <label>Collections</label>
+                        <p:pickList value="#{adminBean.productCollectionPickList}" var="collectionId"
+                                    itemLabel="#{adminBean.resolveCollectionNameById(collectionId)}"
+                                    itemValue="#{collectionId}" showSourceFilter="true" showTargetFilter="true"
+                                    filterMatchMode="contains" responsive="true"/>
                     </div>
                     <div class="field">
                         <label for="image">Primary Product Image *</label>

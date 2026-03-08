@@ -18,4 +18,16 @@ Any value defined here will override the pom.xml file value but is only applicab
         <org-netbeans-modules-maven-jaxws.rest_2e_config_2e_type>ide</org-netbeans-modules-maven-jaxws.rest_2e_config_2e_type>
         <org-netbeans-modules-maven-j2ee.netbeans_2e_deploy_2e_on_2e_save>false</org-netbeans-modules-maven-j2ee.netbeans_2e_deploy_2e_on_2e_save>
     </properties>
+    <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+        <word>addEventListener</word>
+        <word>classList</word>
+        <word>const</word>
+        <word>dataset</word>
+        <word>Ecommerce</word>
+        <word>forEach</word>
+        <word>isFinite</word>
+        <word>querySelectorAll</word>
+        <word>setInterval</word>
+        <word>slideSeconds</word>
+    </spellchecker-wordlist>
 </project-shared-configuration>
