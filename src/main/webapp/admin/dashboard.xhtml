@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:body>
+        <div class="card">
+            <div class="card-head"><h3>Store Overview</h3></div>
+            <div class="card-body dashboard-grid">
+                <div class="dashboard-stat"><h4>Total Products</h4><p>#{adminBean.products.size()}</p></div>
+                <div class="dashboard-stat"><h4>Total Collections</h4><p>#{adminBean.collections.size()}</p></div>
+                <div class="dashboard-stat"><h4>Media Files</h4><p>#{adminBean.mediaFiles.size()}</p></div>
+                <div class="dashboard-stat"><h4>Home Sliders</h4><p>#{adminBean.sliders.size()}</p></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head"><h3>Quick Open</h3></div>
+            <div class="card-body shortcut-grid">
+                <p:commandButton value="Manage Products" icon="pi pi-box" action="#{adminBean.setActiveMenu('products')}" update=":mainForm" process="@this" styleClass="shortcut-btn"/>
+                <p:commandButton value="Manage Collections" icon="pi pi-tags" action="#{adminBean.setActiveMenu('collections')}" update=":mainForm" process="@this" styleClass="shortcut-btn"/>
+                <p:commandButton value="Manage Files" icon="pi pi-images" action="#{adminBean.setActiveMenu('files')}" update=":mainForm" process="@this" styleClass="shortcut-btn"/>
+                <p:commandButton value="Design Home Page" icon="pi pi-home" action="#{adminBean.setActiveMenu('home-page')}" update=":mainForm" process="@this" styleClass="shortcut-btn"/>
+                <p:commandButton value="Go to Orders" icon="pi pi-shopping-cart" action="#{adminBean.setActiveMenu('orders')}" update=":mainForm" process="@this" styleClass="shortcut-btn"/>
+                <p:commandButton value="Go to Settings" icon="pi pi-cog" action="#{adminBean.setActiveMenu('settings')}" update=":mainForm" process="@this" styleClass="shortcut-btn"/>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head"><h3>What to show in dashboard?</h3></div>
+            <div class="card-body">
+                <ul class="hint-list">
+                    <li>Sales today / this week</li>
+                    <li>New customer count</li>
+                    <li>Low-stock products</li>
+                    <li>Top selling collections</li>
+                    <li>Pending order list</li>
+                </ul>
+            </div>
+        </div>
+    </h:body>
+</html>

@@ -21,6 +21,14 @@
             .card-head { padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e8ecf8; }
             .card-body { padding: 12px 14px; }
             .grid { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .dashboard-grid { display: grid; gap: 12px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .dashboard-stat { background: linear-gradient(180deg, #ffffff 0%, #f6f8ff 100%); border: 1px solid #e3e8fa; border-radius: 12px; padding: 12px; }
+            .dashboard-stat h4 { margin: 0; font-size: .9rem; color: #52618d; font-weight: 600; }
+            .dashboard-stat p { margin: 8px 0 0; font-size: 1.55rem; font-weight: 700; color: #172a5f; }
+            .shortcut-grid { display: grid; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .shortcut-btn { width: 100%; justify-content: flex-start; border-radius: 10px !important; }
+            .hint-list { margin: 0; padding-left: 18px; color: #384a7f; }
+            .hint-list li { margin-bottom: 6px; }
             .field { display: flex; flex-direction: column; gap: 6px; }
             .field label { font-weight: 600; }
             .full { grid-column: 1 / -1; }
@@ -43,11 +51,15 @@
             .menu-btn { width: auto; flex: 0 0 auto; }
             .content { padding: 12px; }
             .grid { grid-template-columns: 1fr 1fr; }
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+            .shortcut-grid { grid-template-columns: 1fr 1fr; }
             }
             @media (max-width: 720px) {
             .content { padding: 10px; }
             .card-head, .card-body { padding: 10px; }
             .grid { grid-template-columns: 1fr; }
+            .dashboard-grid,
+            .shortcut-grid { grid-template-columns: 1fr; }
             }
         </h:outputStylesheet>
     </h:head>
@@ -75,12 +87,17 @@
             </h:form>
 
             <h:form id="mainForm" styleClass="content" enctype="multipart/form-data">
-                <h1 class="page-title">#{adminBean.activeMenu eq 'products' ? 'Products' : adminBean.activeMenu eq 'files' ? 'Files' : adminBean.activeMenu eq 'collections' ? 'Collections' : adminBean.activeMenu eq 'home-page' ? 'Home Page' : 'Coming Soon'}</h1>
+                <h1 class="page-title">#{adminBean.activeMenu eq 'dashboard' ? 'Dashboard' : adminBean.activeMenu eq 'products' ? 'Products' : adminBean.activeMenu eq 'files' ? 'Files' : adminBean.activeMenu eq 'collections' ? 'Collections' : adminBean.activeMenu eq 'home-page' ? 'Home Page' : 'Coming Soon'}</h1>
                 <p:growl id="messages" showDetail="true" skipDetailIfEqualsSummary="true"/>
 
-                <h:panelGroup rendered="#{adminBean.activeMenu ne 'products' and adminBean.activeMenu ne 'files' and adminBean.activeMenu ne 'collections' and adminBean.activeMenu ne 'home-page'}" layout="block" styleClass="card">
+                <h:panelGroup rendered="#{adminBean.activeMenu ne 'dashboard' and adminBean.activeMenu ne 'products' and adminBean.activeMenu ne 'files' and adminBean.activeMenu ne 'collections' and adminBean.activeMenu ne 'home-page'}" layout="block" styleClass="card">
                     <div class="card-head"><h3>#{adminBean.activeMenu}</h3></div>
                     <div class="card-body">This module is added in sidebar as requested. We can enhance this one next.</div>
+                </h:panelGroup>
+                
+                <!-- ═══════════════════════════════════════════════ DASHBOARD ═══════════════════════════════════════════════ -->
+                <h:panelGroup rendered="#{adminBean.activeMenu eq 'dashboard'}" layout="block">
+                    <ui:include src="/admin/dashboard.xhtml"/>
                 </h:panelGroup>
 
                 <!-- ═══════════════════════════════════════════════ PRODUCTS ═══════════════════════════════════════════════ -->
