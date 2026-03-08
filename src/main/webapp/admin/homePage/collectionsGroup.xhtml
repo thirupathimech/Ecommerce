@@ -1,15 +1,71 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:body>
-        <div class="card">
-            <div class="card-body">
-                <div class="hp-coming-soon">
-                    <i class="pi pi-tag" style="font-size:2.5rem; color:#c7d0ea;"></i>
-                    <h4>Collections Group Module</h4>
-                    <p>Design and arrange collection showcase blocks for the home page. Coming soon.</p>
-                </div>
+        <div class="grid">
+            <div class="field full">
+                <label>Group Title *</label>
+                <p:inputText value="#{adminBean.collectionGroupForm.title}"/>
+            </div>
+
+            <div class="field">
+                <label>Sort Order *</label>
+                <p:inputNumber value="#{adminBean.collectionGroupForm.sortOrder}" decimalPlaces="0"/>
+            </div>
+
+            <div class="field">
+                <label>Status</label>
+                <p:selectBooleanCheckbox value="#{adminBean.collectionGroupForm.active}" itemLabel="Active"/>
+            </div>
+
+            <div class="field full">
+                <label>Collections in this group *</label>
+                <p:pickList value="#{adminBean.collectionGroupPickList}"
+                            var="item"
+                            itemValue="#{item}"
+                            itemLabel="#{adminBean.resolveCollectionNameById(item)}"
+                            showSourceFilter="true"
+                            showTargetFilter="true"
+                            responsive="true"
+                            sourceFilterPlaceholder="Available Collections"
+                            targetFilterPlaceholder="Group Collections"/>
             </div>
         </div>
+
+        <div style="margin-top: 12px; display:flex; gap:8px;">
+            <p:commandButton value="Save Collections Group" action="#{adminBean.saveCollectionGroup}" update=":mainForm" ajax="false"/>
+            <p:commandButton value="Reset" action="#{adminBean.resetCollectionGroupForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
+        </div>
+
+        <p:dataTable id="homeCollectionGroupsDataTable" value="#{adminBean.homeCollectionGroups}" var="group" paginatorPosition="bottom" rowKey="#{group.id}" rows="6" style="margin-top:12px;">
+            <p:column headerText="Group Title">
+                <h:outputText value="#{group.title}"/>
+            </p:column>
+            <p:column headerText="Collections Count">
+                <h:outputText value="#{adminBean.getCollectionGroupCollectionIds(group).size()}"/>
+            </p:column>
+            <p:column headerText="Order">
+                <h:outputText value="#{group.sortOrder}"/>
+            </p:column>
+            <p:column headerText="Status">
+                <span class="status-pill #{group.active ? 'active' : 'inactive'}">#{group.active ? 'Active' : 'Inactive'}</span>
+            </p:column>
+            <p:column style="width:40px;">
+                <p:rowToggler/>
+            </p:column>
+            <p:column headerText="Action" style="width:200px;">
+                <p:commandButton value="Edit" action="#{adminBean.editCollectionGroup(group)}" process="@this" update=":mainForm" style="margin-right:6px;"/>
+                <p:commandButton value="Delete" action="#{adminBean.deleteCollectionGroup(group)}" process="@this" update=":mainForm" styleClass="ui-button-danger"/>
+            </p:column>
+            <p:rowExpansion>
+                <ul style="margin:.5rem 0; padding-left:1.2rem;">
+                    <ui:repeat value="#{adminBean.getCollectionGroupCollectionIds(group)}" var="collectionId">
+                        <li>#{adminBean.resolveCollectionNameById(collectionId)}</li>
+                    </ui:repeat>
+                </ul>
+            </p:rowExpansion>
+        </p:dataTable>
     </h:body>
 </html>

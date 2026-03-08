@@ -1,5 +1,6 @@
 package com.aadhik.ecommerce.service;
 
+import com.aadhik.ecommerce.model.HomeCollectionGroup;
 import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSectionOrderItem;
 import com.aadhik.ecommerce.model.HomeSectionType;
@@ -41,8 +42,16 @@ public class CatalogService {
         return repository.findHomeDivSections(true);
     }
 
+    public List<HomeCollectionGroup> getHomeActiveCollectionGroups() {
+        return repository.findHomeCollectionGroups(true);
+    }
+
     public List<HomeDivSection> getHomeDivSections() {
         return repository.findHomeDivSections(false);
+    }
+
+    public List<HomeCollectionGroup> getHomeCollectionGroups() {
+        return repository.findHomeCollectionGroups(false);
     }
 
     public List<VideoCarouselItem> getHomeActiveVideoCarouselItems() {
@@ -127,6 +136,13 @@ public class CatalogService {
                         sections.add(HomeRenderSection.forCollectionSection(collectionSection, products));
                     }
                 }
+                case COLLECTION_GROUP -> {
+                    HomeCollectionGroup collectionGroup = repository.findHomeCollectionGroupById(item.getRecordId());
+                    if (collectionGroup != null && collectionGroup.isActive()) {
+                        sections.add(HomeRenderSection.forCollectionGroup(collectionGroup,
+                                toCollections(collectionGroup.getCollectionIds())));
+                    }
+                }
                 case MARQUEE -> {
                     MarqueeConfig marquee = repository.findMarqueeConfigById(item.getRecordId());
                     if (marquee != null && marquee.isActive()) {
@@ -188,6 +204,14 @@ public class CatalogService {
         repository.deleteHomeDivSection(id);
     }
 
+    public HomeCollectionGroup saveHomeCollectionGroup(HomeCollectionGroup group) {
+        return repository.saveHomeCollectionGroup(group);
+    }
+
+    public void deleteHomeCollectionGroup(Long id) {
+        repository.deleteHomeCollectionGroup(id);
+    }
+
     public void deleteVideoCarouselItem(Long id) {
         repository.deleteVideoCarouselItem(id);
     }
@@ -223,7 +247,29 @@ public class CatalogService {
     public boolean isExistSKU(String sku, Long ignoreProductId) {
         return repository.isExistSKU(sku, ignoreProductId);
     }
-    
+
+    private List<ProductCollection> toCollections(String collectionIds) {
+        if (collectionIds == null || collectionIds.isBlank()) {
+            return List.of();
+        }
+        List<ProductCollection> result = new ArrayList<>();
+        for (String row : collectionIds.split("\n")) {
+            String value = row == null ? "" : row.trim();
+            if (value.isEmpty()) {
+                continue;
+            }
+            try {
+                Long id = Long.parseLong(value);
+                ProductCollection collection = repository.findCollectionById(id);
+                if (collection != null && collection.isActive()) {
+                    result.add(collection);
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return result;
+    }
+
     public static class HomeRenderSection {
 
         private HomeSectionType type;
@@ -231,7 +277,9 @@ public class CatalogService {
         private HomeDivSection divSection;
         private VideoCarouselItem videoItem;
         private HomepageSection collectionSection;
+        private HomeCollectionGroup collectionGroup;
         private List<Product> products = List.of();
+        private List<ProductCollection> collections = List.of();
         private MarqueeConfig marquee;
 
         public static HomeRenderSection forSlider(HomeSlider slider) {
@@ -263,6 +311,14 @@ public class CatalogService {
             return section;
         }
 
+        public static HomeRenderSection forCollectionGroup(HomeCollectionGroup collectionGroup, List<ProductCollection> collections) {
+            HomeRenderSection section = new HomeRenderSection();
+            section.type = HomeSectionType.COLLECTION_GROUP;
+            section.collectionGroup = collectionGroup;
+            section.collections = collections == null ? List.of() : collections;
+            return section;
+        }
+
         public static HomeRenderSection forMarquee(MarqueeConfig marquee) {
             HomeRenderSection section = new HomeRenderSection();
             section.type = HomeSectionType.MARQUEE;
@@ -270,13 +326,41 @@ public class CatalogService {
             return section;
         }
 
-        public HomeSectionType getType() { return type; }
-        public HomeSlider getSlider() { return slider; }
-        public HomeDivSection getDivSection() { return divSection; }
-        public VideoCarouselItem getVideoItem() { return videoItem; }
-        public HomepageSection getCollectionSection() { return collectionSection; }
-        public List<Product> getProducts() { return products; }
-        public MarqueeConfig getMarquee() { return marquee; }
+        public HomeSectionType getType() {
+            return type;
+        }
+
+        public HomeSlider getSlider() {
+            return slider;
+        }
+
+        public HomeDivSection getDivSection() {
+            return divSection;
+        }
+
+        public VideoCarouselItem getVideoItem() {
+            return videoItem;
+        }
+
+        public HomepageSection getCollectionSection() {
+            return collectionSection;
+        }
+
+        public HomeCollectionGroup getCollectionGroup() {
+            return collectionGroup;
+        }
+
+        public List<Product> getProducts() {
+            return products;
+        }
+
+        public List<ProductCollection> getCollections() {
+            return collections;
+        }
+
+        public MarqueeConfig getMarquee() {
+            return marquee;
+        }
     }
 
     public static class HomepageSectionView {

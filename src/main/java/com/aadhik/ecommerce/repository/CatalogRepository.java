@@ -1,5 +1,6 @@
 package com.aadhik.ecommerce.repository;
 
+import com.aadhik.ecommerce.model.HomeCollectionGroup;
 import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSectionOrderItem;
 import com.aadhik.ecommerce.model.HomeSlider;
@@ -30,6 +31,15 @@ public class CatalogRepository {
         }
         query.append(" order by s.sortOrder asc, s.id asc ");
         return entityManager.createQuery(query.toString(), HomeSlider.class).getResultList();
+    }
+
+    public List<HomeCollectionGroup> findHomeCollectionGroups(boolean activeOnly) {
+        StringBuilder query = new StringBuilder(" select g from HomeCollectionGroup g ");
+        if (activeOnly) {
+            query.append(" where g.active = true ");
+        }
+        query.append(" order by g.sortOrder asc, g.id asc ");
+        return entityManager.createQuery(query.toString(), HomeCollectionGroup.class).getResultList();
     }
 
     public List<HomeDivSection> findHomeDivSections(boolean activeOnly) {
@@ -191,6 +201,14 @@ public class CatalogRepository {
         return productUsage + sliderUsage + collectionUsage + videoCarouselUsage + divSectionUsage;
     }
 
+    public ProductCollection findCollectionById(Long id) {
+        return entityManager.find(ProductCollection.class, id);
+    }
+
+    public HomeCollectionGroup findHomeCollectionGroupById(Long id) {
+        return entityManager.find(HomeCollectionGroup.class, id);
+    }
+
     public HomeSlider findHomeSliderById(Long id) {
         return entityManager.find(HomeSlider.class, id);
     }
@@ -209,6 +227,23 @@ public class CatalogRepository {
 
     public MarqueeConfig findMarqueeConfigById(Long id) {
         return entityManager.find(MarqueeConfig.class, id);
+    }
+
+    @Transactional
+    public HomeCollectionGroup saveHomeCollectionGroup(HomeCollectionGroup group) {
+        if (group.getId() == null) {
+            entityManager.persist(group);
+            return group;
+        }
+        return entityManager.merge(group);
+    }
+
+    @Transactional
+    public void deleteHomeCollectionGroup(Long id) {
+        HomeCollectionGroup group = entityManager.find(HomeCollectionGroup.class, id);
+        if (group != null) {
+            entityManager.remove(group);
+        }
     }
 
     @Transactional

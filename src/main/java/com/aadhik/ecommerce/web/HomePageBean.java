@@ -3,6 +3,7 @@ package com.aadhik.ecommerce.web;
 import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.MarqueeConfig;
+import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
 import com.aadhik.ecommerce.service.CatalogService;
 import jakarta.enterprise.context.RequestScoped;
@@ -42,6 +43,10 @@ public class HomePageBean {
 
     public List<VideoCarouselItem> getVideoCarouselItems() {
         return catalogService.getHomeActiveVideoCarouselItems();
+    }
+    
+    public List<ProductCollection> getActiveCollections() {
+        return catalogService.getActiveCollections();
     }
 
     public MarqueeConfig getActiveMarquee() {

@@ -94,6 +94,64 @@
             display: block;
             }
 
+            .collection-group-section {
+            margin: 2rem 0;
+            }
+
+            .collection-group-track {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.35rem 0.1rem 0.7rem;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            }
+
+            .collection-group-track::-webkit-scrollbar {
+            display: none;
+            }
+
+            .collection-group-card {
+            flex: 0 0 calc((100% - 2rem) / 3);
+            min-width: 260px;
+            background: #f2f3f7;
+            border: 1.5px solid #27345f;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(17, 34, 78, 0.08);
+            scroll-snap-align: start;
+            }
+
+            .collection-group-card img {
+            width: 100%;
+            height: clamp(190px, 22vw, 280px);
+            display: block;
+            object-fit: cover;
+            }
+
+            .collection-group-card-body {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.15rem 1.1rem;
+            gap: 0.75rem;
+            min-height: 88px;
+            }
+
+            .collection-group-card-title {
+            margin: 0;
+            font-size: clamp(1.25rem, 2.2vw, 2rem);
+            color: #1b2449;
+            font-weight: 700;
+            line-height: 1.2;
+            }
+
+            .collection-group-card-arrow {
+            color: #2a3766;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            }
+
             /* Tablet */
             @media (max-width: 1024px) {
             .video-card {
@@ -116,6 +174,27 @@
 
             .video-card video {
             height: 320px;
+            }
+            .collection-group-track {
+            gap: 0.8rem;
+            }
+
+            .collection-group-card {
+            flex: 0 0 calc((100% - 0.8rem) / 2);
+            min-width: 0;
+            }
+
+            .collection-group-card img {
+            height: 150px;
+            }
+
+            .collection-group-card-body {
+            padding: 0.85rem 0.9rem 1rem;
+            min-height: 84px;
+            }
+
+            .collection-group-card-title {
+            font-size: 1.05rem;
             }
             }
         </h:outputStylesheet>
@@ -198,19 +277,17 @@
                             </article>
                         </h:panelGroup>
 
-                        <h:panelGroup id="collection_section_panelgroup" rendered="#{orderedSection.type.name() eq 'COLLECTION_SECTION'}" layout="block">
+                        <h:panelGroup id="collection_section_panelgroup" rendered="#{orderedSection.type.name() eq 'COLLECTION_GROUP' and not empty orderedSection.collections}" layout="block" styleClass="collection-group-section">
                             <section>
-                                <h2 class="section-title">#{orderedSection.collectionSection.sectionTitle}</h2>
-                                <div class="products-grid">
-                                    <ui:repeat value="#{orderedSection.products}" var="product">
-                                        <article class="product-card">
-                                            <h:graphicImage value="#{homePageBean.resolveMediaUrl(product.imageUrl)}" alt="#{product.name}"/>
-                                            <div class="product-info">
-                                                <p class="product-title">#{product.name}</p>
-                                                <h:panelGroup rendered="#{not empty product.comparePrice}">
-                                                    <span class="old-price">Rs. #{product.comparePrice}</span>
-                                                </h:panelGroup>
-                                                <span class="new-price">Rs. #{product.price}</span>
+                                <h2 class="section-title">#{orderedSection.collectionGroup.title}</h2>
+                                <div class="collection-group-track">
+                                    <ui:repeat value="#{orderedSection.collections}" var="collection">
+                                        <article class="collection-group-card">
+                                            <h:graphicImage value="#{homePageBean.resolveMediaUrl(collection.bannerImage)}"
+                                                            alt="#{collection.name}"/>
+                                            <div class="collection-group-card-body">
+                                                <h3 class="collection-group-card-title">#{collection.name}</h3>
+                                                <span class="collection-group-card-arrow" aria-hidden="true">&#8594;</span>
                                             </div>
                                         </article>
                                     </ui:repeat>

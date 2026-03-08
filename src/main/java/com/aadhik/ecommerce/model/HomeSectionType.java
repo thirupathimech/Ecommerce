@@ -5,5 +5,6 @@ public enum HomeSectionType {
     DIV_SECTION,
     VIDEO_CAROUSEL,
     COLLECTION_SECTION,
+    COLLECTION_GROUP,
     MARQUEE
 }

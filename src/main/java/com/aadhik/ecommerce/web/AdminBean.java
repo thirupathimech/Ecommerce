@@ -1,5 +1,6 @@
 package com.aadhik.ecommerce.web;
 
+import com.aadhik.ecommerce.model.HomeCollectionGroup;
 import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSectionOrderItem;
 import com.aadhik.ecommerce.model.HomeSectionType;
@@ -48,6 +49,7 @@ public class AdminBean implements Serializable {
     private VideoCarouselItem videoCarouselForm;
     private HomepageSection sectionForm;
     private ProductCollection collectionForm;
+    private HomeCollectionGroup collectionGroupForm;
     private Product productForm;
     private MarqueeConfig marqueeForm;
     private String marqueeItemInput;
@@ -64,6 +66,7 @@ public class AdminBean implements Serializable {
     private List<MediaFile> selectedMediaFiles;
     private DualListModel<String> homeSectionOrderPickList;
     private Map<String, String> homeSectionOrderOptionLabelMap;
+    private DualListModel<String> collectionGroupPickList;
 
     @PostConstruct
     public void init() {
@@ -80,6 +83,7 @@ public class AdminBean implements Serializable {
         resetHomeDivSectionForm();
         resetSectionForm();
         resetCollectionForm();
+        resetCollectionGroupForm();
         resetProductForm();
     }
 
@@ -106,8 +110,8 @@ public class AdminBean implements Serializable {
         for (VideoCarouselItem videoItem : getVideoCarouselItems()) {
             addHomeSectionOrderOption(source, HomeSectionType.VIDEO_CAROUSEL, videoItem.getId(), "Video Carousel", videoItem.getTitle());
         }
-        for (HomepageSection section : catalogService.getHomepageSections()) {
-            addHomeSectionOrderOption(source, HomeSectionType.COLLECTION_SECTION, section.getId(), "Collections Group", section.getSectionTitle());
+        for (HomeCollectionGroup group : getHomeCollectionGroups()) {
+            addHomeSectionOrderOption(source, HomeSectionType.COLLECTION_GROUP, group.getId(), "Collections Group", group.getTitle());
         }
         for (MarqueeConfig marqueeConfig : getMarqueeConfigs()) {
             addHomeSectionOrderOption(source, HomeSectionType.MARQUEE, marqueeConfig.getId(), "Marquee", buildMarqueeLabel(marqueeConfig));
@@ -890,6 +894,45 @@ public class AdminBean implements Serializable {
         addInfo("Collection saved successfully");
     }
 
+    public void saveCollectionGroup() {
+        if (isBlank(collectionGroupForm.getTitle())) {
+            addError("Collection group title is required.");
+            return;
+        }
+        List<String> selected = collectionGroupPickList == null ? List.of() : collectionGroupPickList.getTarget();
+        if (selected.isEmpty()) {
+            addError("Choose at least one collection.");
+            return;
+        }
+        collectionGroupForm.setCollectionIds(String.join("\n", selected));
+        catalogService.saveHomeCollectionGroup(collectionGroupForm);
+        resetCollectionGroupForm();
+        loadHomeSectionOrderPickList();
+        addInfo("Collections group saved successfully");
+    }
+
+    public void editCollectionGroup(HomeCollectionGroup group) {
+        HomeCollectionGroup draft = new HomeCollectionGroup();
+        draft.setId(group.getId());
+        draft.setTitle(group.getTitle());
+        draft.setCollectionIds(group.getCollectionIds());
+        draft.setSortOrder(group.getSortOrder());
+        draft.setActive(group.isActive());
+        collectionGroupForm = draft;
+        loadCollectionGroupPickList(group.getCollectionIds());
+    }
+
+    public void deleteCollectionGroup(HomeCollectionGroup group) {
+        if (group == null || group.getId() == null) {
+            addError("Invalid collections group.");
+            return;
+        }
+        catalogService.deleteHomeCollectionGroup(group.getId());
+        resetCollectionGroupForm();
+        loadHomeSectionOrderPickList();
+        addInfo("Collections group deleted successfully");
+    }
+
     public void editSlider(HomeSlider slider) {
         HomeSlider draft = new HomeSlider();
         draft.setId(slider.getId());
@@ -950,6 +993,13 @@ public class AdminBean implements Serializable {
         collectionForm.setActive(true);
     }
 
+    public void resetCollectionGroupForm() {
+        collectionGroupForm = new HomeCollectionGroup();
+        collectionGroupForm.setActive(true);
+        collectionGroupForm.setSortOrder(1);
+        collectionGroupPickList = null;
+    }
+
     public void resetProductForm() {
         productForm = new Product();
         productForm.setCollection(new ProductCollection());
@@ -990,6 +1040,10 @@ public class AdminBean implements Serializable {
         return catalogService.getHomeDivSections();
     }
 
+    public List<HomeCollectionGroup> getHomeCollectionGroups() {
+        return catalogService.getHomeCollectionGroups();
+    }
+
     public List<String> getImageSideOptions() {
         return Arrays.asList("LEFT", "RIGHT");
     }
@@ -1012,6 +1066,51 @@ public class AdminBean implements Serializable {
 
     public List<SectionType> getSectionTypes() {
         return Arrays.asList(SectionType.values());
+    }
+
+    private void loadCollectionGroupPickList(String selectedIdsRaw) {
+        List<String> source = getCollections().stream()
+                .filter(ProductCollection::isActive)
+                .map(collection -> String.valueOf(collection.getId()))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        List<String> target = new ArrayList<>();
+        if (!isBlank(selectedIdsRaw)) {
+            for (String row : selectedIdsRaw.split("\n")) {
+                String id = row == null ? "" : row.trim();
+                if (!id.isEmpty() && source.contains(id)) {
+                    target.add(id);
+                }
+            }
+        }
+        source.removeAll(target);
+        collectionGroupPickList = new DualListModel<>(source, target);
+    }
+
+    public List<String> getCollectionGroupCollectionIds(HomeCollectionGroup group) {
+        if (group == null || isBlank(group.getCollectionIds())) {
+            return List.of();
+        }
+        return group.getCollectionIds().lines()
+                .map(String::trim)
+                .filter(text -> !text.isBlank())
+                .collect(Collectors.toList());
+    }
+
+    public String resolveCollectionNameById(String idText) {
+        if (isBlank(idText)) {
+            return "Unknown";
+        }
+        try {
+            Long id = Long.parseLong(idText);
+            for (ProductCollection collection : getCollections()) {
+                if (collection.getId() != null && collection.getId().equals(id)) {
+                    return collection.getName();
+                }
+            }
+        } catch (NumberFormatException ignored) {
+        }
+        return "Collection #" + idText;
     }
 
     private ProductCollection toCollectionReference(ProductCollection sourceCollection) {
@@ -1361,6 +1460,14 @@ public class AdminBean implements Serializable {
         this.collectionForm = collectionForm;
     }
 
+    public HomeCollectionGroup getCollectionGroupForm() {
+        return collectionGroupForm;
+    }
+
+    public void setCollectionGroupForm(HomeCollectionGroup collectionGroupForm) {
+        this.collectionGroupForm = collectionGroupForm;
+    }
+
     public MarqueeConfig getMarqueeForm() {
         return marqueeForm;
     }
@@ -1454,6 +1561,17 @@ public class AdminBean implements Serializable {
 
     public void setHomeSectionOrderPickList(DualListModel<String> homeSectionOrderPickList) {
         this.homeSectionOrderPickList = homeSectionOrderPickList;
+    }
+
+    public DualListModel<String> getCollectionGroupPickList() {
+        if (collectionGroupPickList == null) {
+            loadCollectionGroupPickList(collectionGroupForm == null ? null : collectionGroupForm.getCollectionIds());
+        }
+        return collectionGroupPickList;
+    }
+
+    public void setCollectionGroupPickList(DualListModel<String> collectionGroupPickList) {
+        this.collectionGroupPickList = collectionGroupPickList;
     }
 
     public static class ProductVariantInput implements Serializable {
