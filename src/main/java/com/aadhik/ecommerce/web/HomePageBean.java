@@ -48,6 +48,32 @@ public class HomePageBean {
         return catalogService.getActiveMarqueeConfig();
     }
 
+    public List<String> getCarouselVideos(VideoCarouselItem item) {
+        if (item == null) {
+            return List.of();
+        }
+        List<String> videos = parseVideoLines(item.getVideoUrls());
+        if (videos.isEmpty()) {
+            videos = parseVideoLines(item.getVideoUrl());
+        }
+        return videos;
+    }
+
+    public int carouselVideoCount(VideoCarouselItem item) {
+        return getCarouselVideos(item).size();
+    }
+
+    private List<String> parseVideoLines(String values) {
+        if (values == null || values.isBlank()) {
+            return List.of();
+        }
+        return values.lines()
+                .map(String::trim)
+                .filter(text -> !text.isBlank())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
     public List<String> getMarqueeItems(MarqueeConfig marquee) {
         if (marquee == null || marquee.getItemsData() == null || marquee.getItemsData().isBlank()) {
             return List.of();

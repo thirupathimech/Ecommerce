@@ -176,8 +176,7 @@ public class CatalogRepository {
 
         Long videoCarouselUsage = entityManager.createQuery("""
                         select count(v) from VideoCarouselItem v
-                        where v.thumbnailUrl = :ref
-                           or v.videoUrl = :ref
+                        where v.videoUrl = :ref
                         """, Long.class)
                 .setParameter("ref", ref)
                 .getSingleResult();

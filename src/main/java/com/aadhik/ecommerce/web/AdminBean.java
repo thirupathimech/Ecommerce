@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.DualListModel;
 
@@ -99,9 +100,6 @@ public class AdminBean implements Serializable {
         homeSectionOrderOptionLabelMap = new LinkedHashMap<>();
         List<String> source = new ArrayList<>();
 
-        for (HomeSlider slider : getSliders()) {
-            addHomeSectionOrderOption(source, HomeSectionType.HOME_SLIDER, slider.getId(), "Home Slider", slider.getTitle());
-        }
         for (HomeDivSection divSection : getHomeDivSections()) {
             addHomeSectionOrderOption(source, HomeSectionType.DIV_SECTION, divSection.getId(), "Div Section", divSection.getHeading());
         }
@@ -109,7 +107,7 @@ public class AdminBean implements Serializable {
             addHomeSectionOrderOption(source, HomeSectionType.VIDEO_CAROUSEL, videoItem.getId(), "Video Carousel", videoItem.getTitle());
         }
         for (HomepageSection section : catalogService.getHomepageSections()) {
-            addHomeSectionOrderOption(source, HomeSectionType.COLLECTION_SECTION, section.getId(), "Collections Maker", section.getSectionTitle());
+            addHomeSectionOrderOption(source, HomeSectionType.COLLECTION_SECTION, section.getId(), "Collections Group", section.getSectionTitle());
         }
         for (MarqueeConfig marqueeConfig : getMarqueeConfigs()) {
             addHomeSectionOrderOption(source, HomeSectionType.MARQUEE, marqueeConfig.getId(), "Marquee", buildMarqueeLabel(marqueeConfig));
@@ -233,11 +231,6 @@ public class AdminBean implements Serializable {
         fileSelectionVariantIndex = -1;
     }
 
-    public void openFilePickerForVideoCarouselThumbnail() {
-        fileSelectionTarget = "video-carousel-thumbnail";
-        fileSelectionVariantIndex = -1;
-    }
-
     public void openFilePickerForVideoCarouselVideo() {
         fileSelectionTarget = "video-carousel-video";
         fileSelectionVariantIndex = -1;
@@ -262,18 +255,12 @@ public class AdminBean implements Serializable {
             sliderForm.setImageUrl(ref);
         } else if ("collection-banner".equals(fileSelectionTarget)) {
             collectionForm.setBannerImage(ref);
-        } else if ("video-carousel-thumbnail".equals(fileSelectionTarget)) {
-            if (!"IMAGE".equals(file.getFileType())) {
-                addWarn("Please select an image file for thumbnail.");
-                return;
-            }
-            videoCarouselForm.setThumbnailUrl(ref);
         } else if ("video-carousel-video".equals(fileSelectionTarget)) {
             if (!"VIDEO".equals(file.getFileType())) {
                 addWarn("Please select a video file.");
                 return;
             }
-            videoCarouselForm.setVideoUrl(ref);
+            appendVideoToCarouselForm(ref);
         } else if ("home-div-section-image".equals(fileSelectionTarget)) {
             if (!"IMAGE".equals(file.getFileType())) {
                 addWarn("Please select an image file.");
@@ -561,6 +548,7 @@ public class AdminBean implements Serializable {
             return;
         }
 
+        normalizeVideoCarouselForm();
         catalogService.saveVideoCarouselItem(videoCarouselForm);
         resetVideoCarouselForm();
         addInfo("Video carousel item saved successfully");
@@ -608,8 +596,8 @@ public class AdminBean implements Serializable {
         VideoCarouselItem draft = new VideoCarouselItem();
         draft.setId(item.getId());
         draft.setTitle(item.getTitle());
-        draft.setThumbnailUrl(item.getThumbnailUrl());
         draft.setVideoUrl(item.getVideoUrl());
+        draft.setVideoUrls(item.getVideoUrls());
         draft.setSortOrder(item.getSortOrder());
         draft.setActive(item.isActive());
         videoCarouselForm = draft;
@@ -946,6 +934,7 @@ public class AdminBean implements Serializable {
         videoCarouselForm = new VideoCarouselItem();
         videoCarouselForm.setActive(true);
         videoCarouselForm.setSortOrder(1);
+        videoCarouselForm.setVideoUrls("");
     }
 
     public void resetSectionForm() {
@@ -984,6 +973,17 @@ public class AdminBean implements Serializable {
 
     public List<VideoCarouselItem> getVideoCarouselItems() {
         return catalogService.getVideoCarouselItems();
+    }
+
+    public int getVideoCount(VideoCarouselItem item) {
+        if (item == null) {
+            return 0;
+        }
+        List<String> selectedVideos = extractVideoRefs(item.getVideoUrls());
+        if (selectedVideos.isEmpty()) {
+            selectedVideos = extractVideoRefs(item.getVideoUrl());
+        }
+        return selectedVideos.size();
     }
 
     public List<HomeDivSection> getHomeDivSections() {
@@ -1046,12 +1046,12 @@ public class AdminBean implements Serializable {
             addError("Video title is required.");
             return false;
         }
-        if (isBlank(videoCarouselForm.getThumbnailUrl())) {
-            addError("Thumbnail image is required.");
-            return false;
+        List<String> selectedVideos = extractVideoRefs(videoCarouselForm.getVideoUrls());
+        if (selectedVideos.isEmpty() && !isBlank(videoCarouselForm.getVideoUrl())) {
+            selectedVideos = extractVideoRefs(videoCarouselForm.getVideoUrl());
         }
-        if (isBlank(videoCarouselForm.getVideoUrl())) {
-            addError("Video file is required.");
+        if (selectedVideos.isEmpty()) {
+            addError("At least one video file is required.");
             return false;
         }
         if (videoCarouselForm.getSortOrder() <= 0) {
@@ -1059,6 +1059,37 @@ public class AdminBean implements Serializable {
             return false;
         }
         return true;
+    }
+
+    private void appendVideoToCarouselForm(String ref) {
+        List<String> selectedVideos = extractVideoRefs(videoCarouselForm.getVideoUrls());
+        if (!selectedVideos.contains(ref)) {
+            selectedVideos.add(ref);
+        }
+        videoCarouselForm.setVideoUrls(String.join("\n", selectedVideos));
+        videoCarouselForm.setVideoUrl(selectedVideos.get(0));
+    }
+
+    private void normalizeVideoCarouselForm() {
+        List<String> selectedVideos = extractVideoRefs(videoCarouselForm.getVideoUrls());
+        if (selectedVideos.isEmpty() && !isBlank(videoCarouselForm.getVideoUrl())) {
+            selectedVideos = extractVideoRefs(videoCarouselForm.getVideoUrl());
+        }
+        videoCarouselForm.setVideoUrls(String.join("\n", selectedVideos));
+        if (!selectedVideos.isEmpty()) {
+            videoCarouselForm.setVideoUrl(selectedVideos.get(0));
+        }
+    }
+
+    private List<String> extractVideoRefs(String values) {
+        if (isBlank(values)) {
+            return new ArrayList<>();
+        }
+        return values.lines()
+                .map(String::trim)
+                .filter(text -> !text.isBlank())
+                .distinct()
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private boolean validateHomeDivSection() {

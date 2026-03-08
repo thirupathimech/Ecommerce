@@ -18,11 +18,11 @@ public class VideoCarouselItem {
     @Column(length = 120, nullable = false)
     private String title;
 
-    @Column(name = "thumbnail_url", length = 512, nullable = false)
-    private String thumbnailUrl;
-
     @Column(name = "video_url", length = 512, nullable = false)
     private String videoUrl;
+
+    @Column(name = "video_urls", length = 4000)
+    private String videoUrls;
 
     @Column(name = "sort_order", nullable = false)
     private int sortOrder = 1;
@@ -46,20 +46,20 @@ public class VideoCarouselItem {
         this.title = title;
     }
 
-    public String getThumbnailUrl() {
-        return thumbnailUrl;
-    }
-
-    public void setThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
-    }
-
     public String getVideoUrl() {
         return videoUrl;
     }
 
     public void setVideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
+    }
+
+    public String getVideoUrls() {
+        return videoUrls;
+    }
+
+    public void setVideoUrls(String videoUrls) {
+        this.videoUrls = videoUrls;
     }
 
     public int getSortOrder() {

@@ -169,21 +169,12 @@
             </div>
 
             <div class="field full">
-                <label>Thumbnail Image *</label>
-                <p:inputText value="#{adminBean.videoCarouselForm.thumbnailUrl}" readonly="true"/>
-                <p:commandButton type="button" value="Choose Thumbnail" icon="pi pi-image" onclick="PF('filePicker').show()">
-                    <p:ajax event="click" listener="#{adminBean.openFilePickerForVideoCarouselThumbnail}" update=":mainForm:filePickerTable :mainForm:messages"/>
-                </p:commandButton>
-                <small>#{adminBean.previewLabel(adminBean.videoCarouselForm.thumbnailUrl)}</small>
-            </div>
-
-            <div class="field full">
-                <label>Video File *</label>
-                <p:inputText value="#{adminBean.videoCarouselForm.videoUrl}" readonly="true"/>
+                <label>Videos * (one per line)</label>
+                <p:inputTextarea value="#{adminBean.videoCarouselForm.videoUrls}" rows="5" autoResize="false"/>
                 <p:commandButton type="button" value="Choose Video" icon="pi pi-video" onclick="PF('filePicker').show()">
                     <p:ajax event="click" listener="#{adminBean.openFilePickerForVideoCarouselVideo}" update=":mainForm:filePickerTable :mainForm:messages"/>
                 </p:commandButton>
-                <small>#{adminBean.previewLabel(adminBean.videoCarouselForm.videoUrl)}</small>
+                <small>Choose video multiple times. Each selected file is appended as a new line.</small>
             </div>
         </div>
 
@@ -193,8 +184,8 @@
         </div>
 
         <p:dataTable value="#{adminBean.videoCarouselItems}" var="vItem" paginatorPosition="bottom" rows="6" style="margin-top:12px;">
-            <p:column headerText="Thumb"><h:graphicImage value="#{adminBean.resolveMediaUrl(vItem.thumbnailUrl)}" styleClass="thumb"/></p:column>
             <p:column headerText="Title"><h:outputText value="#{vItem.title}"/></p:column>
+            <p:column headerText="Videos"><h:outputText value="#{adminBean.getVideoCount(vItem)}"/> files</p:column>
             <p:column headerText="Order"><h:outputText value="#{vItem.sortOrder}"/></p:column>
             <p:column headerText="Status"><span class="status-pill #{vItem.active ? 'active' : 'inactive'}">#{vItem.active ? 'Active' : 'Inactive'}</span></p:column>
             <p:column headerText="Action" style="width:170px;">

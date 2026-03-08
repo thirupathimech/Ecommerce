@@ -172,10 +172,12 @@
                         <h:panelGroup id="video_carousel_panelgroup" rendered="#{orderedSection.type.name() eq 'VIDEO_CAROUSEL'}" layout="block" styleClass="store-video-section">
                             <h2 class="section-title">#{orderedSection.videoItem.title}</h2>
                             <div class="store-video-track">
-                                <article class="video-card">
-                                    <p:video value="#{homePageBean.resolveMediaUrl(orderedSection.videoItem.videoUrl)}" controls="play" player="mp4" autoplay="true"
-                                             disablepictureinpicture="true" disableremoteplayback="true" preload="metadata" controlslist="nodownload nofullscreen" loop="true"/>
-                                </article>
+                                <ui:repeat value="#{homePageBean.getCarouselVideos(orderedSection.videoItem)}" var="videoRef" varStatus="vStatus">
+                                    <article class="video-card">
+                                        <p:video value="#{homePageBean.resolveMediaUrl(videoRef)}" controls="play" player="mp4" autoplay="false"
+                                                 disablepictureinpicture="true" disableremoteplayback="true" preload="metadata" controlslist="nodownload nofullscreen" loop="true"/>
+                                    </article>
+                                </ui:repeat>
                             </div>
                         </h:panelGroup>
 
