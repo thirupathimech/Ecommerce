@@ -1,44 +1,42 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
-    <h:body>
-        <div class="grid">
-            <div class="field">
-                <label>Title *</label>
-                <p:inputText value="#{adminBean.sliderForm.title}"/>
-            </div>
-            <div class="field">
-                <label>Subtitle</label>
-                <p:inputText value="#{adminBean.sliderForm.subtitle}"/>
-            </div>
-            <div class="field">
-                <label>Sort Order *</label>
-                <p:inputNumber value="#{adminBean.sliderForm.sortOrder}" decimalPlaces="0"/>
-            </div>
-            <div class="field full">
-                <label>Slider Image *</label>
-                <p:inputText value="#{adminBean.sliderForm.imageUrl}" readonly="true"/>
-                <p:commandButton type="button" value="Select from Files" icon="pi pi-images" onclick="PF('filePicker').show()">
-                    <p:ajax event="click" listener="#{adminBean.openFilePickerForSlider}" update=":mainForm:filePickerTable :mainForm:messages"/>
-                </p:commandButton>
-                <small>#{adminBean.previewLabel(adminBean.sliderForm.imageUrl)}</small>
-            </div>
-            <div class="field">
-                <label>Status</label>
-                <p:selectBooleanCheckbox value="#{adminBean.sliderForm.active}" itemLabel="Active"/>
-            </div>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <div class="grid">
+        <div class="field">
+            <label>Title *</label>
+            <p:inputText value="#{homeSliderBean.sliderForm.title}"/>
         </div>
-        <div style="margin-top: 12px; display:flex; gap:8px;">
-            <p:commandButton value="Save Slider" action="#{adminBean.saveSlider}" update=":mainForm"/>
-            <p:commandButton value="Reset" action="#{adminBean.resetSliderForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
+        <div class="field">
+            <label>Subtitle</label>
+            <p:inputText value="#{homeSliderBean.sliderForm.subtitle}"/>
         </div>
-        <p:dataTable value="#{adminBean.sliders}" var="sItem" rows="6" paginatorPosition="bottom" style="margin-top:12px;">
-            <p:column headerText="Image"><h:graphicImage value="#{adminBean.resolveMediaUrl(sItem.imageUrl)}" styleClass="thumb"/></p:column>
-            <p:column headerText="Title"><h:outputText value="#{sItem.title}"/></p:column>
-            <p:column headerText="Order"><h:outputText value="#{sItem.sortOrder}"/></p:column>
-            <p:column headerText="Status"><span class="status-pill #{sItem.active ? 'active' : 'inactive'}">#{sItem.active ? 'Active' : 'Inactive'}</span></p:column>
-            <p:column headerText="Action" style="width:120px;"><p:commandButton value="Select" action="#{adminBean.editSlider(sItem)}" update=":mainForm" oncomplete="PF('filePicker').hide()" process="@this"/></p:column>
-        </p:dataTable>
-    </h:body>
-</html>
+        <div class="field">
+            <label>Sort Order *</label>
+            <p:inputNumber value="#{homeSliderBean.sliderForm.sortOrder}" decimalPlaces="0"/>
+        </div>
+        <div class="field full">
+            <label>Slider Image *</label>
+            <p:inputText value="#{homeSliderBean.sliderForm.imageUrl}" readonly="true"/>
+            <p:commandButton type="button" value="Select from Files" icon="pi pi-images" onclick="PF('filePicker').show()">
+                <p:ajax event="click" listener="#{homeSliderBean.openFilePickerForSlider}" update=":mainForm:filePickerTable :mainForm:messages"/>
+            </p:commandButton>
+            <small>#{homeSliderBean.previewLabel(homeSliderBean.sliderForm.imageUrl)}</small>
+        </div>
+        <div class="field">
+            <label>Status</label>
+            <p:selectBooleanCheckbox value="#{homeSliderBean.sliderForm.active}" itemLabel="Active"/>
+        </div>
+    </div>
+    <div style="margin-top: 12px; display:flex; gap:8px;">
+        <p:commandButton value="Save Slider" action="#{homeSliderBean.saveForm}" update=":mainForm"/>
+        <p:commandButton value="Reset" action="#{homeSliderBean.resetForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
+    </div>
+    <p:dataTable value="#{homeSliderBean.sliders}" var="sItem" rows="6" paginatorPosition="bottom" style="margin-top:12px;">
+        <p:column headerText="Image"><h:graphicImage value="#{homeSliderBean.resolveMediaUrl(sItem.imageUrl)}" styleClass="thumb"/></p:column>
+        <p:column headerText="Title"><h:outputText value="#{sItem.title}"/></p:column>
+        <p:column headerText="Order"><h:outputText value="#{sItem.sortOrder}"/></p:column>
+        <p:column headerText="Status"><span class="status-pill #{sItem.active ? 'active' : 'inactive'}">#{sItem.active ? 'Active' : 'Inactive'}</span></p:column>
+        <p:column headerText="Action" style="width:120px;"><p:commandButton value="Select" action="#{homeSliderBean.editForm(sItem)}" update=":mainForm" oncomplete="PF('filePicker').hide()" process="@this"/></p:column>
+    </p:dataTable>
+</ui:composition>

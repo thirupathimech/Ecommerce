@@ -14,9 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author THIRUPATHI G
+ */
 @Named
 @RequestScoped
-public class HomePageBean {
+public class HomePageBean extends BaseBean {
 
     @Inject
     private CatalogService catalogService;
@@ -44,7 +47,7 @@ public class HomePageBean {
     public List<VideoCarouselItem> getVideoCarouselItems() {
         return catalogService.getHomeActiveVideoCarouselItems();
     }
-    
+
     public List<ProductCollection> getActiveCollections() {
         return catalogService.getActiveCollections();
     }

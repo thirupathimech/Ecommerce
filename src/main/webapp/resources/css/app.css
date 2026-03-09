@@ -1,0 +1,11 @@
+/* 
+    Created on : 09-Mar-2026, 1:39:43 am
+    Author     : Aadhik
+*/
+
+.mandatory::after {
+    content: " *";
+    color: red;
+    margin-left: 4px;
+    font-size: 14px;
+}

@@ -1,48 +1,45 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <h:body>
-        <h:form id="homeSectionOrderForm">
-            <div class="card">
-                <div class="card-body">
-                    <h4 style="margin-top:0;">Home Section Order</h4>
-                    <p style="margin-top:0.25rem; color:#6b7280;">
-                        Pick and order exact records (HomeSlider, Div Section, Video Carousel, Collections Group, Marquee).
-                    </p>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:form id="homeSectionOrderForm">
+        <div class="card">
+            <div class="card-body">
+                <h4 style="margin-top:0;">Home Section Order</h4>
+                <p style="margin-top:0.25rem; color:#6b7280;">
+                    Pick and order exact records (HomeSlider, Div Section, Video Carousel, Collections Group, Marquee).
+                </p>
 
-                    <p:pickList id="sectionPickList"
-                                value="#{adminBean.homeSectionOrderPickList}"
-                                var="item"
-                                itemValue="#{item}"
-                                itemLabel="#{adminBean.resolveHomeSectionOrderLabel(item)}"
-                                showSourceFilter="true"
-                                showTargetFilter="true"
-                                showCheckbox="true"
-                                responsive="true"
-                                sourceFilterPlaceholder="Available records"
-                                targetFilterPlaceholder="Home page order">
-                    </p:pickList>
+                <p:pickList id="sectionPickList"
+                            value="#{homeSectionOrderBean.homeSectionOrderPickList}"
+                            var="item"
+                            itemValue="#{item}"
+                            itemLabel="#{homeSectionOrderBean.resolveHomeSectionOrderLabel(item)}"
+                            showSourceFilter="true"
+                            showTargetFilter="true"
+                            showCheckbox="true"
+                            responsive="true"
+                            sourceFilterPlaceholder="Available records"
+                            targetFilterPlaceholder="Home page order">
+                </p:pickList>
 
-                    <div style="margin-top:1rem; display:flex; gap:.75rem;">
-                        <p:commandButton value="Save Order" icon="pi pi-save" ajax="false"
-                                         actionListener="#{adminBean.saveHomeSectionOrder}"
-                                         update="homeSectionOrderForm :growl"/>
-                        <p:commandButton value="Refresh List" icon="pi pi-refresh"
-                                         actionListener="#{adminBean.loadHomeSectionOrderPickList}"
-                                         update="homeSectionOrderForm"
-                                         styleClass="ui-button-secondary"/>
-                    </div>
-
-                    <h5 style="margin:1rem 0 .5rem;">Current selected order</h5>
-                    <ol style="margin:0; padding-left:1.25rem;">
-                        <ui:repeat value="#{adminBean.homeSectionOrderPickList.target}" var="selectedItem">
-                            <li style="margin:.2rem 0;">#{adminBean.resolveHomeSectionOrderLabel(selectedItem)}</li>
-                        </ui:repeat>
-                    </ol>
+                <div style="margin-top:1rem; display:flex; gap:.75rem;">
+                    <p:commandButton value="Save Order" icon="pi pi-save" ajax="false"
+                                     actionListener="#{homeSectionOrderBean.saveForm}"
+                                     update="homeSectionOrderForm :growl"/>
+                    <p:commandButton value="Refresh List" icon="pi pi-refresh"
+                                     actionListener="#{homeSectionOrderBean.loadHomeSectionOrderPickList}"
+                                     update="homeSectionOrderForm"
+                                     styleClass="ui-button-secondary"/>
                 </div>
+
+                <h5 style="margin:1rem 0 .5rem;">Current selected order</h5>
+                <ol style="margin:0; padding-left:1.25rem;">
+                    <ui:repeat value="#{homeSectionOrderBean.homeSectionOrderPickList.target}" var="selectedItem">
+                        <li style="margin:.2rem 0;">#{homeSectionOrderBean.resolveHomeSectionOrderLabel(selectedItem)}</li>
+                    </ui:repeat>
+                </ol>
             </div>
-        </h:form>
-    </h:body>
-</html>
+        </div>
+    </h:form>
+</ui:composition>

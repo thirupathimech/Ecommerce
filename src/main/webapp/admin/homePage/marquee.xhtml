@@ -25,13 +25,13 @@
             <div class="header-actions">
                 <p:commandButton icon="pi pi-save"
                                  value="Save Marquee"
-                                 action="#{adminBean.saveMarquee}"
+                                 action="#{marqueeConfigBean.saveForm}"
                                  process="@form"
                                  update=":mainForm :mainForm:messages"/>
 
                 <p:commandButton icon="pi pi-times"
                                  value="Reset"
-                                 action="#{adminBean.resetMarqueeForm}"
+                                 action="#{marqueeConfigBean.resetForm}"
                                  process="@this"
                                  update=":mainForm"
                                  styleClass="ui-button-secondary"/>
@@ -45,14 +45,14 @@
                         <div class="control-row content-row">
                             <label>Content</label>
                             <div class="inline-input">
-                                <p:inputText value="#{adminBean.marqueeItemInput}" placeholder="Enter marquee text"/>
-                                <p:commandButton value="Add" action="#{adminBean.addMarqueeItem}" update=":mainForm:homePageTabView:marqueePanel :mainForm:messages" process="@parent"/>
+                                <p:inputText value="#{marqueeConfigBean.marqueeItemInput}" placeholder="Enter marquee text"/>
+                                <p:commandButton value="Add" action="#{marqueeConfigBean.addMarqueeItem}" update=":mainForm:homePageTabView:marqueePanel :mainForm:messages" process="@parent"/>
                             </div>
                         </div>
 
                         <div class="control-row">
                             <label>Direction</label>
-                            <h:selectOneMenu value="#{adminBean.marqueeForm.direction}">
+                            <h:selectOneMenu value="#{marqueeConfigBean.marqueeForm.direction}">
                                 <f:selectItem itemLabel="Right → Left" itemValue="rtl"/>
                                 <f:selectItem itemLabel="Left → Right" itemValue="ltr"/>
                                 <f:selectItem itemLabel="Top → Bottom" itemValue="ttb"/>
@@ -62,8 +62,8 @@
                         </div>
 
                         <div class="control-row knob-row">
-                            <label>Speed: #{adminBean.marqueeForm.speedSeconds}s</label>
-                            <p:knob value="#{adminBean.marqueeForm.speedSeconds}" min="5" max="30" step="1" showLabel="true" foregroundColor="#173676" backgroundColor="#d9e1f7" height="70px">
+                            <label>Speed: #{marqueeConfigBean.marqueeForm.speedSeconds}s</label>
+                            <p:knob value="#{marqueeConfigBean.marqueeForm.speedSeconds}" min="5" max="30" step="1" showLabel="true" foregroundColor="#173676" backgroundColor="#d9e1f7" height="70px">
                                 <p:ajax event="change" update=":mainForm:homePageTabView:marqueePanel"/>
                             </p:knob>
                         </div>
@@ -74,7 +74,7 @@
                             <div class="control-row">
                                 <p:outputLabel for="bgMode" value="Background mode"/>
                                 <h:selectOneMenu id="bgMode"
-                                                 value="#{adminBean.marqueeForm.backgroundMode}">
+                                                 value="#{marqueeConfigBean.marqueeForm.backgroundMode}">
                                     <f:selectItem itemLabel="Solid" itemValue="solid"/>
                                     <f:selectItem itemLabel="Gradient" itemValue="gradient"/>
 
@@ -84,14 +84,14 @@
                             </div>
 
                             <!-- SOLID MODE -->
-                            <h:panelGroup rendered="#{adminBean.marqueeForm.backgroundMode eq 'solid'}"
+                            <h:panelGroup rendered="#{marqueeConfigBean.marqueeForm.backgroundMode eq 'solid'}"
                                           layout="block"
                                           styleClass="control-row">
 
                                 <p:outputLabel for="solidColor" value="Solid color"/>
 
                                 <p:colorPicker id="solidColor"
-                                               value="#{adminBean.marqueeForm.solidColor}"
+                                               value="#{marqueeConfigBean.marqueeForm.solidColor}"
                                                format="hex">
                                     <p:ajax event="change"
                                             process="@this"
@@ -101,38 +101,38 @@
 
 
                             <!-- GRADIENT MODE -->
-                            <h:panelGroup rendered="#{adminBean.marqueeForm.backgroundMode eq 'gradient'}"
+                            <h:panelGroup rendered="#{marqueeConfigBean.marqueeForm.backgroundMode eq 'gradient'}"
                                           layout="block"
                                           styleClass="control-row">
 
                                 <p:outputLabel value="Gradient colors (2–5)"/>
 
                                 <div class="inline-input">
-                                    <p:inputNumber value="#{adminBean.gradientColorCount}"
+                                    <p:inputNumber value="#{marqueeConfigBean.gradientColorCount}"
                                                    decimalPlaces="0"
                                                    minValue="2"
                                                    maxValue="5"/>
 
                                     <p:commandButton value="Apply"
-                                                     action="#{adminBean.applyGradientColorCount}"
+                                                     action="#{marqueeConfigBean.applyGradientColorCount}"
                                                      process="@parent"
                                                      update="backgroundConfigWrapper :mainForm:homePageTabView:marqueePanel"/>
                                 </div>
 
-                                <h:panelGroup rendered="#{adminBean.gradientColorCount ge 1}">
-                                    <p:colorPicker value="#{adminBean.gradientColor1}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                                <h:panelGroup rendered="#{marqueeConfigBean.gradientColorCount ge 1}">
+                                    <p:colorPicker value="#{marqueeConfigBean.gradientColor1}" format="hex"><p:ajax listener="#{marqueeConfigBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
                                 </h:panelGroup>
-                                <h:panelGroup rendered="#{adminBean.gradientColorCount ge 2}">
-                                    <p:colorPicker value="#{adminBean.gradientColor2}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                                <h:panelGroup rendered="#{marqueeConfigBean.gradientColorCount ge 2}">
+                                    <p:colorPicker value="#{marqueeConfigBean.gradientColor2}" format="hex"><p:ajax listener="#{marqueeConfigBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
                                 </h:panelGroup>
-                                <h:panelGroup rendered="#{adminBean.gradientColorCount ge 3}">
-                                    <p:colorPicker value="#{adminBean.gradientColor3}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                                <h:panelGroup rendered="#{marqueeConfigBean.gradientColorCount ge 3}">
+                                    <p:colorPicker value="#{marqueeConfigBean.gradientColor3}" format="hex"><p:ajax listener="#{marqueeConfigBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
                                 </h:panelGroup>
-                                <h:panelGroup rendered="#{adminBean.gradientColorCount ge 4}">
-                                    <p:colorPicker value="#{adminBean.gradientColor4}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                                <h:panelGroup rendered="#{marqueeConfigBean.gradientColorCount ge 4}">
+                                    <p:colorPicker value="#{marqueeConfigBean.gradientColor4}" format="hex"><p:ajax listener="#{marqueeConfigBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
                                 </h:panelGroup>
-                                <h:panelGroup rendered="#{adminBean.gradientColorCount ge 5}">
-                                    <p:colorPicker value="#{adminBean.gradientColor5}" format="hex"><p:ajax listener="#{adminBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
+                                <h:panelGroup rendered="#{marqueeConfigBean.gradientColorCount ge 5}">
+                                    <p:colorPicker value="#{marqueeConfigBean.gradientColor5}" format="hex"><p:ajax listener="#{marqueeConfigBean.applyGradientColorCount}" update=":mainForm:homePageTabView:marqueePanel"/></p:colorPicker>
                                 </h:panelGroup>
 
                             </h:panelGroup>
@@ -140,36 +140,36 @@
                         </p:outputPanel>
 
                         <div class="control-row knob-row">
-                            <label>Font size: #{adminBean.marqueeForm.fontSizePx}px</label>
-                            <p:knob value="#{adminBean.marqueeForm.fontSizePx}" min="8" max="60" step="1" showLabel="true" foregroundColor="#173676" backgroundColor="#d9e1f7" height="70px">
+                            <label>Font size: #{marqueeConfigBean.marqueeForm.fontSizePx}px</label>
+                            <p:knob value="#{marqueeConfigBean.marqueeForm.fontSizePx}" min="8" max="60" step="1" showLabel="true" foregroundColor="#173676" backgroundColor="#d9e1f7" height="70px">
                                 <p:ajax event="change" update=":mainForm:homePageTabView:marqueePanel"/>
                             </p:knob>
                         </div>
 
                         <div class="control-row knob-row">
-                            <label>Font weight: #{adminBean.marqueeFontWeightValue}</label>
-                            <p:knob value="#{adminBean.marqueeFontWeightValue}" min="400" max="800" step="100" showLabel="true" foregroundColor="#173676" backgroundColor="#d9e1f7" height="70px">
+                            <label>Font weight: #{marqueeConfigBean.marqueeFontWeightValue}</label>
+                            <p:knob value="#{marqueeConfigBean.marqueeFontWeightValue}" min="400" max="800" step="100" showLabel="true" foregroundColor="#173676" backgroundColor="#d9e1f7" height="70px">
                                 <p:ajax event="change" update=":mainForm:homePageTabView:marqueePanel"/>
                             </p:knob>
                         </div>
 
                         <div class="control-row">
                             <label>Text color</label>
-                            <p:colorPicker value="#{adminBean.marqueeForm.textColor}" format="hex">
+                            <p:colorPicker value="#{marqueeConfigBean.marqueeForm.textColor}" format="hex">
                                 <p:ajax update=":mainForm:homePageTabView:marqueePanel"/>
                             </p:colorPicker>
                         </div>
 
                         <div class="control-row toggle-row">
                             <label>Pause on hover</label>
-                            <p:selectBooleanCheckbox value="#{adminBean.marqueeForm.pauseOnHover}">
+                            <p:selectBooleanCheckbox value="#{marqueeConfigBean.marqueeForm.pauseOnHover}">
                                 <p:ajax update=":mainForm:homePageTabView:marqueePanel"/>
                             </p:selectBooleanCheckbox>
                         </div>
 
                         <div class="control-row toggle-row">
                             <label>Active</label>
-                            <p:selectBooleanCheckbox value="#{adminBean.marqueeForm.active}"/>
+                            <p:selectBooleanCheckbox value="#{marqueeConfigBean.marqueeForm.active}"/>
                         </div>
                     </div>
                 </div>
@@ -179,35 +179,35 @@
                 <div class="card-body">
                     <h3>Items</h3>
                     <ul class="items-list">
-                        <ui:repeat value="#{adminBean.marqueeItems}" var="item" varStatus="status">
+                        <ui:repeat value="#{marqueeConfigBean.marqueeItems}" var="item" varStatus="status">
                             <li>
                                 <span>#{item}</span>
-                                <p:commandButton value="Remove" action="#{adminBean.removeMarqueeItem(status.index)}" update=":mainForm:homePageTabView:marqueePanel" process="@this" styleClass="remove-item-btn"/>
+                                <p:commandButton value="Remove" action="#{marqueeConfigBean.removeMarqueeItem(status.index)}" update=":mainForm:homePageTabView:marqueePanel" process="@this" styleClass="remove-item-btn"/>
                             </li>
                         </ui:repeat>
                     </ul>
 
                     <h3>Live Preview</h3>
-                    <div class="marquee-preview #{adminBean.marqueeForm.pauseOnHover ? 'pause-on-hover' : ''}" style="background:#{adminBean.buildMarqueePreviewBackground()};">
-                        <div class="marquee-track #{adminBean.marqueeAnimationClass}" style="animation-duration:#{adminBean.marqueeForm.speedSeconds}s; font-size:#{adminBean.marqueeForm.fontSizePx}px;
-                             font-weight:#{adminBean.marqueeFontWeightValue};
-                             color:#{adminBean.marqueeForm.textColor};">
-                            <ui:repeat value="#{adminBean.loopedMarqueeItems}" var="previewItem">
+                    <div class="marquee-preview #{marqueeConfigBean.marqueeForm.pauseOnHover ? 'pause-on-hover' : ''}" style="background:#{marqueeConfigBean.buildMarqueePreviewBackground()};">
+                        <div class="marquee-track #{marqueeConfigBean.marqueeAnimationClass}" style="animation-duration:#{marqueeConfigBean.marqueeForm.speedSeconds}s; font-size:#{marqueeConfigBean.marqueeForm.fontSizePx}px;
+                             font-weight:#{marqueeConfigBean.marqueeFontWeightValue};
+                             color:#{marqueeConfigBean.marqueeForm.textColor};">
+                            <ui:repeat value="#{marqueeConfigBean.loopedMarqueeItems}" var="previewItem">
                                 <span class="marquee-item">#{previewItem}</span>
                             </ui:repeat>
                         </div>
                     </div>
 
                     <h3 style="margin-top:10px;">Saved Marquee Configurations</h3>
-                    <p:dataTable value="#{adminBean.marqueeConfigs}" var="mItem" rows="5" paginator="true" paginatorPosition="bottom">
+                    <p:dataTable value="#{marqueeConfigBean.marqueeConfigs}" var="mItem" rows="5" paginator="true" paginatorPosition="bottom">
                         <p:column headerText="ID"><h:outputText value="#{mItem.id}"/></p:column>
                         <p:column headerText="Direction"><h:outputText value="#{mItem.direction}"/></p:column>
                         <p:column headerText="Speed"><h:outputText value="#{mItem.speedSeconds}s"/></p:column>
                         <p:column headerText="Status"><h:outputText value="#{mItem.active ? 'Active' : 'Inactive'}"/></p:column>
                         <p:column headerText="Action">
-                            <p:commandButton icon="pi pi-pencil" action="#{adminBean.editMarquee(mItem)}" update="mainForm:homePageTabView:marqueeTab" process="@this"/>
+                            <p:commandButton icon="pi pi-pencil" action="#{marqueeConfigBean.editForm(mItem)}" update="mainForm:homePageTabView:marqueeTab" process="@this"/>
                             <p:spacer width="8px"/>
-                            <p:commandButton icon="pi pi-delete-left" action="#{adminBean.deleteMarqueeConfig(mItem)}" update="mainForm:homePageTabView" process="@this" styleClass="ui-button-danger">
+                            <p:commandButton icon="pi pi-delete-left" action="#{marqueeConfigBean.deleteForm(mItem)}" update="mainForm:homePageTabView" process="@this" styleClass="ui-button-danger">
                                 <p:confirm type="popup" header="Confirmation"
 						message="Do you want to delete this record?"
 						icon="pi pi-info-circle"

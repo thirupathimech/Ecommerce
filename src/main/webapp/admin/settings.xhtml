@@ -1,0 +1,76 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <div class="card">
+        <div class="card-head">
+            <h3>Store Profile</h3>
+        </div>
+        <div class="card-body grid">
+            <div class="field"><label class="mandatory">Store Name</label><p:inputText value="#{settingsBean.storeName}"/></div>
+            <div class="field"><label class="mandatory">Store Email</label><p:inputText value="#{settingsBean.storeEmail}"/></div>
+            <div class="field"><label class="mandatory">Store Phone Number</label><p:inputText value="#{settingsBean.storePhoneNumber}"/></div>
+            <div class="field"><label class="mandatory">Store Logo</label><p:inputText value="#{settingsBean.storeLogo}" placeholder="Image URL or file reference"/></div>
+            <div class="field"><label class="mandatory">Store Favicon</label><p:inputText value="#{settingsBean.storeFavicon}" placeholder="Favicon URL or file reference"/></div>
+            <div class="field"><label>GST Number</label><p:inputText value="#{settingsBean.gstNumber}"/></div>
+            <div class="field full"><label class="mandatory">Store Address</label><p:inputTextarea value="#{settingsBean.storeAddress}" rows="3" autoResize="false"/></div>
+            <div class="field"><label class="mandatory">Store Pin Code</label><p:inputText value="#{settingsBean.storePinCode}"/></div>
+            <div class="field"><label class="mandatory">Store Password</label><p:password value="#{settingsBean.storePassword}" feedback="false" toggleMask="true"/></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-head">
+            <h3>Order &amp; Checkout Rules</h3>
+        </div>
+        <div class="card-body grid">
+            <div class="field">
+                <label>Allow Guest Checkout</label>
+                <p:selectBooleanCheckbox value="#{settingsBean.allowGuestCheckout}" itemLabel="Enable checkout without account"/>
+            </div>
+            <div class="field"><label>Order Cancellation Time (hours)</label><p:inputNumber value="#{settingsBean.orderCancellationTime}" decimalPlaces="0" minValue="0"/></div>
+            <div class="field"><label>Return Policy Days</label><p:inputNumber value="#{settingsBean.returnPolicyDays}" decimalPlaces="0" minValue="0"/></div>
+            <div class="field">
+                <label>Order Email Notification</label>
+                <p:selectBooleanCheckbox value="#{settingsBean.orderEmailNotification}" itemLabel="Send order emails to customer"/>
+            </div>
+            <div class="field">
+                <label>Admin Order Alert</label>
+                <p:selectBooleanCheckbox value="#{settingsBean.adminOrderAlert}" itemLabel="Notify admin on every order"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-head">
+            <h3>Communication &amp; API Integrations</h3>
+        </div>
+        <div class="card-body grid">
+            <div class="field"><label>OTP Provider</label><p:inputText value="#{settingsBean.otpProvider}"/></div>
+            <div class="field"><label>SMS API</label><p:inputText value="#{settingsBean.smsApi}"/></div>
+            <div class="field"><label>SMS API key</label><p:password value="#{settingsBean.smsApiKey}" feedback="false" toggleMask="true"/></div>
+            <div class="field"><label>WhatsApp API</label><p:inputText value="#{settingsBean.whatsappApi}"/></div>
+            <div class="field"><label>WhatsApp API key</label><p:password value="#{settingsBean.whatsappApiKey}" feedback="false" toggleMask="true"/></div>
+            <div class="field"><label>Email SMTP</label><p:inputText value="#{settingsBean.emailSmtp}"/></div>
+            <div class="field"><label>Delivery Tracking API</label><p:inputText value="#{settingsBean.deliveryTrackingApi}"/></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-head">
+            <h3>SEO &amp; Marketing</h3>
+        </div>
+        <div class="card-body grid">
+            <div class="field full"><label>Meta Title</label><p:inputText value="#{settingsBean.metaTitle}"/></div>
+            <div class="field full"><label>Meta Description</label><p:inputTextarea value="#{settingsBean.metaDescription}" rows="3" autoResize="false"/></div>
+            <div class="field"><label>Google Analytics ID</label><p:inputText value="#{settingsBean.googleAnalyticsId}"/></div>
+            <div class="field"><label>Facebook Pixel ID</label><p:inputText value="#{settingsBean.facebookPixelId}"/></div>
+            <div class="field"><label>Sitemap URL</label><p:inputText value="#{settingsBean.sitemapUrl}"/></div>
+        </div>
+    </div>
+
+    <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+        <p:commandButton value="Save Settings" action="#{settingsBean.saveForm}" update="messages" icon="pi pi-save"/>
+    </div>
+</ui:composition>

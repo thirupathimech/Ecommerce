@@ -1,77 +1,74 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <h:body>
-        <div class="card">
-            <div class="card-head"><h3>Collections</h3></div>
-            <div class="card-body">
-                <div class="grid">
-                    <div class="field">
-                        <label>Collection Name *</label>
-                        <p:inputText value="#{adminBean.collectionForm.name}"/>
-                    </div>
-                    <div class="field">
-                        <label>Slug *</label>
-                        <p:inputText value="#{adminBean.collectionForm.slug}"/>
-                    </div>
-                    <div class="field">
-                        <label>Status</label>
-                        <p:selectBooleanCheckbox value="#{adminBean.collectionForm.active}" itemLabel="Active"/>
-                    </div>
-                    <div class="field full">
-                        <label>Banner Image</label>
-                        <p:inputText value="#{adminBean.collectionForm.bannerImage}" readonly="true"/>
-                        <p:commandButton type="button" value="Select from Files" icon="pi pi-images" onclick="PF('filePicker').show()">
-                            <p:ajax event="click" listener="#{adminBean.openFilePickerForCollectionBanner}" update=":mainForm:filePickerTable :mainForm:messages"/>
-                        </p:commandButton>
-                        <small>#{adminBean.previewLabel(adminBean.collectionForm.bannerImage)}</small>
-                    </div>
-                    <div class="field full">
-                        <label>Description</label>
-                        <p:inputTextarea value="#{adminBean.collectionForm.description}" rows="3" autoResize="false"/>
-                    </div>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <div class="card">
+        <div class="card-head"><h3>Collections</h3></div>
+        <div class="card-body">
+            <div class="grid">
+                <div class="field">
+                    <label>Collection Name *</label>
+                    <p:inputText value="#{productCollectionBean.collectionForm.name}"/>
                 </div>
-                <div style="margin-top: 12px; display:flex; gap:8px;">
-                    <p:commandButton value="Save Collection" action="#{adminBean.saveCollection}" update=":mainForm"/>
-                    <p:commandButton value="Reset" action="#{adminBean.resetCollectionForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
+                <div class="field">
+                    <label>Slug *</label>
+                    <p:inputText value="#{productCollectionBean.collectionForm.slug}"/>
                 </div>
-
-                <p:dataTable value="#{adminBean.collections}" var="cItem" paginator="true" rows="6" style="margin-top:12px;">
-                    <p:column headerText="Banner"><h:graphicImage value="#{adminBean.resolveMediaUrl(cItem.bannerImage)}" styleClass="thumb"/></p:column>
-                    <p:column headerText="Name"><h:outputText value="#{cItem.name}"/></p:column>
-                    <p:column headerText="Slug"><h:outputText value="#{cItem.slug}"/></p:column>
-                    <p:column headerText="Products">
-                        <ui:repeat value="#{adminBean.getProductNamesByCollection(cItem)}" var="productName" varStatus="ps">
-                            <h:outputText value="#{productName}#{ps.last ? '' : ', '}"/>
-                        </ui:repeat>
-                        <h:outputText value="No products" rendered="#{empty adminBean.getProductNamesByCollection(cItem)}"/>
-                    </p:column>
-                    <p:column headerText="Status"><span class="status-pill #{cItem.active ? 'active' : 'inactive'}">#{cItem.active ? 'Active' : 'Inactive'}</span></p:column>
-                    <p:column headerText="Action" style="white-space:nowrap;">
-                        <p:commandButton value="Edit" action="#{adminBean.editCollection(cItem)}" update=":mainForm" process="@this"/>
-                        <p:commandButton value="Manage Products" action="#{adminBean.openCollectionProductsManager(cItem)}"
-                                         update=":mainForm:collectionProductsDialog" process="@this"
-                                         oncomplete="PF('collectionProductsDialog').show()" styleClass="ui-button-secondary"/>
-                    </p:column>
-                </p:dataTable>
+                <div class="field">
+                    <label>Status</label>
+                    <p:selectBooleanCheckbox value="#{productCollectionBean.collectionForm.active}" itemLabel="Active"/>
+                </div>
+                <div class="field full">
+                    <label>Banner Image</label>
+                    <p:inputText value="#{productCollectionBean.collectionForm.bannerImage}" readonly="true"/>
+                    <p:commandButton type="button" value="Select from Files" icon="pi pi-images" onclick="PF('filePicker').show()">
+                        <p:ajax event="click" listener="#{productCollectionBean.openFilePickerForCollectionBanner}" update=":mainForm:filePickerTable :mainForm:messages"/>
+                    </p:commandButton>
+                    <small>#{productCollectionBean.previewLabel(productCollectionBean.collectionForm.bannerImage)}</small>
+                </div>
+                <div class="field full">
+                    <label>Description</label>
+                    <p:inputTextarea value="#{productCollectionBean.collectionForm.description}" rows="3" autoResize="false"/>
+                </div>
             </div>
+            <div style="margin-top: 12px; display:flex; gap:8px;">
+                <p:commandButton value="Save Collection" action="#{productCollectionBean.saveForm}" update=":mainForm"/>
+                <p:commandButton value="Reset" action="#{productCollectionBean.resetForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
+            </div>
+
+            <p:dataTable value="#{productCollectionBean.collections}" var="cItem" paginator="true" rows="6" style="margin-top:12px;">
+                <p:column headerText="Banner"><h:graphicImage value="#{productCollectionBean.resolveMediaUrl(cItem.bannerImage)}" styleClass="thumb"/></p:column>
+                <p:column headerText="Name"><h:outputText value="#{cItem.name}"/></p:column>
+                <p:column headerText="Slug"><h:outputText value="#{cItem.slug}"/></p:column>
+                <p:column headerText="Products">
+                    <ui:repeat value="#{productCollectionBean.getProductNamesByCollection(cItem)}" var="productName" varStatus="ps">
+                        <h:outputText value="#{productName}#{ps.last ? '' : ', '}"/>
+                    </ui:repeat>
+                    <h:outputText value="No products" rendered="#{empty productCollectionBean.getProductNamesByCollection(cItem)}"/>
+                </p:column>
+                <p:column headerText="Status"><span class="status-pill #{cItem.active ? 'active' : 'inactive'}">#{cItem.active ? 'Active' : 'Inactive'}</span></p:column>
+                <p:column headerText="Action" style="white-space:nowrap;">
+                    <p:commandButton value="Edit" action="#{productCollectionBean.editForm(cItem)}" update=":mainForm" process="@this"/>
+                    <p:commandButton value="Manage Products" action="#{productCollectionBean.openCollectionProductsManager(cItem)}"
+                                     update=":mainForm:collectionProductsDialog" process="@this"
+                                     oncomplete="PF('collectionProductsDialog').show()" styleClass="ui-button-secondary"/>
+                </p:column>
+            </p:dataTable>
         </div>
+    </div>
 
-        <p:dialog id="collectionProductsDialog" widgetVar="collectionProductsDialog" header="Manage Collection Products"
-                  modal="true" width="760" responsive="true">
-            <h:panelGroup rendered="#{not empty adminBean.selectedCollectionForProducts}">
-                <p style="margin-top:0;">Collection: <strong>#{adminBean.selectedCollectionForProducts.name}</strong></p>
-                <p:pickList value="#{adminBean.collectionProductsPickList}" var="productId"
-                            itemLabel="#{adminBean.resolveProductNameById(productId)}" itemValue="#{productId}"
-                            showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" responsive="true"/>
-                <div style="margin-top:10px; display:flex; gap:8px; justify-content:flex-end;">
-                    <p:commandButton value="Save" action="#{adminBean.saveCollectionProducts}" update=":mainForm" oncomplete="PF('collectionProductsDialog').hide()"/>
-                    <p:commandButton type="button" value="Cancel" onclick="PF('collectionProductsDialog').hide()" styleClass="ui-button-secondary"/>
-                </div>
-            </h:panelGroup>
-        </p:dialog>
+    <p:dialog id="collectionProductsDialog" widgetVar="collectionProductsDialog" header="Manage Collection Products"
+              modal="true" width="760" responsive="true">
+        <h:panelGroup rendered="#{not empty productCollectionBean.selectedCollectionForProducts}">
+            <p style="margin-top:0;">Collection: <strong>#{productCollectionBean.selectedCollectionForProducts.name}</strong></p>
+            <p:pickList value="#{productCollectionBean.collectionProductsPickList}" var="productId"
+                        itemLabel="#{productCollectionBean.resolveProductNameById(productId)}" itemValue="#{productId}"
+                        showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" responsive="true"/>
+            <div style="margin-top:10px; display:flex; gap:8px; justify-content:flex-end;">
+                <p:commandButton value="Save" action="#{productCollectionBean.saveCollectionProducts}" update=":mainForm" oncomplete="PF('collectionProductsDialog').hide()"/>
+                <p:commandButton type="button" value="Cancel" onclick="PF('collectionProductsDialog').hide()" styleClass="ui-button-secondary"/>
+            </div>
+        </h:panelGroup>
+    </p:dialog>
 
-    </h:body>
-</html>
+</ui:composition>
