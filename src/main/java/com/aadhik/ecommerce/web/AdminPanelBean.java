@@ -31,6 +31,10 @@ public class AdminPanelBean extends AdminBean {
     public boolean deleteForm(Object form) {
         return false;
     }
+    
+    public void setActiveMenu(String activeMenu) {
+        this.activeMenu = activeMenu;
+    }
 
     public String getActiveMenu() {
         return activeMenu;

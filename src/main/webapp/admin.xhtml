@@ -84,7 +84,9 @@
                         <p:column headerText="Name" sortBy="#{fItem.fileName}"><h:outputText value="#{fItem.fileName}"/></p:column>
                         <p:column headerText="Type" sortBy="#{fItem.fileType}"><h:outputText value="#{fItem.fileType}"/></p:column>
                         <p:column headerText="Size" sortBy="#{fItem.fileSize}"><h:outputText value="#{adminPanelBean.humanSize(fItem.fileSize)}"/></p:column>
-                        <p:column headerText="Action" style="width:120px;"><p:commandButton value="Select" action="#{adminPanelBean.selectFile(fItem)}" update=":mainForm" oncomplete="PF('filePicker').hide()" process="@this"/></p:column>
+                        <p:column headerText="Action" style="width:120px;">
+                            <p:commandButton value="Select" action="#{adminPanelBean.selectFile(fItem)}" update=":mainForm" oncomplete="PF('filePicker').hide()" process="@this"/>
+                        </p:column>
                     </p:dataTable>
                 </p:dialog>
 

@@ -77,12 +77,18 @@ public class ProductCollectionBean extends AdminBean {
         this.collectionForm = collectionForm;
     }
 
+    @Override
     public void selectFile(MediaFile file) {
         String ref = toDbFileRef(file.getId());
         if ("collection-banner".equals(fileSelectionTarget)) {
             collectionForm.setBannerImage(ref);
         }
         addInfo("File selected");
+    }
+
+    public void openFilePickerForCollectionBanner() {
+        fileSelectionTarget = "collection-banner";
+        fileSelectionVariantIndex = -1;
     }
 
     public void openCollectionProductsManager(ProductCollection collection) {

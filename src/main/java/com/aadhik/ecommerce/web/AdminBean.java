@@ -62,12 +62,8 @@ public abstract class AdminBean extends BaseBean implements Serializable {
 
     public abstract boolean deleteForm(Object form);
 
-    public void setActiveMenu(String activeMenu) {
-        this.activeMenu = activeMenu;
-        if (!"products".equals(activeMenu)) {
-//            productEditorVisible = false;
-        }
-    }
+     public void selectFile(MediaFile file) {
+     }
 
     public void openFilePickerForPrimary() {
         fileSelectionTarget = "primary";
@@ -87,11 +83,6 @@ public abstract class AdminBean extends BaseBean implements Serializable {
 
     public void openFilePickerForSlider() {
         fileSelectionTarget = "slider";
-        fileSelectionVariantIndex = -1;
-    }
-
-    public void openFilePickerForCollectionBanner() {
-        fileSelectionTarget = "collection-banner";
         fileSelectionVariantIndex = -1;
     }
 
