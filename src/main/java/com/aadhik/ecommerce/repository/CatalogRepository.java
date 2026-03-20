@@ -4,7 +4,6 @@ import com.aadhik.ecommerce.model.HomeCollectionGroup;
 import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSectionOrderItem;
 import com.aadhik.ecommerce.model.HomeSlider;
-import com.aadhik.ecommerce.model.HomepageSection;
 import com.aadhik.ecommerce.model.MarqueeConfig;
 import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
@@ -58,19 +57,6 @@ public class CatalogRepository {
         }
         query.append(" order by v.sortOrder asc, v.id asc ");
         return entityManager.createQuery(query.toString(), VideoCarouselItem.class).getResultList();
-    }
-
-    public List<HomepageSection> findSections(boolean activeOnly) {
-        StringBuilder query = new StringBuilder(" select hs from HomepageSection hs left join fetch hs.collection c ");
-        if (activeOnly) {
-            query.append(" where hs.active = true ");
-        }
-        query.append(" order by hs.sortOrder asc, hs.id asc ");
-        return entityManager.createQuery(query.toString(), HomepageSection.class).getResultList();
-    }
-
-    public List<HomepageSection> findActiveSections() {
-        return findSections(true);
     }
 
     public List<HomeSectionOrderItem> findHomeSectionOrderItems() {
@@ -221,10 +207,6 @@ public class CatalogRepository {
         return entityManager.find(VideoCarouselItem.class, id);
     }
 
-    public HomepageSection findHomepageSectionById(Long id) {
-        return entityManager.find(HomepageSection.class, id);
-    }
-
     public MarqueeConfig findMarqueeConfigById(Long id) {
         return entityManager.find(MarqueeConfig.class, id);
     }
@@ -295,25 +277,6 @@ public class CatalogRepository {
             return slider;
         }
         return entityManager.merge(slider);
-    }
-
-    @Transactional
-    public HomepageSection saveSection(HomepageSection section) {
-        if (section.getCollection() != null) {
-            if (section.getCollection().getId() != null) {
-                ProductCollection managedCollection = entityManager.find(ProductCollection.class, section.getCollection().getId());
-                section.setCollection(managedCollection);
-            } else {
-                section.setCollection(null);
-            }
-        }
-
-        if (section.getId() == null) {
-            entityManager.persist(section);
-            return section;
-        }
-
-        return entityManager.merge(section);
     }
 
     @Transactional

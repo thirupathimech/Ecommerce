@@ -103,9 +103,50 @@
                                 </div>
                             </section>
                         </h:panelGroup>
-                        
-                        <h:panelGroup id="product_collection_panelgroup" rendered="#{orderedSection.type.name() eq 'PRODUCTS_COLLECTION' and not empty orderedSection.collections}" layout="block" >
-                            
+
+                        <h:panelGroup id="product_collection_panelgroup" rendered="#{orderedSection.type.name() eq 'PRODUCTS_COLLECTION' and not empty orderedSection.products}" layout="block" styleClass="product-collection-section">
+                            <section>
+                                <h2 class="section-title">#{orderedSection.collectionSection.sectionTitle}</h2>
+                                <div class="products-grid">
+                                    <ui:repeat value="#{orderedSection.products}" var="product">
+                                        <article class="product-card">
+                                            <div class="product-card-media">
+                                                <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}" layout="block" styleClass="product-badge">Sale</h:panelGroup>
+                                                <h:graphicImage value="#{homePageBean.resolveMediaUrl(product.imageUrl)}" alt="#{product.name}"/>
+                                            </div>
+                                            <div class="product-info">
+                                                <h3 class="product-title">#{product.name}</h3>
+                                                <div class="product-price-stack">
+                                                    <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}">
+                                                        <span class="old-price">#{homePageBean.formatPrice(product.comparePrice)}</span>
+                                                    </h:panelGroup>
+                                                    <span class="new-price">#{homePageBean.productPriceLabel(product)}</span>
+                                                </div>
+                                                <h:panelGroup rendered="#{product.hasVariants}">
+                                                    <div class="product-variant-preview">
+                                                        <ui:repeat value="#{homePageBean.getProductVariants(product)}" var="variant" varStatus="variantStatus">
+                                                            <span class="variant-pill">#{variant.name}</span>
+                                                        </ui:repeat>
+                                                    </div>
+                                                </h:panelGroup>
+                                                <h:panelGroup rendered="#{product.hasVariants}">
+                                                    <p:commandButton value="#{homePageBean.productCtaLabel(product)}"
+                                                                     actionListener="#{homePageBean.openPurchaseDialog(product)}"
+                                                                     process="@this"
+                                                                     update=":mainForm:purchaseDialog :mainForm:messages"
+                                                                     oncomplete="PF('purchaseDialogWidget').show()"
+                                                                     styleClass="product-cta-btn product-cta-buy"/>
+                                                </h:panelGroup>
+                                                <h:panelGroup rendered="#{not product.hasVariants}">
+                                                    <p:commandButton value="#{homePageBean.productCtaLabel(product)}"
+                                                                     type="button"
+                                                                     styleClass="product-cta-btn product-cta-add"/>
+                                                </h:panelGroup>
+                                            </div>
+                                        </article>
+                                    </ui:repeat>
+                                </div>
+                            </section>
                         </h:panelGroup>
                     </ui:repeat>
                 </ui:fragment>
@@ -114,6 +155,47 @@
                     <p:outputLabel value="Please contact administrator"/>
                 </ui:fragment>
             </main>
+
+            <p:messages id="messages" showDetail="true" showIcon="false" closable="true"/>
+
+            <p:dialog id="purchaseDialog" widgetVar="purchaseDialogWidget" header="Choose Variant" modal="true" responsive="true"
+                      appendTo="@(body)" styleClass="purchase-dialog" width="640">
+                <h:panelGroup rendered="#{not empty homePageBean.selectedProduct}" layout="block" styleClass="purchase-dialog-body">
+                    <div class="purchase-product-summary">
+                        <h:graphicImage value="#{homePageBean.resolveMediaUrl(homePageBean.selectedProduct.imageUrl)}" alt="#{homePageBean.selectedProduct.name}"/>
+                        <div>
+                            <h3>#{homePageBean.selectedProduct.name}</h3>
+                            <p>Select the variant and continue with your action.</p>
+                        </div>
+                    </div>
+
+                    <h:panelGroup id="variantChooser" layout="block" styleClass="variant-options-shell">
+                        <ui:repeat value="#{homePageBean.selectedProductVariants}" var="variant">
+                            <p:commandLink actionListener="#{homePageBean.selectVariant(variant.index)}" process="@this" update=":mainForm:purchaseDialog"
+                                           styleClass="variant-option-card #{homePageBean.selectedVariant ne null and homePageBean.selectedVariant.index eq variant.index ? 'active' : ''}">
+                                <span class="variant-option-check"><i class="pi pi-check"></i></span>
+                                <h:graphicImage value="#{variant.imageUrl}" alt="#{variant.name}"/>
+                                <div class="variant-option-details">
+                                    <strong>#{variant.name}</strong>
+                                    <span>#{homePageBean.formatPrice(variant.price)}</span>
+                                    <h:panelGroup rendered="#{not empty variant.comparePrice}">
+                                        <small class="old-price">#{homePageBean.formatPrice(variant.comparePrice)}</small>
+                                    </h:panelGroup>
+                                </div>
+                            </p:commandLink>
+                        </ui:repeat>
+                    </h:panelGroup>
+
+                    <div class="purchase-dialog-actions">
+                        <p:commandButton value="Add To Cart" action="#{homePageBean.addSelectedVariantToCart}"
+                                         update=":mainForm:messages :mainForm:purchaseDialog" process=":mainForm:purchaseDialog"
+                                         oncomplete="if (!args.validationFailed) PF('purchaseDialogWidget').hide()" styleClass="product-cta-btn product-cta-add"/>
+                        <p:commandButton value="Buy It Now" action="#{homePageBean.buySelectedVariantNow}"
+                                         update=":mainForm:messages :mainForm:purchaseDialog" process=":mainForm:purchaseDialog"
+                                         oncomplete="if (!args.validationFailed) PF('purchaseDialogWidget').hide()" styleClass="product-cta-btn product-cta-buy"/>
+                    </div>
+                </h:panelGroup>
+            </p:dialog>
         </h:form>
         <h:outputScript target="body">
             (function () {

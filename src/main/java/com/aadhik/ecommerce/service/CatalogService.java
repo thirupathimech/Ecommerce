@@ -9,12 +9,10 @@ import static com.aadhik.ecommerce.model.HomeSectionType.HOME_SLIDER;
 import static com.aadhik.ecommerce.model.HomeSectionType.MARQUEE;
 import static com.aadhik.ecommerce.model.HomeSectionType.VIDEO_CAROUSEL;
 import com.aadhik.ecommerce.model.HomeSlider;
-import com.aadhik.ecommerce.model.HomepageSection;
 import com.aadhik.ecommerce.model.MarqueeConfig;
 import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
-import com.aadhik.ecommerce.model.SectionType;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
 import com.aadhik.ecommerce.repository.CatalogRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -62,32 +60,6 @@ public class CatalogService {
         return repository.findVideoCarouselItems(false);
     }
 
-    public List<HomepageSection> getHomepageSections() {
-        return repository.findSections(false);
-    }
-
-    public List<HomepageSectionView> getHomepageSectionsWithProducts() {
-        List<HomepageSectionView> result = new ArrayList<>();
-        List<HomepageSection> sections = repository.findActiveSections();
-
-        for (HomepageSection section : sections) {
-            int limit = Math.max(1, section.getMaxItems());
-            List<Product> products;
-
-            if (section.getSectionType() == SectionType.COLLECTION
-                    && section.getCollection() != null
-                    && section.getCollection().getId() != null) {
-                products = repository.findProductsByCollection(section.getCollection().getId(), limit);
-            } else {
-                products = repository.findFeaturedProducts(limit);
-            }
-
-            result.add(new HomepageSectionView(section, products));
-        }
-
-        return result;
-    }
-
     public List<HomeSectionOrderItem> getHomeSectionOrderItems() {
         return repository.findHomeSectionOrderItems();
     }
@@ -122,18 +94,10 @@ public class CatalogService {
                     }
                 }
                 case PRODUCTS_COLLECTION -> {
-                    HomepageSection collectionSection = repository.findHomepageSectionById(item.getRecordId());
-                    if (collectionSection != null && collectionSection.isActive()) {
-                        int limit = Math.max(1, collectionSection.getMaxItems());
-                        List<Product> products;
-                        if (collectionSection.getSectionType() == SectionType.COLLECTION
-                                && collectionSection.getCollection() != null
-                                && collectionSection.getCollection().getId() != null) {
-                            products = repository.findProductsByCollection(collectionSection.getCollection().getId(), limit);
-                        } else {
-                            products = repository.findFeaturedProducts(limit);
-                        }
-                        sections.add(HomeRenderSection.forCollectionSection(collectionSection, products));
+                    ProductCollection productCollection = repository.findCollectionById(item.getRecordId());
+                    if (productCollection != null && productCollection.isActive()) {
+                        List<Product> productList = repository.findProductsByCollection(productCollection.getId(), 25);
+                        sections.add(HomeRenderSection.forCollectionSection(productList));
                     }
                 }
                 case COLLECTION_GROUP -> {
@@ -216,10 +180,6 @@ public class CatalogService {
         repository.deleteVideoCarouselItem(id);
     }
 
-    public HomepageSection saveSection(HomepageSection section) {
-        return repository.saveSection(section);
-    }
-
     public ProductCollection saveCollection(ProductCollection collection) {
         return repository.saveCollection(collection);
     }
@@ -259,7 +219,7 @@ public class CatalogService {
                 continue;
             }
             try {
-                Long id = Long.parseLong(value);
+                Long id = Long.valueOf(value);
                 ProductCollection collection = repository.findCollectionById(id);
                 if (collection != null && collection.isActive()) {
                     result.add(collection);
@@ -276,7 +236,6 @@ public class CatalogService {
         private HomeSlider slider;
         private HomeDivSection divSection;
         private VideoCarouselItem videoItem;
-        private HomepageSection collectionSection;
         private HomeCollectionGroup collectionGroup;
         private List<Product> products = List.of();
         private List<ProductCollection> collections = List.of();
@@ -303,10 +262,9 @@ public class CatalogService {
             return section;
         }
 
-        public static HomeRenderSection forCollectionSection(HomepageSection collectionSection, List<Product> products) {
+        public static HomeRenderSection forCollectionSection(List<Product> products) {
             HomeRenderSection section = new HomeRenderSection();
             section.type = HomeSectionType.PRODUCTS_COLLECTION;
-            section.collectionSection = collectionSection;
             section.products = products == null ? List.of() : products;
             return section;
         }
@@ -342,10 +300,6 @@ public class CatalogService {
             return videoItem;
         }
 
-        public HomepageSection getCollectionSection() {
-            return collectionSection;
-        }
-
         public HomeCollectionGroup getCollectionGroup() {
             return collectionGroup;
         }
@@ -363,22 +317,4 @@ public class CatalogService {
         }
     }
 
-    public static class HomepageSectionView {
-
-        private final HomepageSection section;
-        private final List<Product> products;
-
-        public HomepageSectionView(HomepageSection section, List<Product> products) {
-            this.section = section;
-            this.products = products;
-        }
-
-        public HomepageSection getSection() {
-            return section;
-        }
-
-        public List<Product> getProducts() {
-            return products;
-        }
-    }
 }

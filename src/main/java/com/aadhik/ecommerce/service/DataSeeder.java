@@ -2,7 +2,6 @@ package com.aadhik.ecommerce.service;
 
 import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSlider;
-import com.aadhik.ecommerce.model.HomepageSection;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.SectionType;
@@ -59,8 +58,6 @@ public class DataSeeder {
                 "https://images.unsplash.com/photo-1514996937319-344454492b37?w=700&h=900&fit=crop",
                 new BigDecimal("250.00"), null, true, nutrition);
 
-        createSection("Best Sellers", SectionType.BEST_SELLERS, null, 4, 1);
-        createSection("Nutrition Drinks", SectionType.COLLECTION, nutrition, 4, 2);
         createHomeDivSection(
                 "From mother's heart to baby's first smile 😇",
                 "The Mothers Care brings you 100% pure, organic baby essentials crafted with love and nature's finest ingredients",
@@ -104,17 +101,6 @@ public class DataSeeder {
         product.setActive(true);
         product.setCollection(collection);
         entityManager.persist(product);
-    }
-
-    private void createSection(String title, SectionType type, ProductCollection collection, int maxItems, int sortOrder) {
-        HomepageSection section = new HomepageSection();
-        section.setSectionTitle(title);
-        section.setSectionType(type);
-        section.setCollection(collection);
-        section.setMaxItems(maxItems);
-        section.setSortOrder(sortOrder);
-        section.setActive(true);
-        entityManager.persist(section);
     }
 
     private void createHomeDivSection(String heading, String description, String buttonLabel, String buttonLink,

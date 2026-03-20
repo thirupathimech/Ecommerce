@@ -3,12 +3,15 @@ package com.aadhik.ecommerce.web;
 import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.MarqueeConfig;
+import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
 import com.aadhik.ecommerce.service.CatalogService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -21,8 +24,13 @@ import java.util.stream.Collectors;
 @RequestScoped
 public class HomePageBean extends BaseBean {
 
+    private static final DecimalFormat PRICE_FORMAT = new DecimalFormat("0.00");
+
     @Inject
     private CatalogService catalogService;
+
+    private Long selectedProductId;
+    private Integer selectedVariantIndex;
 
     public List<HomeSlider> getSliders() {
         return catalogService.getHomeActiveSliders();
@@ -30,10 +38,6 @@ public class HomePageBean extends BaseBean {
 
     public List<HomeDivSection> getHomeDivSections() {
         return catalogService.getHomeActiveDivSections();
-    }
-
-    public List<CatalogService.HomepageSectionView> getSectionViews() {
-        return catalogService.getHomepageSectionsWithProducts();
     }
 
     public List<CatalogService.HomeRenderSection> getOrderedHomeSections() {
@@ -161,5 +165,198 @@ public class HomePageBean extends BaseBean {
             return "/resources/files/" + source.substring("dbfile:".length());
         }
         return source;
+    }
+
+    public String formatPrice(BigDecimal value) {
+        if (value == null) {
+            return "";
+        }
+        return "Rs. " + PRICE_FORMAT.format(value);
+    }
+
+    public boolean hasDiscount(Product product) {
+        return product != null
+                && product.getComparePrice() != null
+                && product.getPrice() != null
+                && product.getComparePrice().compareTo(product.getPrice()) > 0;
+    }
+
+    public String productPriceLabel(Product product) {
+        if (product == null || product.getPrice() == null) {
+            return "";
+        }
+        return product.isHasVariants() ? "From " + formatPrice(product.getPrice()) : formatPrice(product.getPrice());
+    }
+
+    public String productCtaLabel(Product product) {
+        return product != null && product.isHasVariants() ? "Buy Now" : "Add To Cart";
+    }
+
+    public List<ProductVariantOption> getProductVariants(Product product) {
+        List<ProductVariantOption> variants = new ArrayList<>();
+        if (product == null || isBlank(product.getVariantData())) {
+            return variants;
+        }
+        String[] lines = product.getVariantData().split("\\n");
+        for (int index = 0; index < lines.length; index++) {
+            String line = lines[index];
+            if (isBlank(line)) {
+                continue;
+            }
+            String[] parts = line.split("\\|", -1);
+            ProductVariantOption option = new ProductVariantOption();
+            option.setIndex(index);
+            option.setName(unescape(getSafe(parts, 0)));
+            option.setImageUrl(resolveMediaUrl(unescape(getSafe(parts, 1))));
+            option.setPrice(toDecimal(getSafe(parts, 2)));
+            option.setComparePrice(toDecimal(getSafe(parts, 3)));
+            option.setWeight(toDecimal(getSafe(parts, 4)));
+            variants.add(option);
+        }
+        return variants;
+    }
+
+    public void openPurchaseDialog(Product product) {
+        selectedProductId = product == null ? null : product.getId();
+        selectedVariantIndex = 0;
+    }
+
+    public Product getSelectedProduct() {
+        if (selectedProductId == null) {
+            return null;
+        }
+        for (CatalogService.HomeRenderSection section : getOrderedHomeSections()) {
+            for (Product product : section.getProducts()) {
+                if (selectedProductId.equals(product.getId())) {
+                    return product;
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<ProductVariantOption> getSelectedProductVariants() {
+        return getProductVariants(getSelectedProduct());
+    }
+
+    public ProductVariantOption getSelectedVariant() {
+        List<ProductVariantOption> variants = getSelectedProductVariants();
+        if (variants.isEmpty()) {
+            return null;
+        }
+        int index = selectedVariantIndex == null ? 0 : selectedVariantIndex;
+        if (index < 0 || index >= variants.size()) {
+            return variants.get(0);
+        }
+        return variants.get(index);
+    }
+
+    public void setSelectedVariantIndex(Integer selectedVariantIndex) {
+        this.selectedVariantIndex = selectedVariantIndex;
+    }
+
+    public void selectVariant(int variantIndex) {
+        this.selectedVariantIndex = variantIndex;
+    }
+
+    public Integer getSelectedVariantIndex() {
+        return selectedVariantIndex;
+    }
+
+    public void addSelectedVariantToCart() {
+        Product product = getSelectedProduct();
+        ProductVariantOption variant = getSelectedVariant();
+        if (product == null || variant == null) {
+            addWarn("Select a product variant first.");
+            return;
+        }
+        addInfo(product.getName() + " - " + variant.getName() + " added to cart.");
+    }
+
+    public void buySelectedVariantNow() {
+        Product product = getSelectedProduct();
+        ProductVariantOption variant = getSelectedVariant();
+        if (product == null || variant == null) {
+            addWarn("Select a product variant first.");
+            return;
+        }
+        addInfo("Buy it now ready for " + product.getName() + " - " + variant.getName() + ".");
+    }
+
+    private String getSafe(String[] values, int index) {
+        return index < values.length ? values[index] : "";
+    }
+
+    private String unescape(String value) {
+        return value == null ? "" : value.replace("\\p", "|").replace("\\n", "\n").replace("\\r", "\r");
+    }
+
+    private BigDecimal toDecimal(String value) {
+        if (isBlank(value)) {
+            return null;
+        }
+        try {
+            return new BigDecimal(value.trim());
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    public static class ProductVariantOption {
+
+        private int index;
+        private String name;
+        private String imageUrl;
+        private BigDecimal price;
+        private BigDecimal comparePrice;
+        private BigDecimal weight;
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+
+        public BigDecimal getPrice() {
+            return price;
+        }
+
+        public void setPrice(BigDecimal price) {
+            this.price = price;
+        }
+
+        public BigDecimal getComparePrice() {
+            return comparePrice;
+        }
+
+        public void setComparePrice(BigDecimal comparePrice) {
+            this.comparePrice = comparePrice;
+        }
+
+        public BigDecimal getWeight() {
+            return weight;
+        }
+
+        public void setWeight(BigDecimal weight) {
+            this.weight = weight;
+        }
     }
 }

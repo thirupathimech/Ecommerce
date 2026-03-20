@@ -335,10 +335,6 @@ public abstract class AdminBean extends BaseBean implements Serializable {
         return Arrays.asList("LEFT", "CENTER", "RIGHT");
     }
 
-    public List<CatalogService.HomepageSectionView> getSectionViews() {
-        return catalogService.getHomepageSectionsWithProducts();
-    }
-
     public List<ProductCollection> getCollections() {
         return catalogService.getCollections();
     }
