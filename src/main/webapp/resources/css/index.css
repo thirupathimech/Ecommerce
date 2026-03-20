@@ -778,9 +778,14 @@ body {
         padding: 1rem 0.75rem 1.5rem;
     }
     .products-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 1rem;
     }
+    .products-grid.is-box {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .products-grid.is-scroll {
+        grid-auto-columns: minmax(220px, 78vw);
+    }D
     .product-card-media {
         padding: 0.8rem 0.8rem 0;
     }
