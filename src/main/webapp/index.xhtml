@@ -103,6 +103,10 @@
                                 </div>
                             </section>
                         </h:panelGroup>
+                        
+                        <h:panelGroup id="product_collection_panelgroup" rendered="#{orderedSection.type.name() eq 'COLLECTION_GROUP' and not empty orderedSection.collections}" layout="block" >
+                            
+                        </h:panelGroup>
                     </ui:repeat>
                 </ui:fragment>
 

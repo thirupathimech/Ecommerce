@@ -158,6 +158,105 @@ body {
 .ui-datatable table {
     min-width: 760px;
 }
+
+.section-subtitle {
+    margin: 4px 0 0;
+    color: #5f6f99;
+    font-size: 0.92rem;
+}
+.product-card-head {
+    gap: 12px;
+}
+.product-card-head h3,
+.product-editor-header h2,
+.product-section-head h3 {
+    margin: 0;
+}
+.product-editor-page {
+    display: grid;
+    gap: 16px;
+}
+.product-breadcrumb-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.product-breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #5f6f99;
+    font-size: 0.92rem;
+}
+.product-editor-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.product-editor-messages {
+    margin: 0;
+}
+.product-editor-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 0.9fr);
+    gap: 16px;
+    align-items: start;
+}
+.product-editor-main,
+.product-editor-sidebar {
+    display: grid;
+    gap: 16px;
+}
+.product-section-card {
+    background: #fff;
+    border: 1px solid #dfe5f2;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(21,40,70,.06);
+    overflow: hidden;
+}
+.product-section-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    border-bottom: 1px solid #e8ecf8;
+    background: linear-gradient(180deg, #ffffff 0%, #f7f9fd 100%);
+}
+.product-section-body {
+    padding: 16px 18px 18px;
+}
+.product-sidebar-grid {
+    grid-template-columns: 1fr;
+}
+.variant-section-body {
+    display: grid;
+    gap: 14px;
+}
+.variant-card {
+    box-shadow: none;
+    border-color: #e4e9f5;
+}
+.product-editor-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.top-actions {
+    justify-content: flex-end;
+}
+.bottom-actions {
+    padding-top: 4px;
+}
+
+
+
+
+
 @media (max-width: 1024px) {
     .layout {
         grid-template-columns: 1fr;
@@ -195,6 +294,9 @@ body {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+
+
 @media (max-width: 720px) {
     .content {
         padding: 10px;
@@ -208,6 +310,18 @@ body {
     .dashboard-grid,
     .shortcut-grid {
         grid-template-columns: 1fr;
+    }
+	.product-breadcrumb-bar,
+    .product-editor-header,
+    .product-section-head {
+        flex-direction: column;
+    }
+    .product-editor-layout {
+        grid-template-columns: 1fr;
+    }
+    .product-section-body,
+    .product-section-head {
+        padding: 14px;
     }
 }
 
