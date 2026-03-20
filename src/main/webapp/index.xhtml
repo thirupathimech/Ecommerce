@@ -88,12 +88,20 @@
 
                         <h:panelGroup id="collection_section_panelgroup" rendered="#{orderedSection.type.name() eq 'COLLECTION_GROUP' and not empty orderedSection.collections}" layout="block" styleClass="collection-group-section #{orderedSection.collectionGroup.scrollDisplayMode ? 'collection-group-section-scroll' : 'collection-group-section-box'}">
                             <section>
-                                <div class="collection-group-header">
+                                <div class="collection-group-header #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
                                     <h2 class="section-title">#{orderedSection.collectionGroup.title}</h2>
+                                    <h:panelGroup rendered="#{orderedSection.collectionGroup.scrollDisplayMode}" layout="block" styleClass="collection-group-scroll-tools">
+                                        <span class="collection-group-scroll-hint">Scroll to explore</span>
+                                        <div class="collection-group-scroll-nav">
+                                            <button type="button" class="collection-group-nav-btn" data-collection-nav="prev" aria-label="Show previous collections">&#8592;</button>
+                                            <span class="collection-group-scroll-status" data-collection-status="true">1/1</span>
+                                            <button type="button" class="collection-group-nav-btn" data-collection-nav="next" aria-label="Show next collections">&#8594;</button>
+                                        </div>
+                                    </h:panelGroup>
                                 </div>
-                                <div class="collection-group-track #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
+                                <div class="collection-group-track #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}" data-collection-track="true">
                                     <ui:repeat value="#{orderedSection.collections}" var="collection">
-                                         <article class="collection-group-card #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
+                                        <article class="collection-group-card #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
                                             <h:graphicImage value="#{homePageBean.resolveMediaUrl(collection.bannerImage)}"
                                                             alt="#{collection.name}"/>
                                             <div class="collection-group-card-body">
@@ -259,80 +267,103 @@
             slides[index].classList.add('active');
             }, interval);
             }());
-            
-             (function() {
-                function setupCollectionGroup(section) {
-                    const track = section.querySelector('[data-collection-track="true"]');
-                    const status = section.querySelector('[data-collection-status]');
-                    const prevBtn = section.querySelector('[data-collection-nav="prev"]');
-                    const nextBtn = section.querySelector('[data-collection-nav="next"]');
-                    if (!track || !status || !prevBtn || !nextBtn) {
-                        return;
-                    }
 
-                    const cards = Array.from(track.querySelectorAll('.collection-group-card.is-scroll'));
-                    if (!cards.length) {
-                        status.textContent = '0/0';
-                        prevBtn.disabled = true;
-                        nextBtn.disabled = true;
-                        return;
-                    }
+            (function() {
+            function setupCollectionGroup(section) {
+            if (section.dataset.collectionGroupReady === 'true') {
+            return;
+            }
+            const track = section.querySelector('[data-collection-track="true"]');
+            const status = section.querySelector('[data-collection-status]');
+            const prevBtn = section.querySelector('[data-collection-nav="prev"]');
+            const nextBtn = section.querySelector('[data-collection-nav="next"]');
+            if (!track || !status || !prevBtn || !nextBtn) {
+            return;
+            }
 
-                    const getStep = function() {
-                        const firstCard = cards[0];
-                        if (!firstCard) {
-                            return track.clientWidth;
-                        }
-                        const gap = parseFloat(window.getComputedStyle(track).columnGap || window.getComputedStyle(track).gap || '0');
-                        return firstCard.getBoundingClientRect().width + gap;
-                    };
+            const cards = Array.from(track.querySelectorAll('.collection-group-card.is-scroll'));
+            if (!cards.length) {
+            status.textContent = '0/0';
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            return;
+            }
+            section.dataset.collectionGroupReady = 'true';
 
-                    const getPageCount = function() {
-                        const maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0);
-                        if (maxScroll &lt;= 0) {
-                            return 1;
-                        }
-                        return Math.max(1, Math.round(maxScroll / getStep()) + 1);
-                    };
+            const getStep = function() {
+            const firstCard = cards[0];
+            if (!firstCard) {
+            return track.clientWidth;
+            }
+            const styles = window.getComputedStyle(track);
+            const gap = parseFloat(styles.columnGap || styles.gap || '0');
+            return firstCard.getBoundingClientRect().width + gap;
+            };
 
-                    const updateState = function() {
-                        const pageCount = getPageCount();
-                        const step = Math.max(getStep(), 1);
-                        const currentPage = Math.min(pageCount, Math.round(track.scrollLeft / step) + 1);
-                        status.textContent = currentPage + '/' + pageCount;
-                        prevBtn.disabled = currentPage  &lt;= 1;
-                        nextBtn.disabled = currentPage  &gt;= pageCount;
-                    };
+            const getPageCount = function() {
+            const maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0);
+            if (maxScroll &lt;= 0) {
+            return 1;
+            }
+            return Math.max(1, Math.round(maxScroll / getStep()) + 1);
+            };
 
-                    const scrollByPage = function(direction) {
-                        track.scrollBy({
-                            left: getStep() * direction,
-                            behavior: 'smooth'
-                        });
-                    };
+            const updateState = function() {
+            const pageCount = getPageCount();
+            const step = Math.max(getStep(), 1);
+            const maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0);
+            const currentLeft = Math.min(track.scrollLeft, maxScroll);
+            const currentPage = Math.min(pageCount, Math.round(currentLeft / step) + 1);
+            status.textContent = currentPage + '/' + pageCount;
+            prevBtn.disabled = currentLeft &lt;= 8;
+            nextBtn.disabled = currentLeft &gt;= maxScroll - 8;
+            };
 
-                    prevBtn.addEventListener('click', function() {
-                        scrollByPage(-1);
-                    });
-                    nextBtn.addEventListener('click', function() {
-                        scrollByPage(1);
-                    });
-                    track.addEventListener('scroll', function() {
-                        window.requestAnimationFrame(updateState);
-                    }, { passive: true });
-                    window.addEventListener('resize', updateState);
-                    updateState();
-                }
+            const scrollByPage = function(direction) {
+            track.scrollBy({
+            left: getStep() * direction,
+            behavior: 'smooth'
+            });
+            };
 
-                function initCollectionGroups() {
-                    document.querySelectorAll('.collection-group-section-scroll').forEach(setupCollectionGroup);
-                }
+            const handleWheelScroll = function(event) {
+            if (window.innerWidth &lt;= 768) {
+            return;
+            }
 
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', initCollectionGroups);
-                } else {
-                    initCollectionGroups();
-                }
+            const mostlyVertical = Math.abs(event.deltaY) &gt; Math.abs(event.deltaX);
+            const canScrollHorizontally = track.scrollWidth &gt; track.clientWidth;
+            if (!mostlyVertical || !canScrollHorizontally) {
+            return;
+            }
+
+            event.preventDefault();
+            track.scrollLeft += event.deltaY;
+            };
+
+            prevBtn.addEventListener('click', function() {
+            scrollByPage(-1);
+            });
+            nextBtn.addEventListener('click', function() {
+            scrollByPage(1);
+            });
+            track.addEventListener('wheel', handleWheelScroll, { passive: false });
+            track.addEventListener('scroll', function() {
+            window.requestAnimationFrame(updateState);
+            }, { passive: true });
+            window.addEventListener('resize', updateState);
+            updateState();
+            }
+
+            function initCollectionGroups() {
+            document.querySelectorAll('.collection-group-section-scroll').forEach(setupCollectionGroup);
+            }
+
+            if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCollectionGroups);
+            } else {
+            initCollectionGroups();
+            }
             })();
         </h:outputScript>
     </h:body>

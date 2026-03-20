@@ -608,6 +608,21 @@ body {
 .collection-group-header.is-scroll {
     margin-bottom: 1rem;
 }
+.collection-group-scroll-tools {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.collection-group-scroll-hint {
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #5c647a;
+}
 
 .collection-group-scroll-nav {
     display: inline-flex;
@@ -668,6 +683,8 @@ body {
     padding: 0.35rem 0.1rem 0.7rem;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
+    scroll-behavior: smooth;
+    cursor: ew-resize;
 }
 
 .collection-group-track.is-scroll::-webkit-scrollbar {
@@ -779,6 +796,10 @@ body {
      .collection-group-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+     .collection-group-scroll-tools {
+        width: 100%;
+        justify-content: space-between;
     }
     .collection-group-scroll-nav {
         align-self: flex-end;
