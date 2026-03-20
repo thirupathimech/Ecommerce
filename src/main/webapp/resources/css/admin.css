@@ -18,6 +18,12 @@ body {
     color: #fff;
     padding: 16px 12px;
 }
+.sidebar-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-height: calc(100vh - 56px);
+}
 .brand {
     font-size: 1.05rem;
     font-weight: 700;
@@ -26,6 +32,44 @@ body {
 .menu-group {
     display: grid;
     gap: 8px;
+}
+.menu-tree-group {
+    display: grid;
+    gap: 10px;
+    padding: 10px 0 4px 14px;
+    border-left: 1px solid rgba(255,255,255,.18);
+    margin-left: 10px;
+}
+.menu-tree-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.7);
+}
+.menu-tree-items {
+    display: grid;
+    gap: 8px;
+    position: relative;
+}
+.menu-tree-btn.ui-button {
+    position: relative;
+}
+.menu-tree-btn.ui-button::before {
+    content: '';
+    position: absolute;
+    left: -16px;
+    top: 50%;
+    width: 12px;
+    border-top: 1px solid rgba(255,255,255,.18);
+}
+.menu-footer {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,.12);
+}
+.menu-btn-footer.ui-button {
+    background: rgba(255,255,255,.14) !important;
 }
 .menu-btn {
     width: 100%;
@@ -271,11 +315,35 @@ body {
         margin: 0 0 8px;
         font-size: .95rem;
     }
+    .sidebar-shell {
+        min-height: auto;
+        gap: 10px;
+    }
     .menu-group {
         display: flex;
         gap: 6px;
         overflow-x: auto;
         padding-bottom: 2px;
+    }
+    .menu-tree-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0;
+        margin-left: 0;
+        border-left: 0;
+    }
+    .menu-tree-items {
+        display: flex;
+        gap: 6px;
+    }
+    .menu-tree-btn.ui-button::before {
+        display: none;
+    }
+    .menu-footer {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: 0;
     }
     .menu-btn {
         width: auto;
@@ -311,7 +379,7 @@ body {
     .shortcut-grid {
         grid-template-columns: 1fr;
     }
-	.product-breadcrumb-bar,
+    .product-breadcrumb-bar,
     .product-editor-header,
     .product-section-head {
         flex-direction: column;

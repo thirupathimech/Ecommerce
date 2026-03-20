@@ -13,22 +13,34 @@
         <div class="layout">
             <h:form id="menuForm" styleClass="sidebar">
                 <p class="brand">Admin Console</p>
-                <div class="menu-group">
-                    <p:commandButton value="Dashboard" action="#{adminPanelBean.setActiveMenu('dashboard')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Orders" action="#{adminPanelBean.setActiveMenu('orders')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Customers" action="#{adminPanelBean.setActiveMenu('customers')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Discounts" action="#{adminPanelBean.setActiveMenu('discounts')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Products" action="#{adminPanelBean.setActiveMenu('products')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Collections" action="#{adminPanelBean.setActiveMenu('collections')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Content" action="#{adminPanelBean.setActiveMenu('content')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Files" action="#{adminPanelBean.setActiveMenu('files')}" update=":mainForm" process="@this" styleClass="menu-btn menu-separator"/>
-                    <p:commandButton value="Home Page" action="#{adminPanelBean.setActiveMenu('home-page')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Product Page" action="#{adminPanelBean.setActiveMenu('product-page')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="CheckOut Page" action="#{adminPanelBean.setActiveMenu('checkout-page')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Shipping" action="#{adminPanelBean.setActiveMenu('shipping')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Tax" action="#{adminPanelBean.setActiveMenu('tax')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Payments" action="#{adminPanelBean.setActiveMenu('payments')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                    <p:commandButton value="Settings" action="#{adminPanelBean.setActiveMenu('settings')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                <div class="sidebar-shell">
+                    <div class="menu-group">
+                        <p:commandButton value="Dashboard" action="#{adminPanelBean.setActiveMenu('dashboard')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                        <p:commandButton value="Orders" action="#{adminPanelBean.setActiveMenu('orders')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                        <p:commandButton value="Customers" action="#{adminPanelBean.setActiveMenu('customers')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                        <p:commandButton value="Discounts" action="#{adminPanelBean.setActiveMenu('discounts')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                        <p:commandButton value="Products" action="#{adminPanelBean.setActiveMenu('products')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                        <p:commandButton value="Collections" action="#{adminPanelBean.setActiveMenu('collections')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                        <p:commandButton value="Content" action="#{adminPanelBean.setActiveMenu('content')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                        <p:commandButton value="Files" action="#{adminPanelBean.setActiveMenu('files')}" update=":mainForm" process="@this" styleClass="menu-btn menu-separator"/>
+
+                        <div class="menu-tree-group">
+                            <div class="menu-tree-label">Page</div>
+                            <div class="menu-tree-items">
+                                <p:commandButton value="Home Page" action="#{adminPanelBean.setActiveMenu('home-page')}" update=":mainForm" process="@this" styleClass="menu-btn menu-tree-btn"/>
+                                <p:commandButton value="Product Page" action="#{adminPanelBean.setActiveMenu('product-page')}" update=":mainForm" process="@this" styleClass="menu-btn menu-tree-btn"/>
+                                <p:commandButton value="CheckOut Page" action="#{adminPanelBean.setActiveMenu('checkout-page')}" update=":mainForm" process="@this" styleClass="menu-btn menu-tree-btn"/>
+                            </div>
+                        </div>
+
+                        <p:commandButton value="Shipping" action="#{adminPanelBean.setActiveMenu('shipping')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                        <p:commandButton value="Tax" action="#{adminPanelBean.setActiveMenu('tax')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                        <p:commandButton value="Payments" action="#{adminPanelBean.setActiveMenu('payments')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
+                    </div>
+
+                    <div class="menu-footer">
+                        <p:commandButton value="Settings" action="#{adminPanelBean.setActiveMenu('settings')}" update=":mainForm" process="@this" styleClass="menu-btn menu-btn-footer"/>
+                    </div>
                 </div>
             </h:form>
 
