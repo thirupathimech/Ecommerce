@@ -94,4 +94,14 @@
         </div>
 
     </h:body>
+    <h:outputScript>
+        document.addEventListener('contextmenu', function(e) {
+            // PrimeFaces component area check
+            if (e.target.closest('.ui-datatable, .ui-menu, .ui-tree, .ui-panel')) {
+                return; // Allow PrimeFaces right-click
+            }
+            // Otherwise block browser context menu
+            e.preventDefault();
+        });
+    </h:outputScript>
 </html>

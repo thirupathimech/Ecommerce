@@ -106,7 +106,7 @@
 
                         <h:panelGroup id="product_collection_panelgroup" rendered="#{orderedSection.type.name() eq 'PRODUCTS_COLLECTION' and not empty orderedSection.products}" layout="block" styleClass="product-collection-section">
                             <section>
-                                <h2 class="section-title">#{orderedSection.collectionSection.sectionTitle}</h2>
+                                <h2 class="section-title">#{orderedSection.productCollection.name}</h2>
                                 <div class="products-grid">
                                     <ui:repeat value="#{orderedSection.products}" var="product">
                                         <article class="product-card">

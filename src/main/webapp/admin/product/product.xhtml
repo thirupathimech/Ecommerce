@@ -43,7 +43,7 @@
         <div class="product-editor-header">
             <div>
                 <h2>#{empty productBean.productForm.id ? 'Add product' : 'Edit product'}</h2>
-                <p class="section-subtitle">Structured like Shopify: keep the product information in separate sections so editing is easy.</p>
+                <p class="section-subtitle">Keep the product information in separate sections so editing is easy.</p>
             </div>
             <div class="product-editor-actions top-actions">
                 <p:commandButton value="#{empty productBean.productForm.id ? 'Save Product' : 'Update Product'}" action="#{productBean.saveForm}" update=":mainForm"/>
@@ -67,11 +67,15 @@
                         <div class="grid">
                             <div class="field full">
                                 <label for="title" class="mandatory">Title</label>
-                                <p:inputText id="title" value="#{productBean.productForm.name}" required="true"/>
+                                <p:inputText id="title" value="#{productBean.productForm.name}" required="true">
+                                    <p:ajax/>
+                                </p:inputText>
                             </div>
                             <div class="field full">
                                 <label for="desc" class="mandatory">Description</label>
-                                <p:inputTextarea id="desc" value="#{productBean.productForm.description}" rows="5" autoResize="false" required="true"/>
+                                <p:inputTextarea id="desc" value="#{productBean.productForm.description}" rows="5" autoResize="false" required="true">
+                                    <p:ajax/>
+                                </p:inputTextarea>
                             </div>
                         </div>
                     </div>
@@ -116,15 +120,21 @@
                         <div class="grid">
                             <div class="field">
                                 <label for="price" class="mandatory">Price</label>
-                                <p:inputNumber id="price" value="#{productBean.productForm.price}" decimalPlaces="2" required="true"/>
+                                <p:inputNumber id="price" value="#{productBean.productForm.price}" decimalPlaces="2" required="true">
+                                    <p:ajax/>
+                                </p:inputNumber>
                             </div>
                             <div class="field">
                                 <label for="comparePrice">Compare Price</label>
-                                <p:inputNumber id="comparePrice" value="#{productBean.productForm.comparePrice}" decimalPlaces="2"/>
+                                <p:inputNumber id="comparePrice" value="#{productBean.productForm.comparePrice}" decimalPlaces="2">
+                                    <p:ajax/>
+                                </p:inputNumber>
                             </div>
                             <div class="field">
                                 <label for="weight">Weight (kg)</label>
-                                <p:inputNumber id="weight" value="#{productBean.productForm.weight}" decimalPlaces="3"/>
+                                <p:inputNumber id="weight" value="#{productBean.productForm.weight}" decimalPlaces="3">
+                                    <p:ajax/>
+                                </p:inputNumber>
                             </div>
                         </div>
                     </div>
@@ -195,18 +205,24 @@
                         <div class="grid product-sidebar-grid">
                             <div class="field">
                                 <label for="sku" class="mandatory">SKU</label>
-                                <p:inputText id="sku" value="#{productBean.productForm.sku}" required="true" autocomplete="false"/>
+                                <p:inputText id="sku" value="#{productBean.productForm.sku}" required="true" autocomplete="false">
+                                    <p:ajax/>
+                                </p:inputText>
                             </div>
                             <div class="field">
                                 <label for="hsn">HSN</label>
-                                <p:inputText id="hsn" value="#{productBean.productForm.hsn}"/>
+                                <p:inputText id="hsn" value="#{productBean.productForm.hsn}">
+                                     <p:ajax/>
+                                </p:inputText>
                             </div>
                             <div class="field full">
                                 <label>Collections</label>
                                 <p:pickList value="#{productBean.productCollectionPickList}" var="collectionId"
                                             itemLabel="#{productBean.resolveCollectionNameById(collectionId)}"
                                             itemValue="#{collectionId}" showSourceFilter="true" showTargetFilter="true"
-                                            filterMatchMode="contains" responsive="true"/>
+                                            filterMatchMode="contains" responsive="true">
+                                     <p:ajax/>
+                                </p:pickList>
                             </div>
                         </div>
                     </div>

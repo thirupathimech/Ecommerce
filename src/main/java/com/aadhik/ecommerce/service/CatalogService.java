@@ -97,7 +97,7 @@ public class CatalogService {
                     ProductCollection productCollection = repository.findCollectionById(item.getRecordId());
                     if (productCollection != null && productCollection.isActive()) {
                         List<Product> productList = repository.findProductsByCollection(productCollection.getId(), 25);
-                        sections.add(HomeRenderSection.forCollectionSection(productList));
+                        sections.add(HomeRenderSection.forProductCollection(productCollection, productList));
                     }
                 }
                 case COLLECTION_GROUP -> {
@@ -238,6 +238,7 @@ public class CatalogService {
         private VideoCarouselItem videoItem;
         private HomeCollectionGroup collectionGroup;
         private List<Product> products = List.of();
+        private ProductCollection productCollection;
         private List<ProductCollection> collections = List.of();
         private MarqueeConfig marquee;
 
@@ -262,10 +263,11 @@ public class CatalogService {
             return section;
         }
 
-        public static HomeRenderSection forCollectionSection(List<Product> products) {
+        public static HomeRenderSection forProductCollection(ProductCollection productCollection, List<Product> products) {
             HomeRenderSection section = new HomeRenderSection();
             section.type = HomeSectionType.PRODUCTS_COLLECTION;
             section.products = products == null ? List.of() : products;
+            section.productCollection = productCollection;
             return section;
         }
 
@@ -314,6 +316,14 @@ public class CatalogService {
 
         public MarqueeConfig getMarquee() {
             return marquee;
+        }
+
+        public ProductCollection getProductCollection() {
+            return productCollection;
+        }
+
+        public void setProductCollection(ProductCollection productCollection) {
+            this.productCollection = productCollection;
         }
     }
 
