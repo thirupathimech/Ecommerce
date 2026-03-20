@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:body>
         <div class="grid">
             <div class="field full">
@@ -13,6 +14,16 @@
             <div class="field">
                 <label>Sort Order *</label>
                 <p:inputNumber value="#{homeCollectionGroupBean.collectionGroupForm.sortOrder}" decimalPlaces="0"/>
+            </div>
+
+            <div class="field">
+                <label>Display Type</label>
+                <p:selectOneMenu value="#{homeCollectionGroupBean.collectionGroupForm.displayMode}">
+                    <f:selectItems value="#{homeCollectionGroupBean.displayModeOptions}"
+                                   var="mode"
+                                   itemValue="#{mode}"
+                                   itemLabel="#{homeCollectionGroupBean.displayModeLabel(mode)}"/>
+                </p:selectOneMenu>
             </div>
 
             <div class="field">
@@ -42,6 +53,9 @@
         <p:dataTable id="homeCollectionGroupsDataTable" value="#{homeCollectionGroupBean.homeCollectionGroups}" var="group" paginatorPosition="bottom" rowKey="#{group.id}" rows="6" style="margin-top:12px;">
             <p:column headerText="Group Title">
                 <h:outputText value="#{group.title}"/>
+            </p:column>
+            <p:column headerText="Display Type">
+                <h:outputText value="#{homeCollectionGroupBean.displayModeLabel(group.displayMode)}"/>
             </p:column>
             <p:column headerText="Collections Count">
                 <h:outputText value="#{homeCollectionGroupBean.getCollectionGroupCollectionIds(group).size()}"/>

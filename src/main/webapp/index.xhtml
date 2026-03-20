@@ -86,12 +86,14 @@
                             </article>
                         </h:panelGroup>
 
-                        <h:panelGroup id="collection_section_panelgroup" rendered="#{orderedSection.type.name() eq 'COLLECTION_GROUP' and not empty orderedSection.collections}" layout="block" styleClass="collection-group-section">
+                        <h:panelGroup id="collection_section_panelgroup" rendered="#{orderedSection.type.name() eq 'COLLECTION_GROUP' and not empty orderedSection.collections}" layout="block" styleClass="collection-group-section #{orderedSection.collectionGroup.scrollDisplayMode ? 'collection-group-section-scroll' : 'collection-group-section-box'}">
                             <section>
-                                <h2 class="section-title">#{orderedSection.collectionGroup.title}</h2>
-                                <div class="collection-group-track">
+                                <div class="collection-group-header">
+                                    <h2 class="section-title">#{orderedSection.collectionGroup.title}</h2>
+                                </div>
+                                <div class="collection-group-track #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
                                     <ui:repeat value="#{orderedSection.collections}" var="collection">
-                                        <article class="collection-group-card">
+                                         <article class="collection-group-card #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
                                             <h:graphicImage value="#{homePageBean.resolveMediaUrl(collection.bannerImage)}"
                                                             alt="#{collection.name}"/>
                                             <div class="collection-group-card-body">

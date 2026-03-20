@@ -24,6 +24,7 @@ public class HomeCollectionGroupBean extends AdminBean {
         collectionGroupForm = new HomeCollectionGroup();
         collectionGroupForm.setActive(true);
         collectionGroupForm.setSortOrder(1);
+        collectionGroupForm.setDisplayMode(HomeCollectionGroup.DISPLAY_MODE_BOX);
         collectionGroupPickList = null;
     }
 
@@ -57,6 +58,7 @@ public class HomeCollectionGroupBean extends AdminBean {
             draft.setId(group.getId());
             draft.setTitle(group.getTitle());
             draft.setCollectionIds(group.getCollectionIds());
+            draft.setDisplayMode(group.getDisplayMode());
             draft.setSortOrder(group.getSortOrder());
             draft.setActive(group.isActive());
             collectionGroupForm = draft;
@@ -106,6 +108,17 @@ public class HomeCollectionGroupBean extends AdminBean {
                 .map(String::trim)
                 .filter(text -> !text.isBlank())
                 .collect(Collectors.toList());
+    }
+
+    public List<String> getDisplayModeOptions() {
+        return List.of(HomeCollectionGroup.DISPLAY_MODE_BOX, HomeCollectionGroup.DISPLAY_MODE_SCROLL);
+    }
+
+    public String displayModeLabel(String displayMode) {
+        if (HomeCollectionGroup.DISPLAY_MODE_SCROLL.equalsIgnoreCase(displayMode)) {
+            return "Scroll";
+        }
+        return "Box";
     }
 
     public DualListModel<String> getCollectionGroupPickList() {
