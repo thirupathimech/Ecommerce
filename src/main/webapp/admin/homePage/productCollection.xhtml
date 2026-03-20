@@ -9,6 +9,7 @@
             <p style="margin-top:0.25rem; color:#6b7280;">
                 Set how many products should appear on the home page and choose the display style.
             </p>
+
             <div class="grid">
                 <div class="field">
                     <label>Collection Name *</label>
@@ -22,7 +23,7 @@
                     <label>Status</label>
                     <p:selectBooleanCheckbox value="#{productCollectionBean.collectionForm.active}" itemLabel="Active"/>
                 </div>
-                 <div class="field">
+                <div class="field">
                     <label>Products to Show</label>
                     <p:inputNumber value="#{productCollectionBean.collectionForm.homeProductLimit}" minValue="1" decimalPlaces="0"/>
                     <small>Example: 4, 6, 8 or 10 products.</small>
@@ -47,6 +48,7 @@
                     <p:inputTextarea value="#{productCollectionBean.collectionForm.description}" rows="3" autoResize="false"/>
                 </div>
             </div>
+
             <div style="margin-top: 12px; display:flex; gap:8px;">
                 <p:commandButton value="Save Collection" action="#{productCollectionBean.saveForm}" update=":mainForm"/>
                 <p:commandButton value="Reset" action="#{productCollectionBean.resetForm}" process="@this" update=":mainForm" styleClass="ui-button-secondary"/>
@@ -88,5 +90,4 @@
             </div>
         </h:panelGroup>
     </p:dialog>
-
 </ui:composition>

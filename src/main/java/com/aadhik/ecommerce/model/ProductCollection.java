@@ -30,6 +30,12 @@ public class ProductCollection {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(name = "home_product_limit")
+    private Integer homeProductLimit = 8;
+
+    @Column(name = "scroll_display_mode", nullable = false)
+    private boolean scrollDisplayMode;
+
     public Long getId() {
         return id;
     }
@@ -76,5 +82,20 @@ public class ProductCollection {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+      public Integer getHomeProductLimit() {
+        return homeProductLimit;
+    }
+
+    public void setHomeProductLimit(Integer homeProductLimit) {
+        this.homeProductLimit = homeProductLimit;
+    }
+
+    public boolean isScrollDisplayMode() {
+        return scrollDisplayMode;
+    }
+
+    public void setScrollDisplayMode(boolean scrollDisplayMode) {
+        this.scrollDisplayMode = scrollDisplayMode;
     }
 }

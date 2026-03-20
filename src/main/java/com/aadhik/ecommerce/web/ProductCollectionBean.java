@@ -25,6 +25,8 @@ public class ProductCollectionBean extends AdminBean {
     public void resetForm() {
         collectionForm = new ProductCollection();
         collectionForm.setActive(true);
+        collectionForm.setHomeProductLimit(8);
+        collectionForm.setScrollDisplayMode(false);
     }
 
     @Override
@@ -47,6 +49,9 @@ public class ProductCollectionBean extends AdminBean {
             addError("Collection slug is required.");
             return false;
         }
+        if (collectionForm.getHomeProductLimit() == null || collectionForm.getHomeProductLimit() < 1) {
+            collectionForm.setHomeProductLimit(8);
+        }
         return true;
     }
 
@@ -60,6 +65,8 @@ public class ProductCollectionBean extends AdminBean {
             draft.setBannerImage(collection.getBannerImage());
             draft.setDescription(collection.getDescription());
             draft.setActive(collection.isActive());
+            draft.setHomeProductLimit(collection.getHomeProductLimit());
+            draft.setScrollDisplayMode(collection.isScrollDisplayMode());
             collectionForm = draft;
         }
     }
@@ -149,6 +156,15 @@ public class ProductCollectionBean extends AdminBean {
 
     public void setSelectedCollectionForProducts(ProductCollection selectedCollectionForProducts) {
         this.selectedCollectionForProducts = selectedCollectionForProducts;
+    }
+    
+    public String resolveDisplayTypeLabel(ProductCollection collection) {
+        return collection != null && collection.isScrollDisplayMode() ? "Scroll" : "Box";
+    }
+
+    public int resolveHomeProductLimit(ProductCollection collection) {
+        return collection != null && collection.getHomeProductLimit() != null && collection.getHomeProductLimit() > 0
+                ? collection.getHomeProductLimit() : 8;
     }
 
     public DualListModel<String> getCollectionProductsPickList() {

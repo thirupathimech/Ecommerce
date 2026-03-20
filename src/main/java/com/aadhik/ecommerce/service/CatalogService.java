@@ -96,7 +96,9 @@ public class CatalogService {
                 case PRODUCTS_COLLECTION -> {
                     ProductCollection productCollection = repository.findCollectionById(item.getRecordId());
                     if (productCollection != null && productCollection.isActive()) {
-                        List<Product> productList = repository.findProductsByCollection(productCollection.getId(), 25);
+                          int limit = productCollection.getHomeProductLimit() != null && productCollection.getHomeProductLimit() > 0
+                                ? productCollection.getHomeProductLimit() : 8;
+                        List<Product> productList = repository.findProductsByCollection(productCollection.getId(), limit);
                         sections.add(HomeRenderSection.forProductCollection(productCollection, productList));
                     }
                 }

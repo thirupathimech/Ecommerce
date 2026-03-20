@@ -191,6 +191,10 @@ public class HomePageBean extends BaseBean {
     public String productCtaLabel(Product product) {
         return product != null && product.isHasVariants() ? "Buy Now" : "Add To Cart";
     }
+    
+    public String productCountLabel(int count) {
+        return count == 1 ? "1 product" : count + " products";
+    }
 
     public List<ProductVariantOption> getProductVariants(Product product) {
         List<ProductVariantOption> variants = new ArrayList<>();

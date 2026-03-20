@@ -114,10 +114,15 @@
                             </section>
                         </h:panelGroup>
 
-                        <h:panelGroup id="product_collection_panelgroup" rendered="#{orderedSection.type.name() eq 'PRODUCTS_COLLECTION' and not empty orderedSection.products}" layout="block" styleClass="product-collection-section">
+                        <h:panelGroup id="product_collection_panelgroup" rendered="#{orderedSection.type.name() eq 'PRODUCTS_COLLECTION' and not empty orderedSection.products}" layout="block" styleClass="product-collection-section #{orderedSection.productCollection.scrollDisplayMode ? 'product-collection-section-scroll' : 'product-collection-section-box'}">
                             <section>
-                                <h2 class="section-title">#{orderedSection.productCollection.name}</h2>
-                                <div class="products-grid">
+                                <div class="product-collection-header #{orderedSection.productCollection.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
+                                    <div>
+                                        <h2 class="section-title">#{orderedSection.productCollection.name}</h2>
+                                        <p class="product-collection-meta">#{homePageBean.productCountLabel(orderedSection.products.size())} • Display: #{orderedSection.productCollection.scrollDisplayMode ? 'Scroll' : 'Box'}</p>
+                                    </div>
+                                </div>
+                                <div class="products-grid #{orderedSection.productCollection.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
                                     <ui:repeat value="#{orderedSection.products}" var="product">
                                         <article class="product-card">
                                             <div class="product-card-media">
