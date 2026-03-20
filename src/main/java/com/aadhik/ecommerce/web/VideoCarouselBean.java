@@ -99,9 +99,10 @@ public class VideoCarouselBean extends AdminBean {
         }
     }
 
+    @Override
     public void selectFile(MediaFile file) {
         String ref = toDbFileRef(file.getId());
-        if ("video-carousel-video".equals(fileSelectionTarget)) {
+        if ("VIDEO_CAROUSEL".equals(fileSelectionTarget)) {
             if (!"VIDEO".equals(file.getFileType())) {
                 addWarn("Please select a video file.");
                 return;

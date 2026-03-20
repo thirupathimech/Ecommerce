@@ -20,7 +20,7 @@
             <label>Videos * (one per line)</label>
             <p:inputTextarea value="#{videoCarouselBean.videoCarouselForm.videoUrls}" rows="5" autoResize="false"/>
             <p:commandButton type="button" value="Choose Video" icon="pi pi-video" onclick="PF('filePicker').show()">
-                <p:ajax event="click" listener="#{videoCarouselBean.openFilePickerForVideoCarouselVideo}" update=":mainForm:filePickerTable :mainForm:messages"/>
+                <p:ajax event="click" listener="#{videoCarouselBean.openFilePicker(videoCarouselBean, 'VIDEO_CAROUSEL')}" update=":mainForm:filePickerTable :mainForm:messages"/>
             </p:commandButton>
             <small>Choose video multiple times. Each selected file is appended as a new line.</small>
         </div>

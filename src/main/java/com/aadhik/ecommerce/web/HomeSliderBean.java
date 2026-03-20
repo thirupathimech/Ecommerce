@@ -69,9 +69,10 @@ public class HomeSliderBean extends AdminBean {
         return false;
     }
 
+    @Override
     public void selectFile(MediaFile file) {
         String ref = toDbFileRef(file.getId());
-        if ("slider".equals(fileSelectionTarget)) {
+        if ("SLIDER".equals(fileSelectionTarget)) {
             sliderForm.setImageUrl(ref);
         }
         addInfo("File selected");

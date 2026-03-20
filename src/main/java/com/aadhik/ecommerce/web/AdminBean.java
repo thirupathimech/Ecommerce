@@ -37,7 +37,9 @@ public abstract class AdminBean extends BaseBean implements Serializable {
     protected String activeMenu;
 
     protected String fileSelectionTarget;
+    
     protected int fileSelectionVariantIndex;
+    private static Object selectFileBean;
     private List<MediaFile> selectedMediaFiles;
 
     protected Map<String, String> homeSectionOrderOptionLabelMap;
@@ -46,7 +48,6 @@ public abstract class AdminBean extends BaseBean implements Serializable {
     @PostConstruct
     public void init() {
         activeMenu = activeMenu == null ? "dashboard" : activeMenu;
-        fileSelectionTarget = "primary";
         fileSelectionVariantIndex = -1;
         selectedMediaFiles = new ArrayList<>();
         resetForm();
@@ -62,38 +63,33 @@ public abstract class AdminBean extends BaseBean implements Serializable {
 
     public abstract boolean deleteForm(Object form);
 
-     public void selectFile(MediaFile file) {
-     }
-
-    public void openFilePickerForPrimary() {
-        fileSelectionTarget = "primary";
-        fileSelectionVariantIndex = -1;
-        selectedMediaFiles = new ArrayList<>();
+    public void selectFile(MediaFile file) {
+        if(selectFileBean == null) return;
+        if(selectFileBean instanceof ProductBean productBean){
+            productBean.selectFile(file);
+        } else if(selectFileBean instanceof HomeDivSectionBean homeDivSectionBean){
+            homeDivSectionBean.selectFile(file);
+        } else if(selectFileBean instanceof HomeSliderBean homeSliderBean){
+            homeSliderBean.selectFile(file);
+        } else if(selectFileBean instanceof VideoCarouselBean videoCarouselBean){
+            videoCarouselBean.selectFile(file);
+        } else if(selectFileBean instanceof ProductCollectionBean productCollectionBean){
+            productCollectionBean.selectFile(file);
+        }
+        selectFileBean = null;
     }
 
-    public void openFilePickerForGallery() {
-        fileSelectionTarget = "gallery";
-        fileSelectionVariantIndex = -1;
-    }
-
-    public void openFilePickerForVariant(int index) {
-        fileSelectionTarget = "variant";
+    public void openFilePicker(Object bean, String fileTarget, int index) {
         fileSelectionVariantIndex = index;
+        selectFileBean = bean;
+        fileSelectionTarget = fileTarget;
+        if ("PRODUCT".equalsIgnoreCase(fileSelectionTarget)) {
+            selectedMediaFiles = new ArrayList<>();
+        }
     }
 
-    public void openFilePickerForSlider() {
-        fileSelectionTarget = "slider";
-        fileSelectionVariantIndex = -1;
-    }
-
-    public void openFilePickerForVideoCarouselVideo() {
-        fileSelectionTarget = "video-carousel-video";
-        fileSelectionVariantIndex = -1;
-    }
-
-    public void openFilePickerForHomeDivSectionImage() {
-        fileSelectionTarget = "home-div-section-image";
-        fileSelectionVariantIndex = -1;
+    public void openFilePicker(Object bean, String fileTarget) {
+        openFilePicker(bean, fileTarget, -1);
     }
 
     public void handleFileUpload(FileUploadEvent event) {
@@ -279,23 +275,24 @@ public abstract class AdminBean extends BaseBean implements Serializable {
             colors.setLength(colors.length() - 1);
         }
 
-        return "{"
-                + "type:'pie',"
-                + "data:{"
-                + "labels:[" + labels + "],"
-                + "datasets:[{"
-                + "label:'Storage Usage by File Type',"
-                + "data:[" + values + "],"
-                + "backgroundColor:[" + colors + "]"
-                + "}]"
-                + "},"
-                + "options:{"
-                + "plugins:{"
-                + "legend:{position:'right'},"
-                + "title:{display:true,text:'Storage Usage by File Type'}"
-                + "}"
-                + "}"
-                + "}";
+        return """
+               {
+                type:'pie',
+                data:{
+                    labels:[%s],
+                    datasets:[{
+                        label:'Storage Usage by File Type',
+                        data:[%s],
+                        backgroundColor:[%s]
+                    }]
+                },
+                options:{
+                    plugins:{
+                        legend:{position:'right'},
+                        title:{display:true,text:'Storage Usage by File Type'}
+                    }
+                }
+                }""".formatted(labels, values, colors);
     }
 
     public long getTotalFileStorageBytes() {

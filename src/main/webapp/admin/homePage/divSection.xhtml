@@ -52,7 +52,7 @@
             <label>Image *</label>
             <p:inputText value="#{homeDivSectionBean.homeDivSectionForm.imageUrl}" readonly="true"/>
             <p:commandButton type="button" value="Choose Image" icon="pi pi-image" onclick="PF('filePicker').show()">
-                <p:ajax event="click" listener="#{homeDivSectionBean.openFilePickerForHomeDivSectionImage}" update=":mainForm:filePickerTable :mainForm:messages"/>
+                <p:ajax event="click" listener="#{homeDivSectionBean.openFilePicker(homeDivSectionBean, 'HOME_DIV_SECTION_IMAGE')}" update=":mainForm:filePickerTable :mainForm:messages"/>
             </p:commandButton>
             <small>#{homeDivSectionBean.previewLabel(homeDivSectionBean.homeDivSectionForm.imageUrl)}</small>
         </div>

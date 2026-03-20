@@ -19,7 +19,7 @@
             <label>Slider Image *</label>
             <p:inputText value="#{homeSliderBean.sliderForm.imageUrl}" readonly="true"/>
             <p:commandButton type="button" value="Select from Files" icon="pi pi-images" onclick="PF('filePicker').show()">
-                <p:ajax event="click" listener="#{homeSliderBean.openFilePickerForSlider}" update=":mainForm:filePickerTable :mainForm:messages"/>
+                <p:ajax event="click" listener="#{homeSliderBean.openFilePicker(homeSliderBean, 'SLIDER')}" update=":mainForm:filePickerTable :mainForm:messages"/>
             </p:commandButton>
             <small>#{homeSliderBean.previewLabel(homeSliderBean.sliderForm.imageUrl)}</small>
         </div>

@@ -313,15 +313,16 @@ public class ProductBean extends AdminBean {
         return text.replace("%7C", "|").replace("%0A", "\n");
     }
 
+    @Override
     public void selectFile(MediaFile file) {
         String ref = toDbFileRef(file.getId());
-        if ("primary".equals(fileSelectionTarget)) {
+        if ("PRODUCT".equals(fileSelectionTarget)) {
             productForm.setImageUrl(ref);
-        } else if ("variant".equals(fileSelectionTarget)
+        } else if ("PRODUCT_VARIANT".equals(fileSelectionTarget)
                 && fileSelectionVariantIndex >= 0
                 && fileSelectionVariantIndex < variantInputs.size()) {
             variantInputs.get(fileSelectionVariantIndex).setImageUrl(ref);
-        } else if ("gallery".equals(fileSelectionTarget)) {
+        } else if ("PRODUCT_GALLERY".equals(fileSelectionTarget)) {
             if (isBlank(productForm.getGalleryImages())) {
                 productForm.setGalleryImages(ref);
             } else if (!productForm.getGalleryImages().contains(ref)) {

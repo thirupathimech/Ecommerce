@@ -43,6 +43,12 @@
         </dependency>
         <dependency>
             <groupId>org.mvnpm</groupId>
+            <artifactId>primeflex</artifactId>
+            <version>4.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mvnpm</groupId>
             <artifactId>primeicons</artifactId>
             <version>${primeicons.version}</version>
             <scope>compile</scope>

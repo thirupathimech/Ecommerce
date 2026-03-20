@@ -22,7 +22,7 @@
                     <label>Banner Image</label>
                     <p:inputText value="#{productCollectionBean.collectionForm.bannerImage}" readonly="true"/>
                     <p:commandButton type="button" value="Select from Files" icon="pi pi-images" onclick="PF('filePicker').show()">
-                        <p:ajax event="click" listener="#{productCollectionBean.openFilePickerForCollectionBanner}" update=":mainForm:filePickerTable :mainForm:messages"/>
+                        <p:ajax event="click" listener="#{productCollectionBean.openFilePicker(productCollectionBean, 'COLLECTION_BANNER')}" update=":mainForm:filePickerTable :mainForm:messages"/>
                     </p:commandButton>
                     <small>#{productCollectionBean.previewLabel(productCollectionBean.collectionForm.bannerImage)}</small>
                 </div>

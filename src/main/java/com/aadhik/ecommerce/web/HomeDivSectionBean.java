@@ -104,9 +104,10 @@ public class HomeDivSectionBean extends AdminBean {
         return false;
     }
     
+    @Override
     public void selectFile(MediaFile file) {
         String ref = toDbFileRef(file.getId());
-        if ("home-div-section-image".equals(fileSelectionTarget)) {
+        if ("HOME_DIV_SECTION_IMAGE".equals(fileSelectionTarget)) {
             if (!"IMAGE".equals(file.getFileType())) {
                 addWarn("Please select an image file.");
                 return;
