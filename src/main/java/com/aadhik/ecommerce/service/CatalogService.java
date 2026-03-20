@@ -4,7 +4,6 @@ import com.aadhik.ecommerce.model.HomeCollectionGroup;
 import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSectionOrderItem;
 import com.aadhik.ecommerce.model.HomeSectionType;
-import static com.aadhik.ecommerce.model.HomeSectionType.COLLECTION_SECTION;
 import static com.aadhik.ecommerce.model.HomeSectionType.DIV_SECTION;
 import static com.aadhik.ecommerce.model.HomeSectionType.HOME_SLIDER;
 import static com.aadhik.ecommerce.model.HomeSectionType.MARQUEE;
@@ -23,6 +22,7 @@ import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
+import static com.aadhik.ecommerce.model.HomeSectionType.PRODUCTS_COLLECTION;
 
 @ApplicationScoped
 public class CatalogService {
@@ -121,7 +121,7 @@ public class CatalogService {
                         sections.add(HomeRenderSection.forVideoCarousel(videoItem));
                     }
                 }
-                case COLLECTION_SECTION -> {
+                case PRODUCTS_COLLECTION -> {
                     HomepageSection collectionSection = repository.findHomepageSectionById(item.getRecordId());
                     if (collectionSection != null && collectionSection.isActive()) {
                         int limit = Math.max(1, collectionSection.getMaxItems());
@@ -305,7 +305,7 @@ public class CatalogService {
 
         public static HomeRenderSection forCollectionSection(HomepageSection collectionSection, List<Product> products) {
             HomeRenderSection section = new HomeRenderSection();
-            section.type = HomeSectionType.COLLECTION_SECTION;
+            section.type = HomeSectionType.PRODUCTS_COLLECTION;
             section.collectionSection = collectionSection;
             section.products = products == null ? List.of() : products;
             return section;

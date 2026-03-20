@@ -441,7 +441,7 @@ public abstract class AdminBean extends BaseBean implements Serializable {
             addHomeSectionOrderOption(source, HomeSectionType.COLLECTION_GROUP, group.getId(), "Collections Group", group.getTitle());
         }
         for (ProductCollection collection : getCollections()) {
-            addHomeSectionOrderOption(source, HomeSectionType.COLLECTION_SECTION, collection.getId(), "Collection", collection.getName());
+            addHomeSectionOrderOption(source, HomeSectionType.PRODUCTS_COLLECTION, collection.getId(), "Collection", collection.getName());
         }
         for (MarqueeConfig marqueeConfig : getMarqueeConfigs()) {
             addHomeSectionOrderOption(source, HomeSectionType.MARQUEE, marqueeConfig.getId(), "Marquee", buildMarqueeLabel(marqueeConfig));
