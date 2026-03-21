@@ -166,7 +166,7 @@ public class HomePageBean extends BaseBean {
         return new ArrayList<>(contentPageService.getPages().values());
     }
 
-    public String getPageHtml(String key) {
+    public String pageHtml(String key) {
         ContentPage page = contentPageService.getPage(key);
         return page == null ? "" : page.getHtmlContent();
     }
