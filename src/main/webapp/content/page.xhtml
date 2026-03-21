@@ -9,23 +9,46 @@
     <ui:define name="content">
         <main class="policy-page-shell">
             <section class="policy-page-card">
-                <h:link outcome="/index" value="&#8592; Back to Home" styleClass="policy-back-link"/>
-                <div class="policy-page-header">
-                    <span class="policy-eyebrow">Store information</span>
-                    <h1>#{contentViewBean.currentPage.title}</h1>
-                    <p>These details are loaded from the admin content editor and shown here in the storefront.</p>
+                <div class="policy-page-hero">
+                    <div class="policy-page-header">
+                        <span class="policy-eyebrow">Store information</span>
+                        <h1>#{contentViewBean.currentPage.title}</h1>
+                        <p>Find shipping, returns, privacy, and contact details in a cleaner layout that is easy to browse on mobile and desktop.</p>
+                    </div>
+
+                    <div class="policy-page-actions">
+                        <h:link outcome="/index" value="Back to Home" styleClass="policy-back-link"/>
+                    </div>
                 </div>
 
-                <nav class="policy-page-links" aria-label="Policy quick links">
-                    <ui:repeat value="#{contentViewBean.pages}" var="page">
-                        <h:link outcome="/content/page" value="#{page.title}" styleClass="#{contentViewBean.isSelected(page.slug) ? 'active' : ''}">
-                            <f:param name="slug" value="#{page.slug}"/>
-                        </h:link>
-                    </ui:repeat>
-                </nav>
+                <div class="policy-page-layout">
+                    <aside class="policy-page-sidebar">
+                        <div class="policy-page-nav-card">
+                            <div class="policy-page-nav-header">
+                                <span class="policy-nav-label">Browse pages</span>
+                                <p>Jump between policy pages quickly.</p>
+                            </div>
 
-                <div class="policy-page-body">
-                    <h:outputText value="#{contentViewBean.currentPage.htmlContent}" escape="false"/>
+                            <nav class="policy-page-links" aria-label="Policy quick links">
+                                <ui:repeat value="#{contentViewBean.pages}" var="page">
+                                    <h:link outcome="/content/page" value="#{page.title}" styleClass="#{contentViewBean.isSelected(page.slug) ? 'active' : ''}">
+                                        <f:param name="slug" value="#{page.slug}"/>
+                                    </h:link>
+                                </ui:repeat>
+                            </nav>
+                        </div>
+                    </aside>
+
+                    <article class="policy-page-content-card">
+                        <div class="policy-page-content-head">
+                            <span class="policy-content-label">Current page</span>
+                            <h2>#{contentViewBean.currentPage.title}</h2>
+                        </div>
+
+                        <div class="policy-page-body">
+                            <h:outputText value="#{contentViewBean.currentPage.htmlContent}" escape="false"/>
+                        </div>
+                    </article>
                 </div>
             </section>
         </main>
