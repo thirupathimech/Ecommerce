@@ -21,6 +21,7 @@ import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import static com.aadhik.ecommerce.model.HomeSectionType.PRODUCTS_COLLECTION;
+import com.aadhik.ecommerce.model.StoreMenuItem;
 
 @ApplicationScoped
 public class CatalogService {
@@ -133,6 +134,30 @@ public class CatalogService {
     public List<Product> getProducts() {
         return repository.findProducts();
     }
+    
+    public List<Product> getActiveProducts() {
+        return repository.findActiveProducts();
+    }
+
+    public List<Product> getProductsByCollection(Long collectionId) {
+        return collectionId == null ? List.of() : repository.findProductsByCollection(collectionId, Integer.MAX_VALUE);
+    }
+
+    public Product findProductById(Long id) {
+        return id == null ? null : repository.findProductById(id);
+    }
+
+    public ProductCollection findCollectionBySlug(String slug) {
+        return slug == null || slug.isBlank() ? null : repository.findCollectionBySlug(slug);
+    }
+
+    public List<StoreMenuItem> getStoreMenuItems() {
+        return repository.findStoreMenuItems(false);
+    }
+
+    public List<StoreMenuItem> getActiveStoreMenuItems() {
+        return repository.findStoreMenuItems(true);
+    }
 
     public List<MarqueeConfig> getMarqueeConfigs() {
         return repository.findMarqueeConfigs();
@@ -188,6 +213,14 @@ public class CatalogService {
 
     public Product saveProduct(Product product) {
         return repository.saveProduct(product);
+    }
+    
+    public StoreMenuItem saveStoreMenuItem(StoreMenuItem item) {
+        return repository.saveStoreMenuItem(item);
+    }
+
+    public void deleteStoreMenuItem(Long id) {
+        repository.deleteStoreMenuItem(id);
     }
 
     public MarqueeConfig saveMarqueeConfig(MarqueeConfig marqueeConfig) {

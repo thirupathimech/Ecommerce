@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/storeLayout.xhtml">
+    <ui:define name="title">Collection</ui:define>
+    <ui:define name="head"><h:outputStylesheet name="index.css" library="css"/></ui:define>
+    <ui:define name="content">
+        <main class="container catalog-page-shell">
+            <h:panelGroup rendered="#{not empty storefrontBean.selectedCollection}" layout="block">
+                <section class="catalog-hero">
+                    <p class="catalog-eyebrow">Collection</p>
+                    <h1>#{storefrontBean.selectedCollection.name}</h1>
+                    <p>#{storefrontBean.collectionDescription()}</p>
+                </section>
+                <section class="products-grid is-box catalog-grid-shell">
+                    <ui:repeat value="#{storefrontBean.selectedCollectionProducts}" var="product">
+                        <ui:include src="/templates/productCard.xhtml">
+                            <ui:param name="product" value="#{product}"/>
+                        </ui:include>
+                    </ui:repeat>
+                </section>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{empty storefrontBean.selectedCollection}" layout="block" styleClass="catalog-empty-state">
+                <h2>Collection not found</h2>
+                <p>Please choose a valid collection menu.</p>
+            </h:panelGroup>
+        </main>
+    </ui:define>
+</ui:composition>

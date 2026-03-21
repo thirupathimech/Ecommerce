@@ -3,8 +3,10 @@ package com.aadhik.ecommerce.service;
 import com.aadhik.ecommerce.model.ContentPage;
 import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSlider;
+import com.aadhik.ecommerce.model.MenuItemTargetType;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
+import com.aadhik.ecommerce.model.StoreMenuItem;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
@@ -24,51 +26,87 @@ public class DataSeeder {
     @PostConstruct
     @Transactional
     public void seed() {
-        seedContentPages();
+        try {
+            seedContentPages();
+            seedStoreMenusIfNeeded();
 
-        Long existing = entityManager.createQuery("select count(c) from ProductCollection c", Long.class)
+            Long existing = entityManager.createQuery("select count(c) from ProductCollection c", Long.class)
+                    .getSingleResult();
+            if (existing != null && existing > 0) {
+                return;
+            }
+
+            ProductCollection bestSellers = createCollection("Best Sellers", "best-sellers",
+                    "https://images.unsplash.com/photo-1494390248081-4e521a5940db?w=900&h=400&fit=crop",
+                    "Top moving health drinks and cereals");
+
+            ProductCollection nutrition = createCollection("Nutrition Drinks", "nutrition-drinks",
+                    "https://images.unsplash.com/photo-1615486363974-bfd7c6f33c0f?w=900&h=400&fit=crop",
+                    "Energy and immunity boosters");
+
+            createSlider(1, "Sip Your Way to Health", "Premium wholesome powders",
+                    "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=1400&h=700&fit=crop");
+            createSlider(2, "Sprouted Mix", "Natural goodness for all ages",
+                    "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1400&h=700&fit=crop");
+            createSlider(3, "5 in 1 Weight Gain", "Healthy weight support",
+                    "https://images.unsplash.com/photo-1467453678174-768ec283a940?w=1400&h=700&fit=crop");
+
+            createProduct("Apple Instant Cerealac - Homemade & Nutritious",
+                    "https://images.unsplash.com/photo-1602741007916-4e52790f3f3f?w=700&h=900&fit=crop",
+                    new BigDecimal("320.00"), new BigDecimal("375.00"), true, bestSellers);
+            createProduct("Nendran Banana Nutty Dates Drink",
+                    "https://images.unsplash.com/photo-1627483262955-c873b837f078?w=700&h=900&fit=crop",
+                    new BigDecimal("320.00"), new BigDecimal("750.00"), true, bestSellers);
+            createProduct("5-in-1 Weight Gain Nutrii Drink",
+                    "https://images.unsplash.com/photo-1523906630133-f6934a1ab2b9?w=700&h=900&fit=crop",
+                    new BigDecimal("270.00"), new BigDecimal("675.00"), true, nutrition);
+            createProduct("Sprouted Ragi Almond & Dates Powder",
+                    "https://images.unsplash.com/photo-1514996937319-344454492b37?w=700&h=900&fit=crop",
+                    new BigDecimal("250.00"), null, true, nutrition);
+
+            createHomeDivSection(
+                    "From mother's heart to baby's first smile 😇",
+                    "The Mothers Care brings you 100% pure, organic baby essentials crafted with love and nature's finest ingredients",
+                    "Visit",
+                    "#",
+                    "https://images.unsplash.com/photo-1544126592-807ade215a0b?w=900&h=1000&fit=crop",
+                    "LEFT",
+                    "CENTER",
+                    1);
+        } catch (Exception e) {
+            System.out.println(">>>>> com.aadhik.ecommerce.service.DataSeeder.seed() ## START");
+            e.printStackTrace();
+            System.out.println(">>>>> com.aadhik.ecommerce.service.DataSeeder.seed() ## END");
+        }
+    }
+
+    private void seedStoreMenusIfNeeded() {
+        Long menuCount = entityManager.createQuery("select count(m) from StoreMenuItem m", Long.class)
                 .getSingleResult();
-        if (existing != null && existing > 0) {
+        if (menuCount != null && menuCount > 0) {
             return;
         }
 
-        ProductCollection bestSellers = createCollection("Best Sellers", "best-sellers",
-                "https://images.unsplash.com/photo-1494390248081-4e521a5940db?w=900&h=400&fit=crop",
-                "Top moving health drinks and cereals");
+        createStoreMenu("Home", MenuItemTargetType.HOME, null, 1);
+        createStoreMenu("All Products", MenuItemTargetType.ALL_PRODUCTS, null, 2);
 
-        ProductCollection nutrition = createCollection("Nutrition Drinks", "nutrition-drinks",
-                "https://images.unsplash.com/photo-1615486363974-bfd7c6f33c0f?w=900&h=400&fit=crop",
-                "Energy and immunity boosters");
+        ProductCollection firstCollection = entityManager.createQuery("select c from ProductCollection c order by c.id asc", ProductCollection.class)
+                .setMaxResults(1)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        if (firstCollection != null) {
+            createStoreMenu(firstCollection.getName(), MenuItemTargetType.COLLECTION, firstCollection.getSlug(), 3);
+        }
 
-        createSlider(1, "Sip Your Way to Health", "Premium wholesome powders",
-                "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=1400&h=700&fit=crop");
-        createSlider(2, "Sprouted Mix", "Natural goodness for all ages",
-                "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1400&h=700&fit=crop");
-        createSlider(3, "5 in 1 Weight Gain", "Healthy weight support",
-                "https://images.unsplash.com/photo-1467453678174-768ec283a940?w=1400&h=700&fit=crop");
-
-        createProduct("Apple Instant Cerealac - Homemade & Nutritious",
-                "https://images.unsplash.com/photo-1602741007916-4e52790f3f3f?w=700&h=900&fit=crop",
-                new BigDecimal("320.00"), new BigDecimal("375.00"), true, bestSellers);
-        createProduct("Nendran Banana Nutty Dates Drink",
-                "https://images.unsplash.com/photo-1627483262955-c873b837f078?w=700&h=900&fit=crop",
-                new BigDecimal("320.00"), new BigDecimal("750.00"), true, bestSellers);
-        createProduct("5-in-1 Weight Gain Nutrii Drink",
-                "https://images.unsplash.com/photo-1523906630133-f6934a1ab2b9?w=700&h=900&fit=crop",
-                new BigDecimal("270.00"), new BigDecimal("675.00"), true, nutrition);
-        createProduct("Sprouted Ragi Almond & Dates Powder",
-                "https://images.unsplash.com/photo-1514996937319-344454492b37?w=700&h=900&fit=crop",
-                new BigDecimal("250.00"), null, true, nutrition);
-
-        createHomeDivSection(
-                "From mother's heart to baby's first smile 😇",
-                "The Mothers Care brings you 100% pure, organic baby essentials crafted with love and nature's finest ingredients",
-                "Visit",
-                "#",
-                "https://images.unsplash.com/photo-1544126592-807ade215a0b?w=900&h=1000&fit=crop",
-                "LEFT",
-                "CENTER",
-                1);
+        Product firstProduct = entityManager.createQuery("select p from Product p order by p.id asc", Product.class)
+                .setMaxResults(1)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        if (firstProduct != null) {
+            createStoreMenu(firstProduct.getName(), MenuItemTargetType.PRODUCT, String.valueOf(firstProduct.getId()), 4);
+        }
     }
 
     private void seedContentPages() {
@@ -130,6 +168,16 @@ public class DataSeeder {
         product.setActive(true);
         product.setCollection(collection);
         entityManager.persist(product);
+    }
+
+    private void createStoreMenu(String label, MenuItemTargetType targetType, String targetRef, int sortOrder) {
+        StoreMenuItem item = new StoreMenuItem();
+        item.setLabel(label);
+        item.setTargetType(targetType);
+        item.setTargetRef(targetRef);
+        item.setSortOrder(sortOrder);
+        item.setActive(true);
+        entityManager.persist(item);
     }
 
     private void createHomeDivSection(String heading, String description, String buttonLabel, String buttonLink,

@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <article class="product-card">
+        <div class="product-card-media">
+            <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}" layout="block" styleClass="product-badge">Sale</h:panelGroup>
+            <h:outputLink value="#{request.contextPath}/product.xhtml?id=#{product.id}" styleClass="product-card-link">
+                <h:graphicImage value="#{homePageBean.resolveMediaUrl(product.imageUrl)}" alt="#{product.name}"/>
+            </h:outputLink>
+        </div>
+        <div class="product-info">
+            <h3 class="product-title">#{product.name}</h3>
+            <div class="product-price-stack">
+                <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}">
+                    <span class="old-price">#{homePageBean.formatPrice(product.comparePrice)}</span>
+                </h:panelGroup>
+                <span class="new-price">#{homePageBean.productPriceLabel(product)}</span>
+            </div>
+            <h:panelGroup rendered="#{product.hasVariants}">
+                <div class="product-variant-preview">
+                    <ui:repeat value="#{homePageBean.getProductVariants(product)}" var="variant">
+                        <span class="variant-pill">#{variant.name}</span>
+                    </ui:repeat>
+                </div>
+            </h:panelGroup>
+            <h:outputLink value="#{request.contextPath}/product.xhtml?id=#{product.id}" styleClass="catalog-card-button">View Product</h:outputLink>
+        </div>
+    </article>
+</ui:composition>

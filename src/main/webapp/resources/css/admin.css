@@ -331,7 +331,17 @@ body {
     padding-top: 4px;
 }
 
-
+.menu-admin-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.menu-admin-actions {
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+.menu-active-toggle {
+    justify-content:flex-end;
+}
 
 
 

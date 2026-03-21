@@ -82,13 +82,15 @@
                             </div>
                             <div class="collection-group-track #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}" data-collection-track="true">
                                 <ui:repeat value="#{orderedSection.collections}" var="collection">
-                                    <article class="collection-group-card #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
-                                        <h:graphicImage value="#{homePageBean.resolveMediaUrl(collection.bannerImage)}" alt="#{collection.name}"/>
-                                        <div class="collection-group-card-body">
-                                            <h3 class="collection-group-card-title">#{collection.name}</h3>
-                                            <span class="collection-group-card-arrow" aria-hidden="true">&#8594;</span>
-                                        </div>
-                                    </article>
+                                    <h:outputLink value="#{request.contextPath}/collection.xhtml?slug=#{collection.slug}" styleClass="collection-link-wrap">
+                                        <article class="collection-group-card #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
+                                            <h:graphicImage value="#{homePageBean.resolveMediaUrl(collection.bannerImage)}" alt="#{collection.name}"/>
+                                            <div class="collection-group-card-body">
+                                                <h3 class="collection-group-card-title">#{collection.name}</h3>
+                                                <span class="collection-group-card-arrow" aria-hidden="true">&#8594;</span>
+                                            </div>
+                                        </article>
+                                    </h:outputLink>
                                 </ui:repeat>
                             </div>
                         </section>
@@ -104,42 +106,9 @@
                             </div>
                             <div class="products-grid #{orderedSection.productCollection.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
                                 <ui:repeat value="#{orderedSection.products}" var="product">
-                                    <article class="product-card">
-                                        <div class="product-card-media">
-                                            <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}" layout="block" styleClass="product-badge">Sale</h:panelGroup>
-                                            <h:graphicImage value="#{homePageBean.resolveMediaUrl(product.imageUrl)}" alt="#{product.name}"/>
-                                        </div>
-                                        <div class="product-info">
-                                            <h3 class="product-title">#{product.name}</h3>
-                                            <div class="product-price-stack">
-                                                <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}">
-                                                    <span class="old-price">#{homePageBean.formatPrice(product.comparePrice)}</span>
-                                                </h:panelGroup>
-                                                <span class="new-price">#{homePageBean.productPriceLabel(product)}</span>
-                                            </div>
-
-                                            <h:panelGroup rendered="#{product.hasVariants}">
-                                                <div class="product-variant-preview">
-                                                    <ui:repeat value="#{homePageBean.getProductVariants(product)}" var="variant" varStatus="variantStatus">
-                                                        <span class="variant-pill">#{variant.name}</span>
-                                                    </ui:repeat>
-                                                </div>
-                                            </h:panelGroup>
-                                            <h:panelGroup rendered="#{product.hasVariants}">
-                                                <p:commandButton value="#{homePageBean.productCtaLabel(product)}"
-                                                                 actionListener="#{homePageBean.openPurchaseDialog(product)}"
-                                                                 process="@this"
-                                                                 update=":mainForm:purchaseDialog :mainForm:messages"
-                                                                 oncomplete="PF('purchaseDialogWidget').show()"
-                                                                 styleClass="product-cta-btn product-cta-buy"/>
-                                            </h:panelGroup>
-                                            <h:panelGroup rendered="#{not product.hasVariants}">
-                                                <p:commandButton value="#{homePageBean.productCtaLabel(product)}"
-                                                                 type="button"
-                                                                 styleClass="product-cta-btn product-cta-add"/>
-                                            </h:panelGroup>
-                                        </div>
-                                    </article>
+                                    <ui:include src="/templates/productCard.xhtml">
+                                        <ui:param name="product" value="#{product}"/>
+                                    </ui:include>
                                 </ui:repeat>
                             </div>
                         </section>

@@ -1,0 +1,58 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <div class="card">
+        <div class="card-head product-card-head">
+            <div>
+                <h3>Store Menu</h3>
+                <p class="section-subtitle">First menu name enter pannunga, next antha menu ku map panra target ah choose pannunga, appuram reference select pannunga.</p>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="grid menu-admin-grid">
+                <div class="field">
+                    <label>Menu Name</label>
+                    <p:inputText value="#{menuBean.menuForm.label}" placeholder="Example: Best Seller"/>
+                </div>
+                <div class="field">
+                    <label>Map To</label>
+                    <p:selectOneMenu value="#{menuBean.menuForm.targetType}">
+                        <f:selectItems value="#{menuBean.targetTypes}" var="targetType" itemValue="#{targetType}" itemLabel="#{menuBean.targetTypeLabel(targetType)}"/>
+                        <p:ajax process="@this" update=":mainForm:menuRefWrapper"/>
+                    </p:selectOneMenu>
+                </div>
+                <h:panelGroup id="menuRefWrapper" layout="block" styleClass="field">
+                    <label>Reference</label>
+                    <p:selectOneMenu value="#{menuBean.menuForm.targetRef}" disabled="#{not menuBean.requiresReference(menuBean.menuForm.targetType)}">
+                        <f:selectItem itemLabel="Select reference" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{menuBean.referenceOptions}"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <div class="field">
+                    <label>Sort Order</label>
+                    <p:inputNumber value="#{menuBean.menuForm.sortOrder}" decimalPlaces="0" minValue="1"/>
+                </div>
+                <div class="field menu-active-toggle">
+                    <label>Status</label>
+                    <p:selectBooleanCheckbox value="#{menuBean.menuForm.active}" itemLabel="Active"/>
+                </div>
+                <div class="field full menu-admin-actions">
+                    <p:commandButton value="Save Menu" action="#{menuBean.saveForm}" update=":mainForm" process="@form"/>
+                    <p:commandButton value="Reset" action="#{menuBean.resetForm}" update=":mainForm" process="@this" styleClass="ui-button-secondary"/>
+                </div>
+            </div>
+            <p:dataTable value="#{menuBean.menuItems}" var="mItem" paginator="true" rows="8" style="margin-top:18px;">
+                <p:column headerText="Menu Name"><h:outputText value="#{mItem.label}"/></p:column>
+                <p:column headerText="Mapped To"><h:outputText value="#{menuBean.describeMenuTarget(mItem)}"/></p:column>
+                <p:column headerText="Sort"><h:outputText value="#{mItem.sortOrder}"/></p:column>
+                <p:column headerText="Status"><span class="status-pill #{mItem.active ? 'active' : 'inactive'}">#{mItem.active ? 'Active' : 'Inactive'}</span></p:column>
+                <p:column headerText="Action" style="width:220px;">
+                    <p:commandButton value="Edit" action="#{menuBean.editForm(mItem)}" update=":mainForm" process="@this" styleClass="ui-button-secondary"/>
+                    <p:commandButton value="Delete" action="#{menuBean.deleteForm(mItem)}" update=":mainForm" process="@this" styleClass="ui-button-danger"/>
+                </p:column>
+            </p:dataTable>
+        </div>
+    </div>
+</ui:composition>

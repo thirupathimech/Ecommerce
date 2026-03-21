@@ -19,7 +19,7 @@
                 <div id="nav-shell" class="nav-shell">
                     <div class="nav-row">
                         <div class="nav-left">
-                            <p:commandButton id="bar" type="button" icon="pi pi-bars" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
+                            <p:commandButton id="bar" type="button" icon="pi pi-bars" onclick="toggleStoreMenu(true); return false;" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                             <p:commandButton id="searchBtn" type="button" icon="pi pi-search" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                         </div>
                         <h:graphicImage id="logo" styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="logo"/>
@@ -27,6 +27,18 @@
                             <p:commandButton id="userBtn" type="button" icon="pi pi-user" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                             <p:commandButton id="shoppingBtn" type="button" icon="pi pi-shopping-bag" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                         </div>
+                    </div>
+                </div>
+
+                <div id="storeMenuDrawer" class="store-menu-drawer" aria-hidden="true">
+                    <div class="store-menu-header">
+                        <h3>Menu</h3>
+                        <button type="button" class="store-menu-close" onclick="toggleStoreMenu(false)">✕</button>
+                    </div>
+                    <div class="store-menu-links">
+                        <ui:repeat value="#{storefrontBean.menuItems}" var="menuItem">
+                            <h:outputLink value="#{storefrontBean.menuLink(menuItem)}" styleClass="store-menu-link">#{menuItem.label}</h:outputLink>
+                        </ui:repeat>
                     </div>
                 </div>
 
@@ -55,5 +67,13 @@
             <ui:insert name="afterContent"/>
         </h:form>
         <ui:insert name="bodyEnd"/>
+        <h:outputScript target="body">
+            function toggleStoreMenu(isOpen) {
+                var drawer = document.getElementById('storeMenuDrawer');
+                if (!drawer) { return; }
+                drawer.classList.toggle('open', !!isOpen);
+                drawer.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            }
+        </h:outputScript>
     </h:body>
 </html>

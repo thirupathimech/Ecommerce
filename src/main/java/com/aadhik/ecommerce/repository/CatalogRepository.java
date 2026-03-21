@@ -8,6 +8,7 @@ import com.aadhik.ecommerce.model.MarqueeConfig;
 import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
+import com.aadhik.ecommerce.model.StoreMenuItem;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
@@ -95,6 +96,39 @@ public class CatalogRepository {
         }
         queryBuilder.append(" order by c.id desc ");
         return entityManager.createQuery(queryBuilder.toString(), ProductCollection.class).getResultList();
+    }
+
+    public List<Product> findActiveProducts() {
+        return entityManager.createQuery("""
+                        select distinct p from Product p
+                        where p.active = true
+                        order by p.id desc
+                        """, Product.class)
+                .getResultList();
+    }
+
+    public Product findProductById(Long id) {
+        return entityManager.find(Product.class, id);
+    }
+
+    public ProductCollection findCollectionBySlug(String slug) {
+        List<ProductCollection> items = entityManager.createQuery("""
+                        select c from ProductCollection c
+                        where c.slug = :slug and c.active = true
+                        """, ProductCollection.class)
+                .setParameter("slug", slug)
+                .setMaxResults(1)
+                .getResultList();
+        return items.isEmpty() ? null : items.get(0);
+    }
+
+    public List<StoreMenuItem> findStoreMenuItems(boolean activeOnly) {
+        StringBuilder queryBuilder = new StringBuilder(" select m from StoreMenuItem m ");
+        if (activeOnly) {
+            queryBuilder.append(" where m.active = true ");
+        }
+        queryBuilder.append(" order by m.sortOrder asc, m.id asc ");
+        return entityManager.createQuery(queryBuilder.toString(), StoreMenuItem.class).getResultList();
     }
 
     public List<Product> findProducts() {
@@ -277,6 +311,23 @@ public class CatalogRepository {
             return slider;
         }
         return entityManager.merge(slider);
+    }
+
+    @Transactional
+    public StoreMenuItem saveStoreMenuItem(StoreMenuItem item) {
+        if (item.getId() == null) {
+            entityManager.persist(item);
+            return item;
+        }
+        return entityManager.merge(item);
+    }
+
+    @Transactional
+    public void deleteStoreMenuItem(Long id) {
+        StoreMenuItem item = entityManager.find(StoreMenuItem.class, id);
+        if (item != null) {
+            entityManager.remove(item);
+        }
     }
 
     @Transactional
