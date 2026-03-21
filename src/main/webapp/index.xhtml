@@ -171,6 +171,41 @@
                 </ui:fragment>
             </main>
 
+            <section id="store-policies" class="policy-section">
+                <div class="policy-section-head">
+                    <span class="policy-eyebrow">Store information</span>
+                    <h2>Shipping, Refund, Privacy &amp; Contact Pages</h2>
+                    <p>Footer quick links scroll directly to these sections and render the content entered in the admin Content menu.</p>
+                </div>
+                <div class="policy-stack">
+                    <ui:repeat value="#{homePageBean.contentPages}" var="page">
+                        <article id="#{page.key}" class="policy-card">
+                            <h3>#{page.title}</h3>
+                            <div class="policy-card-body">
+                                <h:outputText value="#{homePageBean.pageHtml(page.key)}" escape="false"/>
+                            </div>
+                        </article>
+                    </ui:repeat>
+                </div>
+            </section>
+
+            <footer class="site-footer">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <h2>Need help before checkout?</h2>
+                        <p>Use the quick links to jump to the store policies entered by the admin team. Each page below pulls the same content saved from the Content editor.</p>
+                    </div>
+                    <div class="footer-links">
+                        <h3>Quick Links</h3>
+                        <ul>
+                            <ui:repeat value="#{homePageBean.contentPages}" var="page">
+                                <li><a href="##{page.key}">#{page.title}</a></li>
+                            </ui:repeat>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+            
             <p:messages id="messages" showDetail="true" showIcon="false" closable="true"/>
 
             <p:dialog id="purchaseDialog" widgetVar="purchaseDialogWidget" modal="true" responsive="true" showHeader="false"

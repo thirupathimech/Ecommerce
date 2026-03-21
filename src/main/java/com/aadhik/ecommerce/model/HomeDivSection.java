@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,10 +16,19 @@ public class HomeDivSection {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "heading", nullable = false, length = 180)
+    @Column(
+            name = "heading",
+            nullable = false,
+            length = 180
+    )
     private String heading;
 
-    @Column(name = "description", nullable = false, length = 1000)
+    @Lob
+    @Column(
+            name = "description",
+            columnDefinition = "TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci",
+            nullable = false
+    )
     private String description;
 
     @Column(name = "button_label", length = 60)

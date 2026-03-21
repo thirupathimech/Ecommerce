@@ -1,0 +1,43 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <div class="card content-editor-card">
+        <div class="card-head">
+            <h3>Footer Policy Content</h3>
+        </div>
+        <div class="card-body content-editor-layout">
+            <div class="content-page-menu">
+                <ui:repeat value="#{contentPageBean.pages}" var="page">
+                    <p:commandButton value="#{page.title}"
+                                     actionListener="#{contentPageBean.selectPage(page.key)}"
+                                     process="@this"
+                                     update=":mainForm"
+                                     styleClass="menu-btn #{contentPageBean.selectedPageKey eq page.key ? 'active' : ''}"/>
+                </ui:repeat>
+            </div>
+
+            <div class="content-page-editor">
+                <div class="content-editor-header">
+                    <h4>#{contentPageBean.selectedPageTitle}</h4>
+                    <p>Enter HTML content here. The same content will be shown in the store footer quick links.</p>
+                </div>
+                <p:textEditor value="#{contentPageBean.editorHtml}" height="320" secure="false"/>
+                <div class="content-editor-actions">
+                    <p:commandButton value="Save Content" action="#{contentPageBean.saveForm}" update=":mainForm:messages" icon="pi pi-save"/>
+                </div>
+            </div>
+
+            <div class="content-page-preview">
+                <div class="content-editor-header">
+                    <h4>Live Preview</h4>
+                    <p>This is how the selected policy content is rendered on the storefront page.</p>
+                </div>
+                <div class="content-preview-surface">
+                    <h:outputText value="#{contentPageBean.editorHtml}" escape="false"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</ui:composition>

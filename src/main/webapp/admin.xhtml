@@ -48,10 +48,15 @@
             </h:form>
 
             <h:form id="mainForm" styleClass="content" enctype="multipart/form-data">
-                <h1 class="page-title">#{adminPanelBean.activeMenu eq 'dashboard' ? 'Dashboard' : adminPanelBean.activeMenu eq 'products' ? 'Products' : adminPanelBean.activeMenu eq 'files' ? 'Files' : adminPanelBean.activeMenu eq 'collections' ? 'Collections' : adminPanelBean.activeMenu eq 'home-page' ? 'Home Page' : adminPanelBean.activeMenu eq 'settings' ? 'Settings' : 'Coming Soon'}</h1>
+                <h1 class="page-title">#{adminPanelBean.activeMenu eq 'dashboard' ? 'Dashboard' : adminPanelBean.activeMenu eq 'products' ? 'Products' : 
+                                         adminPanelBean.activeMenu eq 'files' ? 'Files' : adminPanelBean.activeMenu eq 'collections' ? 'Collections' : 
+                                         adminPanelBean.activeMenu eq 'home-page' ? 'Home Page' : adminPanelBean.activeMenu eq 'content' ? 'Content' : 
+                                         adminPanelBean.activeMenu eq 'settings' ? 'Settings' : 'Coming Soon'}</h1>
                 <p:growl id="messages" showDetail="true" skipDetailIfEqualsSummary="true"/>
 
-                <h:panelGroup rendered="#{adminPanelBean.activeMenu ne 'dashboard' and adminPanelBean.activeMenu ne 'products' and adminPanelBean.activeMenu ne 'files' and adminPanelBean.activeMenu ne 'collections' and adminPanelBean.activeMenu ne 'home-page' and adminPanelBean.activeMenu ne 'settings'}" layout="block" styleClass="card">
+                <h:panelGroup rendered="#{adminPanelBean.activeMenu ne 'dashboard' and adminPanelBean.activeMenu ne 'products' and adminPanelBean.activeMenu ne 'files' 
+                                          and adminPanelBean.activeMenu ne 'collections' and adminPanelBean.activeMenu ne 'home-page' and adminPanelBean.activeMenu ne 'content' 
+                                          and adminPanelBean.activeMenu ne 'settings'}" layout="block" styleClass="card">
                     <div class="card-head"><h3>#{adminPanelBean.activeMenu}</h3></div>
                     <div class="card-body">This module is added in sidebar as requested. We can enhance this one next.</div>
                 </h:panelGroup>
@@ -79,6 +84,11 @@
                 <!-- ═══════════════════════════════════════════════ FILES ═══════════════════════════════════════════════ -->
                 <h:panelGroup rendered="#{adminPanelBean.activeMenu eq 'files'}" layout="block">
                     <ui:include src="/admin/files.xhtml"/>
+                </h:panelGroup>
+                
+                <!-- ═══════════════════════════════════════════════ CONTENT ═══════════════════════════════════════════════ -->
+                <h:panelGroup rendered="#{adminPanelBean.activeMenu eq 'content'}" layout="block">
+                    <ui:include src="/admin/content.xhtml"/>
                 </h:panelGroup>
 
                 <!-- ═══════════════════════════════════════════════ SETTINGS ═══════════════════════════════════════════════ -->

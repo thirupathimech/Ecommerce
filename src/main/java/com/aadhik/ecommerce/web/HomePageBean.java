@@ -7,6 +7,8 @@ import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
 import com.aadhik.ecommerce.service.CatalogService;
+import com.aadhik.ecommerce.service.ContentPageService;
+import com.aadhik.ecommerce.service.ContentPageService.ContentPage;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -28,6 +30,9 @@ public class HomePageBean extends BaseBean {
 
     @Inject
     private CatalogService catalogService;
+    
+    @Inject
+    private ContentPageService contentPageService;
 
     private Long selectedProductId;
     private Integer selectedVariantIndex;
@@ -155,6 +160,15 @@ public class HomePageBean extends BaseBean {
 
     public String marqueeBackground() {
         return marqueeBackground(getActiveMarquee());
+    }
+    
+    public List<ContentPage> getContentPages() {
+        return new ArrayList<>(contentPageService.getPages().values());
+    }
+
+    public String getPageHtml(String key) {
+        ContentPage page = contentPageService.getPage(key);
+        return page == null ? "" : page.getHtmlContent();
     }
 
     public String resolveMediaUrl(String source) {
