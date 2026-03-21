@@ -1,10 +1,10 @@
 package com.aadhik.ecommerce.service;
 
+import com.aadhik.ecommerce.model.ContentPage;
 import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
-import com.aadhik.ecommerce.model.SectionType;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
@@ -24,6 +24,8 @@ public class DataSeeder {
     @PostConstruct
     @Transactional
     public void seed() {
+        seedContentPages();
+
         Long existing = entityManager.createQuery("select count(c) from ProductCollection c", Long.class)
                 .getSingleResult();
         if (existing != null && existing > 0) {
@@ -67,6 +69,33 @@ public class DataSeeder {
                 "LEFT",
                 "CENTER",
                 1);
+    }
+
+    private void seedContentPages() {
+        Long pageCount = entityManager.createQuery("select count(c) from ContentPage c", Long.class)
+                .getSingleResult();
+        if (pageCount != null && pageCount > 0) {
+            return;
+        }
+
+        createContentPage("shipping", "shipping-policy", "Shipping Policy", 1,
+                "<h2>Shipping Policy</h2><p>Orders are usually packed within 1 to 2 business days and delivered based on your location and courier availability.</p><ul><li>Shipping confirmation is shared once your order is dispatched.</li><li>Delivery timelines can vary during weekends, holidays, or peak sale periods.</li><li>Please ensure your address and phone number are correct while placing the order.</li></ul>");
+        createContentPage("refund", "refund-policy", "Refund Policy", 2,
+                "<h2>Refund Policy</h2><p>If you receive a damaged, defective, or incorrect product, contact our support team within 48 hours of delivery.</p><ul><li>Approved refunds are processed to the original payment method.</li><li>Refund settlement time depends on your bank or payment provider.</li><li>Replacement can be arranged when eligible stock is available.</li></ul>");
+        createContentPage("privacy", "privacy-policy", "Privacy Policy", 3,
+                "<h2>Privacy Policy</h2><p>We collect only the customer information needed to process orders, provide support, and improve store communication.</p><ul><li>Contact and shipping details are used to fulfill your orders.</li><li>We do not share your personal data except when required for delivery or payment processing.</li><li>Reasonable operational safeguards are used to protect your data.</li></ul>");
+        createContentPage("contact", "contact-information", "Contact Information", 4,
+                "<h2>Contact Information</h2><p>For order help, delivery questions, or product clarification, please contact our support team.</p><ul><li><strong>Email:</strong> support@ecommerce-demo.com</li><li><strong>Phone:</strong> +91 90000 12345</li><li><strong>Business Hours:</strong> Monday to Saturday, 10:00 AM to 6:00 PM</li><li><strong>Address:</strong> 24 Market Lane, Chennai, Tamil Nadu</li></ul>");
+    }
+
+    private void createContentPage(String key, String slug, String title, int sortOrder, String htmlContent) {
+        ContentPage page = new ContentPage();
+        page.setKey(key);
+        page.setSlug(slug);
+        page.setTitle(title);
+        page.setSortOrder(sortOrder);
+        page.setHtmlContent(htmlContent);
+        entityManager.persist(page);
     }
 
     private ProductCollection createCollection(String name, String slug, String image, String description) {

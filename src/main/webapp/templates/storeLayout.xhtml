@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title><ui:insert name="title">Ecommerce</ui:insert></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -44,7 +45,7 @@
                             <h3>Quick Links</h3>
                             <ul>
                                 <ui:repeat value="#{homePageBean.contentPages}" var="page">
-                                    <li><a href="#{page.key}">#{page.title}</a></li>
+                                    <li><h:link outcome="/content/page" value="#{page.title}"><f:param name="slug" value="#{page.slug}"/></h:link></li>
                                 </ui:repeat>
                             </ul>
                         </div>

@@ -1,7 +1,7 @@
 package com.aadhik.ecommerce.web;
 
+import com.aadhik.ecommerce.model.ContentPage;
 import com.aadhik.ecommerce.service.ContentPageService;
-import com.aadhik.ecommerce.service.ContentPageService.ContentPage;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
@@ -64,7 +64,7 @@ public class ContentPageBean extends AdminBean {
     }
 
     public List<ContentPage> getPages() {
-        return new ArrayList<>(contentPageService.getPages().values());
+        return new ArrayList<>(contentPageService.getPages());
     }
 
     public String getSelectedPageKey() {

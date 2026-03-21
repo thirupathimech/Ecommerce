@@ -1,5 +1,6 @@
 package com.aadhik.ecommerce.web;
 
+import com.aadhik.ecommerce.model.ContentPage;
 import com.aadhik.ecommerce.model.HomeDivSection;
 import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.MarqueeConfig;
@@ -8,7 +9,6 @@ import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
 import com.aadhik.ecommerce.service.CatalogService;
 import com.aadhik.ecommerce.service.ContentPageService;
-import com.aadhik.ecommerce.service.ContentPageService.ContentPage;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -30,7 +30,7 @@ public class HomePageBean extends BaseBean {
 
     @Inject
     private CatalogService catalogService;
-    
+
     @Inject
     private ContentPageService contentPageService;
 
@@ -161,14 +161,9 @@ public class HomePageBean extends BaseBean {
     public String marqueeBackground() {
         return marqueeBackground(getActiveMarquee());
     }
-    
-    public List<ContentPage> getContentPages() {
-        return new ArrayList<>(contentPageService.getPages().values());
-    }
 
-    public String pageHtml(String key) {
-        ContentPage page = contentPageService.getPage(key);
-        return page == null ? "" : page.getHtmlContent();
+    public List<ContentPage> getContentPages() {
+        return new ArrayList<>(contentPageService.getPages());
     }
 
     public String resolveMediaUrl(String source) {
@@ -205,7 +200,7 @@ public class HomePageBean extends BaseBean {
     public String productCtaLabel(Product product) {
         return product != null && product.isHasVariants() ? "Buy Now" : "Add To Cart";
     }
-    
+
     public String productCountLabel(int count) {
         return count == 1 ? "1 product" : count + " products";
     }
