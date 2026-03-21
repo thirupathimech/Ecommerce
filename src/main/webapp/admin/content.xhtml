@@ -4,28 +4,9 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <div class="card policy-admin-card">
-            <div class="policy-admin-hero">
-                <div class="policy-admin-hero-copy">
-                    <span class="policy-admin-eyebrow">Content studio</span>
-                    <h3>Footer Policy Content</h3>
-                    <p>Create a cleaner, more trustworthy experience for shipping, returns, privacy, and every footer policy page. Pick a page, edit the content, then review the live preview before saving.</p>
-                </div>
-
-                <div class="policy-admin-hero-badge">
-                    <span class="policy-admin-badge-label">Editing</span>
-                    <strong>#{contentPageBean.selectedPageTitle}</strong>
-                    <small>Changes update the storefront policy page and footer quick links content.</small>
-                </div>
-            </div>
-
             <div class="policy-admin-layout">
                 <aside class="policy-admin-sidebar">
                     <div class="policy-admin-panel policy-admin-nav-panel">
-                        <div class="policy-admin-panel-head">
-                            <span class="policy-admin-panel-label">Policy pages</span>
-                            <h4>Select a page</h4>
-                            <p>Switch between pages quickly and keep every policy consistent.</p>
-                        </div>
 
                         <div class="policy-admin-page-menu">
                             <ui:repeat value="#{contentPageBean.pages}" var="page">
@@ -55,11 +36,6 @@
                 <section class="policy-admin-main">
                     <div class="policy-admin-panel policy-admin-editor-panel">
                         <div class="policy-admin-editor-head">
-                            <div>
-                                <span class="policy-admin-panel-label">Editor</span>
-                                <h4>#{contentPageBean.selectedPageTitle}</h4>
-                                <p>Use formatted HTML content to match the polished storefront policy layout.</p>
-                            </div>
 
                             <div class="policy-admin-editor-actions">
                                 <p:commandButton value="Save Content"
