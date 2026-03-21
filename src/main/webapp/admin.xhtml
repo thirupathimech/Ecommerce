@@ -21,17 +21,20 @@
                         <p:commandButton value="Discounts" action="#{adminPanelBean.setActiveMenu('discounts')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                         <p:commandButton value="Products" action="#{adminPanelBean.setActiveMenu('products')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                         <p:commandButton value="Collections" action="#{adminPanelBean.setActiveMenu('collections')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
-                        <p:commandButton value="Content" action="#{adminPanelBean.setActiveMenu('content')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                         <p:commandButton value="Files" action="#{adminPanelBean.setActiveMenu('files')}" update=":mainForm" process="@this" styleClass="menu-btn menu-separator"/>
 
-                        <div class="menu-tree-group">
-                            <div class="menu-tree-label">Page</div>
+                        <details class="menu-tree-group" open="open">
+                            <summary class="menu-tree-label">
+                                <span class="menu-tree-arrow">&#8250;</span>
+                                <span class="menu-tree-folder">Pages</span>
+                            </summary>
                             <div class="menu-tree-items">
                                 <p:commandButton value="Home Page" action="#{adminPanelBean.setActiveMenu('home-page')}" update=":mainForm" process="@this" styleClass="menu-btn menu-tree-btn"/>
                                 <p:commandButton value="Product Page" action="#{adminPanelBean.setActiveMenu('product-page')}" update=":mainForm" process="@this" styleClass="menu-btn menu-tree-btn"/>
-                                <p:commandButton value="CheckOut Page" action="#{adminPanelBean.setActiveMenu('checkout-page')}" update=":mainForm" process="@this" styleClass="menu-btn menu-tree-btn"/>
+                                <p:commandButton value="Checkout Page" action="#{adminPanelBean.setActiveMenu('checkout-page')}" update=":mainForm" process="@this" styleClass="menu-btn menu-tree-btn"/>
+                                <p:commandButton value="Content" action="#{adminPanelBean.setActiveMenu('content')}" update=":mainForm" process="@this" styleClass="menu-btn menu-tree-btn"/>
                             </div>
-                        </div>
+                        </details>
 
                         <p:commandButton value="Shipping" action="#{adminPanelBean.setActiveMenu('shipping')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                         <p:commandButton value="Tax" action="#{adminPanelBean.setActiveMenu('tax')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
@@ -108,12 +111,12 @@
     </h:body>
     <h:outputScript>
         document.addEventListener('contextmenu', function(e) {
-            // PrimeFaces component area check
-            if (e.target.closest('.ui-datatable, .ui-menu, .ui-tree, .ui-panel')) {
-                return; // Allow PrimeFaces right-click
-            }
-            // Otherwise block browser context menu
-            e.preventDefault();
+        // PrimeFaces component area check
+        if (e.target.closest('.ui-datatable, .ui-menu, .ui-tree, .ui-panel')) {
+        return; // Allow PrimeFaces right-click
+        }
+        // Otherwise block browser context menu
+        e.preventDefault();
         });
     </h:outputScript>
 </html>

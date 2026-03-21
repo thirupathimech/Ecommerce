@@ -36,21 +36,55 @@ body {
 .menu-tree-group {
     display: grid;
     gap: 10px;
-    padding: 10px 0 4px 14px;
-    border-left: 1px solid rgba(255,255,255,.18);
-    margin-left: 10px;
+    padding: 2px 0 4px;
+    margin: 2px 0;
 }
 .menu-tree-label {
-    font-size: 0.82rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,.7);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #edf2ff;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.08);
+}
+.menu-tree-label::-webkit-details-marker {
+    display: none;
+}
+.menu-tree-arrow {
+    font-size: 1.2rem;
+    line-height: 1;
+    transform: rotate(0deg);
+    transition: transform .2s ease;
+}
+.menu-tree-group[open] .menu-tree-arrow {
+    transform: rotate(90deg);
+}
+.menu-tree-folder {
+    position: relative;
+    padding-left: 18px;
+}
+.menu-tree-folder::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-52%);
+    font-size: 0.8rem;
+    color: #ffd978;
 }
 .menu-tree-items {
     display: grid;
     gap: 8px;
     position: relative;
+    margin-left: 18px;
+    padding-left: 18px;
+    border-left: 1px solid rgba(255,255,255,.18);
 }
 .menu-tree-btn.ui-button {
     position: relative;
@@ -58,9 +92,9 @@ body {
 .menu-tree-btn.ui-button::before {
     content: '';
     position: absolute;
-    left: -16px;
+    left: -19px;
     top: 50%;
-    width: 12px;
+    width: 14px;
     border-top: 1px solid rgba(255,255,255,.18);
 }
 .menu-footer {
@@ -327,15 +361,21 @@ body {
     }
     .menu-tree-group {
         display: flex;
-        align-items: center;
+        align-items: stretch;
         gap: 8px;
         padding: 0;
-        margin-left: 0;
-        border-left: 0;
+        margin: 0;
+    }
+    .menu-tree-label {
+        flex: 0 0 auto;
+        white-space: nowrap;
     }
     .menu-tree-items {
         display: flex;
         gap: 6px;
+        margin-left: 0;
+        padding-left: 0;
+        border-left: 0;
     }
     .menu-tree-btn.ui-button::before {
         display: none;

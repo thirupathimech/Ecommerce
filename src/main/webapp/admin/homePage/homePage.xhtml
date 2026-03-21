@@ -6,7 +6,7 @@
         <div class="card-body">
             <p:tabView id="homePageTabView" style="width: 80vw" activeIndex="#{adminHomePageSettingsBean.homeTabIndex}">
                 
-                <p:ajax event="tabChange" listener="#{adminHomePageSettingsBean.onHomeTabChange}" process="@this"/>
+                <p:ajax event="tabChange" listener="#{adminHomePageSettingsBean.onHomeTabChange}" process="@this" update=":mainForm"/>
                 
                 <p:tab id="homeSectionTab" title="Home Section Order">
                     <ui:include src="homeSectionOrder.xhtml"/>
@@ -28,10 +28,6 @@
                     <ui:include src="collectionsGroup.xhtml"/>
                 </p:tab>
                 
-                <p:tab id="productCollectionTab" title="Product Collection">
-                    <ui:include src="productCollection.xhtml"/>
-                </p:tab>
-
                 <p:tab id="marqueeTab" title="Marquee">
                     <ui:include src="marquee.xhtml"/>
                 </p:tab>
