@@ -3,41 +3,104 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <div class="card content-editor-card">
-        <div class="card-head">
-            <h3>Footer Policy Content</h3>
-        </div>
-        <div class="card-body content-editor-layout">
-            <div class="content-page-menu">
-                <ui:repeat value="#{contentPageBean.pages}" var="page">
-                    <p:commandButton value="#{page.title}"
-                                     actionListener="#{contentPageBean.selectPage(page.key)}"
-                                     process="@this"
-                                     update=":mainForm"
-                                     styleClass="menu-btn #{contentPageBean.selectedPageKey eq page.key ? 'active' : ''}"/>
-                </ui:repeat>
-            </div>
-
-            <div class="content-page-editor">
-                <div class="content-editor-header">
-                    <h4>#{contentPageBean.selectedPageTitle}</h4>
-                    <p>Enter HTML content here. The same content will be shown in the store footer quick links.</p>
+    <div class="card policy-admin-card">
+            <div class="policy-admin-hero">
+                <div class="policy-admin-hero-copy">
+                    <span class="policy-admin-eyebrow">Content studio</span>
+                    <h3>Footer Policy Content</h3>
+                    <p>Create a cleaner, more trustworthy experience for shipping, returns, privacy, and every footer policy page. Pick a page, edit the content, then review the live preview before saving.</p>
                 </div>
-                <p:textEditor value="#{contentPageBean.editorHtml}" height="320" secure="false"/>
-                <div class="content-editor-actions">
-                    <p:commandButton value="Save Content" action="#{contentPageBean.saveForm}" update=":mainForm:messages" icon="pi pi-save"/>
+
+                <div class="policy-admin-hero-badge">
+                    <span class="policy-admin-badge-label">Editing</span>
+                    <strong>#{contentPageBean.selectedPageTitle}</strong>
+                    <small>Changes update the storefront policy page and footer quick links content.</small>
                 </div>
             </div>
 
-            <div class="content-page-preview">
-                <div class="content-editor-header">
-                    <h4>Live Preview</h4>
-                    <p>This is how the selected policy content is rendered on the storefront page.</p>
-                </div>
-                <div class="content-preview-surface">
-                    <h:outputText value="#{contentPageBean.editorHtml}" escape="false"/>
-                </div>
+            <div class="policy-admin-layout">
+                <aside class="policy-admin-sidebar">
+                    <div class="policy-admin-panel policy-admin-nav-panel">
+                        <div class="policy-admin-panel-head">
+                            <span class="policy-admin-panel-label">Policy pages</span>
+                            <h4>Select a page</h4>
+                            <p>Switch between pages quickly and keep every policy consistent.</p>
+                        </div>
+
+                        <div class="policy-admin-page-menu">
+                            <ui:repeat value="#{contentPageBean.pages}" var="page">
+                                <p:commandButton value="#{page.title}"
+                                                 actionListener="#{contentPageBean.selectPage(page.key)}"
+                                                 process="@this"
+                                                 update=":mainForm"
+                                                 icon="pi pi-file-edit"
+                                                 styleClass="policy-admin-menu-btn #{contentPageBean.selectedPageKey eq page.key ? 'active' : ''}"/>
+                            </ui:repeat>
+                        </div>
+                    </div>
+                    <div class="policy-admin-panel policy-admin-tips-panel">
+                        <div class="policy-admin-panel-head">
+                            <span class="policy-admin-panel-label">Writing tips</span>
+                            <h4>Make it user friendly</h4>
+                        </div>
+
+                        <ul class="policy-admin-tips-list">
+                            <li>Start with a short intro so customers know what the page covers.</li>
+                            <li>Use headings and bullet lists to break long policies into easy sections.</li>
+                            <li>Highlight key timelines like shipping windows, return periods, or support hours.</li>
+                        </ul>
+                    </div>
+                </aside>
+
+                <section class="policy-admin-main">
+                    <div class="policy-admin-panel policy-admin-editor-panel">
+                        <div class="policy-admin-editor-head">
+                            <div>
+                                <span class="policy-admin-panel-label">Editor</span>
+                                <h4>#{contentPageBean.selectedPageTitle}</h4>
+                                <p>Use formatted HTML content to match the polished storefront policy layout.</p>
+                            </div>
+
+                            <div class="policy-admin-editor-actions">
+                                <p:commandButton value="Save Content"
+                                                 action="#{contentPageBean.saveForm}"
+                                                 update=":mainForm:messages"
+                                                 icon="pi pi-save"
+                                                 styleClass="policy-admin-save-btn"/>
+                            </div>
+                        </div>
+                        <div class="policy-admin-editor-shell">
+                            <p:textEditor value="#{contentPageBean.editorHtml}" height="380" secure="false"/>
+                        </div>
+                    </div>
+                    <div class="policy-admin-panel policy-admin-preview-panel">
+                        <div class="policy-admin-panel-head">
+                            <span class="policy-admin-panel-label">Storefront preview</span>
+                            <h4>Live Preview</h4>
+                            <p>Review how the selected content will appear on the customer-facing policy page.</p>
+                        </div>
+
+                        <div class="policy-admin-preview-surface">
+                            <div class="policy-admin-preview-frame">
+                                <div class="policy-admin-preview-topbar">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="policy-page-card policy-admin-preview-card">
+                                    <div class="policy-page-hero policy-admin-preview-hero">
+                                        <div class="policy-page-header">
+                                            <span class="policy-eyebrow">Store information</span>
+                                            <h1>#{contentPageBean.selectedPageTitle}</h1>
+                                            <p>Customers will see this page in the same polished policy layout used across the storefront.</p>
+                                        </div>
+                                    </div>
+                                    <div class="policy-page-body policy-admin-preview-body">
+                                        <h:outputText value="#{contentPageBean.editorHtml}" escape="false"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
-    </div>
 </ui:composition>
