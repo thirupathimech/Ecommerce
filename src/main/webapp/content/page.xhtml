@@ -14,33 +14,13 @@
                 <div class="policy-page-hero">
                     <div class="policy-page-header">
                         <span class="policy-eyebrow">Store information</span>
-                        <h1>#{contentViewBean.currentPage.title}</h1>
-                    </div>
-
-                    <div class="policy-page-actions">
-                         <h:outputLink value="#{request.contextPath}/index.xhtml" styleClass="policy-back-link">Back to Home</h:outputLink>
                     </div>
                 </div>
 
                 <div class="policy-page-layout">
-                    <aside class="policy-page-sidebar">
-                        <div class="policy-page-nav-card">
-                            <div class="policy-page-nav-header">
-                                <span class="policy-nav-label">Browse pages</span>
-                                <p>Jump between policy pages quickly.</p>
-                            </div>
-
-                            <nav class="policy-page-links" aria-label="Policy quick links">
-                                <ui:repeat value="#{contentViewBean.pages}" var="page">
-                                    <h:outputLink value="#{request.contextPath}/content/page.xhtml?slug=#{page.slug}" styleClass="#{contentViewBean.isSelected(page.slug) ? 'active' : ''}">#{page.title}</h:outputLink>
-                                </ui:repeat>
-                            </nav>
-                        </div>
-                    </aside>
 
                     <article class="policy-page-content-card">
                         <div class="policy-page-content-head">
-                            <span class="policy-content-label">Current page</span>
                             <h2>#{contentViewBean.currentPage.title}</h2>
                         </div>
 

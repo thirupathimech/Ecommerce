@@ -22,7 +22,7 @@
                             <p:commandButton id="bar" type="button" icon="pi pi-bars" onclick="toggleStoreMenu(true); return false;" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                             <p:commandButton id="searchBtn" type="button" icon="pi pi-search" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                         </div>
-                        <h:graphicImage id="logo" styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="logo"/>
+                        <h:link outcome="index"><h:graphicImage id="logo" styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="logo"/></h:link>
                         <div class="nav-right">
                             <p:commandButton id="userBtn" type="button" icon="pi pi-user" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                             <p:commandButton id="shoppingBtn" type="button" icon="pi pi-shopping-bag" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
@@ -30,7 +30,9 @@
                     </div>
                 </div>
 
-                <div id="storeMenuDrawer" class="store-menu-drawer" aria-hidden="true">
+                <div id="storeMenuBackdrop" class="store-menu-backdrop" aria-hidden="true" onclick="toggleStoreMenu(false)"></div>
+
+                <aside id="storeMenuDrawer" class="store-menu-drawer" aria-hidden="true" aria-label="Store navigation">
                     <div class="store-menu-header">
                         <h3>Menu</h3>
                         <button type="button" class="store-menu-close" onclick="toggleStoreMenu(false)">✕</button>
@@ -40,7 +42,7 @@
                             <h:outputLink value="#{storefrontBean.menuLink(menuItem)}" styleClass="store-menu-link">#{menuItem.label}</h:outputLink>
                         </ui:repeat>
                     </div>
-                </div>
+                </aside>
 
                 <div class="page-content">
                     <ui:insert name="content"/>
@@ -49,8 +51,8 @@
                 <footer class="site-footer">
                     <div class="footer-grid">
                         <div class="footer-brand">
-                            <h2>Need help before checkout?</h2>
-                            <p>Use the quick links to jump to the store policies entered by the admin team. Each page below pulls the same content saved from the Content editor.</p>
+                            <h2>Shop with confidence.</h2>
+                            <p>Explore our policies to learn more about shipping, returns, and how we safeguard your information. We aim to provide a seamless and trustworthy shopping journey.</p>
                         </div>
                         <div class="footer-links">
                             <h3>Quick Links</h3>
@@ -69,11 +71,34 @@
         <ui:insert name="bodyEnd"/>
         <h:outputScript target="body">
             function toggleStoreMenu(isOpen) {
-                var drawer = document.getElementById('storeMenuDrawer');
-                if (!drawer) { return; }
-                drawer.classList.toggle('open', !!isOpen);
-                drawer.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            var drawer = document.getElementById('storeMenuDrawer');
+            var backdrop = document.getElementById('storeMenuBackdrop');
+            if (!drawer || !backdrop) { return; }
+
+            var shouldOpen = !!isOpen;
+            drawer.classList.toggle('open', shouldOpen);
+            backdrop.classList.toggle('open', shouldOpen);
+            drawer.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+            backdrop.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+            document.body.classList.toggle('store-menu-open', shouldOpen);
             }
+            document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+            toggleStoreMenu(false);
+            }
+            });
+
+            document.addEventListener('click', function(event) {
+            var drawer = document.getElementById('storeMenuDrawer');
+            var trigger = document.getElementById('mainForm:bar');
+            if (!drawer || drawer.getAttribute('aria-hidden') === 'true') {
+            return;
+            }
+            if (drawer.contains(event.target) || (trigger &amp;&amp; trigger.contains(event.target))) {
+            return;
+            }
+            toggleStoreMenu(false);
+            });
         </h:outputScript>
     </h:body>
 </html>
