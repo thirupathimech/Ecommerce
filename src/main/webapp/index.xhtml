@@ -5,7 +5,9 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/templates/storeLayout.xhtml">
     <ui:define name="title">Ecommerce</ui:define>
-
+    <ui:define name="head">
+        <h:outputStylesheet name="index.css" library="css"/>
+    </ui:define>
     <ui:define name="content">
         <main id="mainContainer" class="container">
             <ui:fragment id="hero-slider-fragment" rendered="#{not empty homePageBean.sliders}">

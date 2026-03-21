@@ -5,6 +5,9 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/templates/storeLayout.xhtml">
     <ui:define name="title">#{empty contentViewBean.currentPage ? 'Content Page' : contentViewBean.currentPage.title}</ui:define>
+    <ui:define name="head">
+        <h:outputStylesheet library="css" name="index.css"/>
+    </ui:define>
     <ui:define name="content">
         <main class="policy-page-shell">
             <section class="policy-page-card">
@@ -12,11 +15,10 @@
                     <div class="policy-page-header">
                         <span class="policy-eyebrow">Store information</span>
                         <h1>#{contentViewBean.currentPage.title}</h1>
-                        <p>Find shipping, returns, privacy, and contact details in a cleaner layout that is easy to browse on mobile and desktop.</p>
                     </div>
 
                     <div class="policy-page-actions">
-                        <h:link outcome="/index" value="Back to Home" styleClass="policy-back-link"/>
+                         <h:outputLink value="#{request.contextPath}/index.xhtml" styleClass="policy-back-link">Back to Home</h:outputLink>
                     </div>
                 </div>
 
@@ -30,9 +32,7 @@
 
                             <nav class="policy-page-links" aria-label="Policy quick links">
                                 <ui:repeat value="#{contentViewBean.pages}" var="page">
-                                    <h:link outcome="/content/page" value="#{page.title}" styleClass="#{contentViewBean.isSelected(page.slug) ? 'active' : ''}">
-                                        <f:param name="slug" value="#{page.slug}"/>
-                                    </h:link>
+                                    <h:outputLink value="#{request.contextPath}/content/page.xhtml?slug=#{page.slug}" styleClass="#{contentViewBean.isSelected(page.slug) ? 'active' : ''}">#{page.title}</h:outputLink>
                                 </ui:repeat>
                             </nav>
                         </div>

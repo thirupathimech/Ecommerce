@@ -14,10 +14,8 @@
                 <p>The page you requested is unavailable or may have been moved. Use the buttons below to continue browsing the store.</p>
 
                 <div class="not-found-actions">
-                    <h:link outcome="/index" value="Go to Home" styleClass="not-found-link primary"/>
-                    <h:link outcome="/content/page" value="View Store Info" styleClass="not-found-link secondary">
-                        <f:param name="slug" value="shipping"/>
-                    </h:link>
+                    <h:outputLink value="#{request.contextPath}/index.xhtml" styleClass="not-found-link primary">Go to Home</h:outputLink>
+                    <h:outputLink value="#{request.contextPath}/content/page.xhtml?slug=shipping" styleClass="not-found-link secondary">View Store Info</h:outputLink>
                 </div>
             </section>
         </main>
