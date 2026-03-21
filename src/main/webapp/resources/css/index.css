@@ -17,9 +17,21 @@
 }
 body {
     margin: 0;
+    min-height: 100vh;
     font-family: "Inter", "Segoe UI", sans-serif;
     background: var(--surface);
     color: var(--text-main);
+}
+.page-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.page-content {
+    flex: 1 0 auto;
+}
+#mainForm {
+    min-height: 100vh;
 }
 .top-strip {
     background: #ffffff;
@@ -770,10 +782,14 @@ body {
 }
 .site-footer {
     margin-top: 2.5rem;
-    background: #10255f;
+    background: linear-gradient(135deg, #10255f 0%, #173676 100%);
     color: #fff;
     border-radius: 28px 28px 0 0;
     padding: 2rem 1.5rem;
+    box-shadow: 0 -12px 30px rgba(16, 37, 95, 0.12);
+}
+.site-footer .footer-grid {
+    width: 100%;
 }
 .footer-grid {
     max-width: 1200px;
@@ -812,6 +828,7 @@ body {
     color: #fff6a8;
     text-decoration: none;
     font-weight: 600;
+    word-break: break-word;
 }
 .footer-links a:hover,
 .footer-links a:focus {
@@ -820,6 +837,7 @@ body {
 }
 .policy-section {
     max-width: 1200px;
+    width: min(100% - 2.5rem, 1200px);
     margin: 2rem auto 0;
     display: grid;
     gap: 1.25rem;
@@ -1145,7 +1163,6 @@ body {
         grid-template-columns: 1fr;
     }
     .site-footer {
-        border-radius: 24px 24px 0 0;
         padding: 1.5rem 1rem;
     }
 }

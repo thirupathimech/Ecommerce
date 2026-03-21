@@ -1,299 +1,247 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <h:head>
-        <title>Ecommerce</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <h:outputStylesheet library="css" name="index.css"/>
-    </h:head>
-    <h:body>
-        <h:form id="mainForm">
-            <div class="admin-link">
-                <h:outputLink value="admin.xhtml">Go to Admin Setup</h:outputLink>
-            </div>
-            <div id="announcementBar" class="top-strip">Sip Your Way To Health</div>
-            <div id="nav-shell" class="nav-shell">
-                <div class="nav-row">
-                    <div class="nav-left">
-                        <p:commandButton id="bar" type="button" icon="pi pi-bars" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
-                        <p:commandButton id="searchBtn" type="button" icon="pi pi-search" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
-                    </div>
-                    <h:graphicImage id="logo" styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="logo"/>
-                    <div class="nav-right">
-                        <p:commandButton id="userBtn" type="button" icon="pi pi-user" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
-                        <p:commandButton id="shoppingBtn" type="button" icon="pi pi-shopping-bag" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
-                    </div>
-                </div>
-            </div>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/storeLayout.xhtml">
+    <ui:define name="title">Ecommerce</ui:define>
 
-            <main id="mainContainer" class="container">
-                <ui:fragment id="hero-slider-fragment" rendered="#{not empty homePageBean.sliders}">
-                    <section id="hero-slider" class="hero-slider" data-slide-seconds="3.5">
-                        <ui:repeat value="#{homePageBean.sliders}" var="slide" varStatus="status">
-                            <article class="hero-slide #{status.first ? 'active' : ''}">
-                                <h:graphicImage value="#{homePageBean.resolveMediaUrl(slide.imageUrl)}" alt="#{slide.title}"/>
-                                <div class="hero-overlay">
-                                    <h3>#{slide.title}</h3>
-                                    <p>#{slide.subtitle}</p>
-                                </div>
-                            </article>
-                        </ui:repeat>
-                    </section>
-                </ui:fragment>
-
-                <ui:fragment id="marquee_fragment" rendered="#{homePageBean.hasOrderedHomeSections()}">
-                    <ui:repeat id="marquee_panel_repeat" value="#{homePageBean.orderedHomeSections}" var="orderedSection" varStatus="orderstatus">
-                        <h:panelGroup id="marqueePanelGroup" rendered="#{orderedSection.type.name() eq 'MARQUEE' and not empty homePageBean.getMarqueeItems(orderedSection.marquee)}"
-                                      layout="block"
-                                      styleClass="store-marquee #{orderedSection.marquee.pauseOnHover ? 'pause-on-hover' : ''}"
-                                      style="background:#{homePageBean.marqueeBackground(orderedSection.marquee)};">
-                            <div class="store-marquee-track #{homePageBean.marqueeAnimationClass(orderedSection.marquee)}"
-                                 style="animation-duration:#{orderedSection.marquee.speedSeconds}s; font-size:#{orderedSection.marquee.fontSizePx}px; font-weight:#{orderedSection.marquee.fontWeight}; color:#{orderedSection.marquee.textColor};">
-                                <ui:repeat value="#{homePageBean.getMarqueeLoopedItems(orderedSection.marquee)}" var="mItem" varStatus="marq_item_status">
-                                    <span id="marquee_#{marq_item_status.index + 1}" class="store-marquee-item">#{mItem}</span>
-                                </ui:repeat>
-                            </div>
-                        </h:panelGroup>
-
-                        <h:panelGroup id="video_carousel_panelgroup" rendered="#{orderedSection.type.name() eq 'VIDEO_CAROUSEL'}" layout="block" styleClass="store-video-section">
-                            <h2 class="section-title">#{orderedSection.videoItem.title}</h2>
-                            <div class="store-video-track">
-                                <ui:repeat value="#{homePageBean.getCarouselVideos(orderedSection.videoItem)}" var="videoRef" varStatus="vStatus">
-                                    <article class="video-card">
-                                        <p:video value="#{homePageBean.resolveMediaUrl(videoRef)}" controls="play" player="mp4" autoplay="false"
-                                                 disablepictureinpicture="true" disableremoteplayback="true" preload="metadata" controlslist="nodownload nofullscreen" loop="true"/>
-                                    </article>
-                                </ui:repeat>
-                            </div>
-                        </h:panelGroup>
-
-                        <h:panelGroup id="div_section_panelgroup" rendered="#{orderedSection.type.name() eq 'DIV_SECTION'}" layout="block" styleClass="home-div-section">
-                            <article class="home-div-card #{orderedSection.divSection.imageSide eq 'RIGHT' ? 'right' : ''}">
-                                <div class="home-div-image-wrap">
-                                    <h:graphicImage id="div_section_image" value="#{homePageBean.resolveMediaUrl(orderedSection.divSection.imageUrl)}" alt="#{orderedSection.divSection.heading}"/>
-                                </div>
-                                <div class="home-div-content">
-                                    <div class="home-div-content-inner #{orderedSection.divSection.contentAlign eq 'LEFT' ? 'align-left' : orderedSection.divSection.contentAlign eq 'RIGHT' ? 'align-right' : 'align-center'}">
-                                        <h2 class="home-div-heading">#{orderedSection.divSection.heading}</h2>
-                                        <p class="home-div-desc">#{orderedSection.divSection.description}</p>
-                                        <h:panelGroup id="div_section_button_label_panelgroup" rendered="#{not empty orderedSection.divSection.buttonLabel}">
-                                            <h:outputLink id="div_section_button_link" value="#{empty orderedSection.divSection.buttonLink ? '#' : orderedSection.divSection.buttonLink}" styleClass="home-div-btn">#{orderedSection.divSection.buttonLabel}</h:outputLink>
-                                        </h:panelGroup>
-                                    </div>
-                                </div>
-                            </article>
-                        </h:panelGroup>
-
-                        <h:panelGroup id="collection_section_panelgroup" rendered="#{orderedSection.type.name() eq 'COLLECTION_GROUP' and not empty orderedSection.collections}" layout="block" styleClass="collection-group-section #{orderedSection.collectionGroup.scrollDisplayMode ? 'collection-group-section-scroll' : 'collection-group-section-box'}">
-                            <section>
-                                <div class="collection-group-header #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
-                                    <h2 class="section-title">#{orderedSection.collectionGroup.title}</h2>
-                                    <h:panelGroup rendered="#{orderedSection.collectionGroup.scrollDisplayMode}" layout="block" styleClass="collection-group-scroll-tools">
-                                        <span class="collection-group-scroll-hint">Scroll to explore</span>
-                                        <div class="collection-group-scroll-nav">
-                                            <button type="button" class="collection-group-nav-btn" data-collection-nav="prev" aria-label="Show previous collections">&#8592;</button>
-                                            <span class="collection-group-scroll-status" data-collection-status="true">1/1</span>
-                                            <button type="button" class="collection-group-nav-btn" data-collection-nav="next" aria-label="Show next collections">&#8594;</button>
-                                        </div>
-                                    </h:panelGroup>
-                                </div>
-                                <div class="collection-group-track #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}" data-collection-track="true">
-                                    <ui:repeat value="#{orderedSection.collections}" var="collection">
-                                        <article class="collection-group-card #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
-                                            <h:graphicImage value="#{homePageBean.resolveMediaUrl(collection.bannerImage)}"
-                                                            alt="#{collection.name}"/>
-                                            <div class="collection-group-card-body">
-                                                <h3 class="collection-group-card-title">#{collection.name}</h3>
-                                                <span class="collection-group-card-arrow" aria-hidden="true">&#8594;</span>
-                                            </div>
-                                        </article>
-                                    </ui:repeat>
-                                </div>
-                            </section>
-                        </h:panelGroup>
-
-                        <h:panelGroup id="product_collection_panelgroup" rendered="#{orderedSection.type.name() eq 'PRODUCTS_COLLECTION' and not empty orderedSection.products}" layout="block" styleClass="product-collection-section #{orderedSection.productCollection.scrollDisplayMode ? 'product-collection-section-scroll' : 'product-collection-section-box'}">
-                            <section>
-                                <div class="product-collection-header #{orderedSection.productCollection.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
-                                    <div>
-                                        <h2 class="section-title">#{orderedSection.productCollection.name}</h2>
-                                        <p class="product-collection-meta">#{homePageBean.productCountLabel(orderedSection.products.size())} • Display: #{orderedSection.productCollection.scrollDisplayMode ? 'Scroll' : 'Box'}</p>
-                                    </div>
-                                </div>
-                                <div class="products-grid #{orderedSection.productCollection.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
-                                    <ui:repeat value="#{orderedSection.products}" var="product">
-                                        <article class="product-card">
-                                            <div class="product-card-media">
-                                                <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}" layout="block" styleClass="product-badge">Sale</h:panelGroup>
-                                                <h:graphicImage value="#{homePageBean.resolveMediaUrl(product.imageUrl)}" alt="#{product.name}"/>
-                                            </div>
-                                            <div class="product-info">
-                                                <h3 class="product-title">#{product.name}</h3>
-                                                <div class="product-price-stack">
-                                                    <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}">
-                                                        <span class="old-price">#{homePageBean.formatPrice(product.comparePrice)}</span>
-                                                    </h:panelGroup>
-                                                    <span class="new-price">#{homePageBean.productPriceLabel(product)}</span>
-                                                </div>
-                                                <h:panelGroup rendered="#{product.hasVariants}">
-                                                    <div class="product-variant-preview">
-                                                        <ui:repeat value="#{homePageBean.getProductVariants(product)}" var="variant" varStatus="variantStatus">
-                                                            <span class="variant-pill">#{variant.name}</span>
-                                                        </ui:repeat>
-                                                    </div>
-                                                </h:panelGroup>
-                                                <h:panelGroup rendered="#{product.hasVariants}">
-                                                    <p:commandButton value="#{homePageBean.productCtaLabel(product)}"
-                                                                     actionListener="#{homePageBean.openPurchaseDialog(product)}"
-                                                                     process="@this"
-                                                                     update=":mainForm:purchaseDialog :mainForm:messages"
-                                                                     oncomplete="PF('purchaseDialogWidget').show()"
-                                                                     styleClass="product-cta-btn product-cta-buy"/>
-                                                </h:panelGroup>
-                                                <h:panelGroup rendered="#{not product.hasVariants}">
-                                                    <p:commandButton value="#{homePageBean.productCtaLabel(product)}"
-                                                                     type="button"
-                                                                     styleClass="product-cta-btn product-cta-add"/>
-                                                </h:panelGroup>
-                                            </div>
-                                        </article>
-                                    </ui:repeat>
-                                </div>
-                            </section>
-                        </h:panelGroup>
-                    </ui:repeat>
-                </ui:fragment>
-
-                <ui:fragment rendered="#{not homePageBean.hasOrderedHomeSections()}">
-                    <p:outputLabel value="Please contact administrator"/>
-                </ui:fragment>
-            </main>
-
-            <section id="store-policies" class="policy-section">
-                <div class="policy-section-head">
-                    <span class="policy-eyebrow">Store information</span>
-                    <h2>Shipping, Refund, Privacy &amp; Contact Pages</h2>
-                    <p>Footer quick links scroll directly to these sections and render the content entered in the admin Content menu.</p>
-                </div>
-                <div class="policy-stack">
-                    <ui:repeat value="#{homePageBean.contentPages}" var="page">
-                        <article id="#{page.key}" class="policy-card">
-                            <h3>#{page.title}</h3>
-                            <div class="policy-card-body">
-                                <h:outputText value="#{homePageBean.pageHtml(page.key)}" escape="false"/>
+    <ui:define name="content">
+        <main id="mainContainer" class="container">
+            <ui:fragment id="hero-slider-fragment" rendered="#{not empty homePageBean.sliders}">
+                <section id="hero-slider" class="hero-slider" data-slide-seconds="3.5">
+                    <ui:repeat value="#{homePageBean.sliders}" var="slide" varStatus="status">
+                        <article class="hero-slide #{status.first ? 'active' : ''}">
+                            <h:graphicImage value="#{homePageBean.resolveMediaUrl(slide.imageUrl)}" alt="#{slide.title}"/>
+                            <div class="hero-overlay">
+                                <h3>#{slide.title}</h3>
+                                <p>#{slide.subtitle}</p>
                             </div>
                         </article>
                     </ui:repeat>
-                </div>
-            </section>
+                </section>
+            </ui:fragment>
 
-            <footer class="site-footer">
-                <div class="footer-grid">
-                    <div class="footer-brand">
-                        <h2>Need help before checkout?</h2>
-                        <p>Use the quick links to jump to the store policies entered by the admin team. Each page below pulls the same content saved from the Content editor.</p>
-                    </div>
-                    <div class="footer-links">
-                        <h3>Quick Links</h3>
-                        <ul>
-                            <ui:repeat value="#{homePageBean.contentPages}" var="page">
-                                <li><a href="##{page.key}">#{page.title}</a></li>
+            <ui:fragment id="marquee_fragment" rendered="#{homePageBean.hasOrderedHomeSections()}">
+                <ui:repeat id="marquee_panel_repeat" value="#{homePageBean.orderedHomeSections}" var="orderedSection" varStatus="orderstatus">
+                    <h:panelGroup id="marqueePanelGroup" rendered="#{orderedSection.type.name() eq 'MARQUEE' and not empty homePageBean.getMarqueeItems(orderedSection.marquee)}"
+                                  layout="block"
+                                  styleClass="store-marquee #{orderedSection.marquee.pauseOnHover ? 'pause-on-hover' : ''}"
+                                  style="background:#{homePageBean.marqueeBackground(orderedSection.marquee)};">
+                        <div class="store-marquee-track #{homePageBean.marqueeAnimationClass(orderedSection.marquee)}"
+                             style="animation-duration:#{orderedSection.marquee.speedSeconds}s; font-size:#{orderedSection.marquee.fontSizePx}px; font-weight:#{orderedSection.marquee.fontWeight}; color:#{orderedSection.marquee.textColor};">
+                            <ui:repeat value="#{homePageBean.getMarqueeLoopedItems(orderedSection.marquee)}" var="mItem" varStatus="marq_item_status">
+                                <span id="marquee_#{marq_item_status.index + 1}" class="store-marquee-item">#{mItem}</span>
                             </ui:repeat>
-                        </ul>
-                    </div>
-                </div>
-            </footer>
-            
-            <p:messages id="messages" showDetail="true" showIcon="false" closable="true"/>
-
-            <p:dialog id="purchaseDialog" widgetVar="purchaseDialogWidget" modal="true" responsive="true" showHeader="false"
-                      appendTo="@(body)" styleClass="purchase-dialog" width="900" fitViewport="true">
-                <h:panelGroup rendered="#{not empty homePageBean.selectedProduct}" layout="block" id="purchaseDialogContent" styleClass="purchase-dialog-body">
-                    <p:commandButton type="button" icon="pi pi-times" onclick="PF('purchaseDialogWidget').hide()"
-                                     styleClass="purchase-dialog-close ui-button-flat ui-button-plain" title="Close quick buy dialog"/>
-
-                    <div class="purchase-dialog-panel">
-                        <div class="purchase-product-visual">
-                            <h:graphicImage value="#{homePageBean.resolveMediaUrl(homePageBean.selectedProduct.imageUrl)}" alt="#{homePageBean.selectedProduct.name}"/>
                         </div>
-                        <div class="purchase-dialog-content">
-                            <div class="purchase-product-summary">
-                                <span class="purchase-dialog-eyebrow">Quick buy</span>
-                                <h3>#{homePageBean.selectedProduct.name}</h3>
-                                <p>Choose the right pack size and continue instantly. This layout is optimized for both desktop and mobile.</p>
-                            </div>
+                    </h:panelGroup>
 
-                            <div class="purchase-selection-block">
-                                <div class="purchase-selection-header">
-                                    <span>Select variant</span>
-                                    <h:panelGroup rendered="#{not empty homePageBean.selectedVariant}">
-                                        <strong>#{homePageBean.selectedVariant.name}</strong>
+                    <h:panelGroup id="video_carousel_panelgroup" rendered="#{orderedSection.type.name() eq 'VIDEO_CAROUSEL'}" layout="block" styleClass="store-video-section">
+                        <h2 class="section-title">#{orderedSection.videoItem.title}</h2>
+                        <div class="store-video-track">
+                            <ui:repeat value="#{homePageBean.getCarouselVideos(orderedSection.videoItem)}" var="videoRef" varStatus="vStatus">
+                                <article class="video-card">
+                                    <p:video value="#{homePageBean.resolveMediaUrl(videoRef)}" controls="play" player="mp4" autoplay="false"
+                                             disablepictureinpicture="true" disableremoteplayback="true" preload="metadata" controlslist="nodownload nofullscreen" loop="true"/>
+                                </article>
+                            </ui:repeat>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="div_section_panelgroup" rendered="#{orderedSection.type.name() eq 'DIV_SECTION'}" layout="block" styleClass="home-div-section">
+                        <article class="home-div-card #{orderedSection.divSection.imageSide eq 'RIGHT' ? 'right' : ''}">
+                            <div class="home-div-image-wrap">
+                                <h:graphicImage id="div_section_image" value="#{homePageBean.resolveMediaUrl(orderedSection.divSection.imageUrl)}" alt="#{orderedSection.divSection.heading}"/>
+                            </div>
+                            <div class="home-div-content">
+                                <div class="home-div-content-inner #{orderedSection.divSection.contentAlign eq 'LEFT' ? 'align-left' : orderedSection.divSection.contentAlign eq 'RIGHT' ? 'align-right' : 'align-center'}">
+                                    <h2 class="home-div-heading">#{orderedSection.divSection.heading}</h2>
+                                    <p class="home-div-desc">#{orderedSection.divSection.description}</p>
+                                    <h:panelGroup id="div_section_button_label_panelgroup" rendered="#{not empty orderedSection.divSection.buttonLabel}">
+                                        <h:outputLink id="div_section_button_link" value="#{empty orderedSection.divSection.buttonLink ? '#' : orderedSection.divSection.buttonLink}" styleClass="home-div-btn">#{orderedSection.divSection.buttonLabel}</h:outputLink>
                                     </h:panelGroup>
                                 </div>
-                                <h:panelGroup id="variantChooser" layout="block" styleClass="variant-options-shell">
-                                    <ui:repeat value="#{homePageBean.selectedProductVariants}" var="variant">
-                                        <p:commandLink actionListener="#{homePageBean.selectVariant(variant.index)}" process="@this" update=":mainForm:purchaseDialog"
-                                                       styleClass="variant-option-card #{homePageBean.selectedVariant ne null and homePageBean.selectedVariant.index eq variant.index ? 'active' : ''}">
-                                            <span class="variant-option-check"><i class="pi pi-check"></i></span>
-                                            <h:graphicImage value="#{variant.imageUrl}" alt="#{variant.name}"/>
-                                            <div class="variant-option-details">
-                                                <div class="variant-option-topline">
-                                                    <strong>#{variant.name}</strong>
-                                                    <span class="variant-option-price">#{homePageBean.formatPrice(variant.price)}</span>
-                                                </div>
-                                                <div class="variant-option-meta">
-                                                    <span>Best suited for quick checkout</span>
-                                                    <h:panelGroup rendered="#{not empty variant.comparePrice}">
-                                                        <small class="old-price">#{homePageBean.formatPrice(variant.comparePrice)}</small>
-                                                    </h:panelGroup>
-                                                </div>
-                                            </div>
-                                        </p:commandLink>
-                                    </ui:repeat>
+                            </div>
+                        </article>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="collection_section_panelgroup" rendered="#{orderedSection.type.name() eq 'COLLECTION_GROUP' and not empty orderedSection.collections}" layout="block" styleClass="collection-group-section #{orderedSection.collectionGroup.scrollDisplayMode ? 'collection-group-section-scroll' : 'collection-group-section-box'}">
+                        <section>
+                            <div class="collection-group-header #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
+                                <h2 class="section-title">#{orderedSection.collectionGroup.title}</h2>
+                                <h:panelGroup rendered="#{orderedSection.collectionGroup.scrollDisplayMode}" layout="block" styleClass="collection-group-scroll-tools">
+                                    <span class="collection-group-scroll-hint">Scroll to explore</span>
+                                    <div class="collection-group-scroll-nav">
+                                        <button type="button" class="collection-group-nav-btn" data-collection-nav="prev" aria-label="Show previous collections">&#8592;</button>
+                                        <span class="collection-group-scroll-status" data-collection-status="true">1/1</span>
+                                        <button type="button" class="collection-group-nav-btn" data-collection-nav="next" aria-label="Show next collections">&#8594;</button>
+                                    </div>
                                 </h:panelGroup>
                             </div>
-
-                            <div class="purchase-dialog-note">
-                                <i class="pi pi-shield"></i>
-                                <span>Safe checkout flow with clear variant selection before you continue.</span>
+                            <div class="collection-group-track #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}" data-collection-track="true">
+                                <ui:repeat value="#{orderedSection.collections}" var="collection">
+                                    <article class="collection-group-card #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
+                                        <h:graphicImage value="#{homePageBean.resolveMediaUrl(collection.bannerImage)}" alt="#{collection.name}"/>
+                                        <div class="collection-group-card-body">
+                                            <h3 class="collection-group-card-title">#{collection.name}</h3>
+                                            <span class="collection-group-card-arrow" aria-hidden="true">&#8594;</span>
+                                        </div>
+                                    </article>
+                                </ui:repeat>
                             </div>
+                        </section>
+                    </h:panelGroup>
 
-                            <div class="purchase-dialog-actions">
-                                <p:commandButton value="Add to cart" action="#{homePageBean.addSelectedVariantToCart}"
-                                                 update=":mainForm:messages :mainForm:purchaseDialog" process=":mainForm:purchaseDialog"
-                                                 oncomplete="if (!args.validationFailed) PF('purchaseDialogWidget').hide()" styleClass="product-cta-btn product-cta-add purchase-secondary-action"/>
-                                <p:commandButton value="Buy it now" action="#{homePageBean.buySelectedVariantNow}"
-                                                 update=":mainForm:messages :mainForm:purchaseDialog" process=":mainForm:purchaseDialog"
-                                                 oncomplete="if (!args.validationFailed) PF('purchaseDialogWidget').hide()" styleClass="product-cta-btn product-cta-buy purchase-primary-action"/>
+                    <h:panelGroup id="product_collection_panelgroup" rendered="#{orderedSection.type.name() eq 'PRODUCTS_COLLECTION' and not empty orderedSection.products}" layout="block" styleClass="product-collection-section">
+                        <section>
+                            <div class="product-collection-header">
+                                <div>
+                                    <h2 class="section-title">#{orderedSection.productCollection.name}</h2>
+                                    <p class="product-collection-meta">#{homePageBean.productCountLabel(orderedSection.products.size())} • Display: #{orderedSection.productCollection.scrollDisplayMode ? 'Scroll' : 'Box'}</p>
+                                </div>
                             </div>
+                            <div class="products-grid #{orderedSection.productCollection.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
+                                <ui:repeat value="#{orderedSection.products}" var="product">
+                                    <article class="product-card">
+                                        <div class="product-card-media">
+                                            <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}" layout="block" styleClass="product-badge">Sale</h:panelGroup>
+                                            <h:graphicImage value="#{homePageBean.resolveMediaUrl(product.imageUrl)}" alt="#{product.name}"/>
+                                        </div>
+                                        <div class="product-info">
+                                            <h3 class="product-title">#{product.name}</h3>
+                                            <div class="product-price-stack">
+                                                <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}">
+                                                    <span class="old-price">#{homePageBean.formatPrice(product.comparePrice)}</span>
+                                                </h:panelGroup>
+                                                <span class="new-price">#{homePageBean.productPriceLabel(product)}</span>
+                                            </div>
+
+                                            <h:panelGroup rendered="#{product.hasVariants}">
+                                                <div class="product-variant-preview">
+                                                    <ui:repeat value="#{homePageBean.getProductVariants(product)}" var="variant" varStatus="variantStatus">
+                                                        <span class="variant-pill">#{variant.name}</span>
+                                                    </ui:repeat>
+                                                </div>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{product.hasVariants}">
+                                                <p:commandButton value="#{homePageBean.productCtaLabel(product)}"
+                                                                 actionListener="#{homePageBean.openPurchaseDialog(product)}"
+                                                                 process="@this"
+                                                                 update=":mainForm:purchaseDialog :mainForm:messages"
+                                                                 oncomplete="PF('purchaseDialogWidget').show()"
+                                                                 styleClass="product-cta-btn product-cta-buy"/>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{not product.hasVariants}">
+                                                <p:commandButton value="#{homePageBean.productCtaLabel(product)}"
+                                                                 type="button"
+                                                                 styleClass="product-cta-btn product-cta-add"/>
+                                            </h:panelGroup>
+                                        </div>
+                                    </article>
+                                </ui:repeat>
+                            </div>
+                        </section>
+                    </h:panelGroup>
+                </ui:repeat>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not homePageBean.hasOrderedHomeSections()}">
+                <p:outputLabel value="Please contact administrator"/>
+            </ui:fragment>
+        </main>
+
+        <section id="store-policies" class="policy-section">
+            <div class="policy-section-head">
+                <span class="policy-eyebrow">Store information</span>
+                <h2>Shipping, Refund, Privacy &amp; Contact Pages</h2>
+                <p>Footer quick links scroll directly to these sections and render the content entered in the admin Content menu.</p>
+            </div>
+            <div class="policy-stack">
+                <ui:repeat value="#{homePageBean.contentPages}" var="page">
+                    <article id="#{page.key}" class="policy-card">
+                        <h3>#{page.title}</h3>
+                        <div class="policy-card-body">
+                            <h:outputText value="#{homePageBean.pageHtml(page.key)}" escape="false"/>
+                        </div>
+                    </article>
+                </ui:repeat>
+            </div>
+        </section>
+        <p:messages id="messages" showDetail="true" showIcon="false" closable="true"/>
+    </ui:define>
+
+    <ui:define name="afterContent">
+        <p:dialog id="purchaseDialog" widgetVar="purchaseDialogWidget" modal="true" responsive="true" showHeader="false"
+                  appendTo="@(body)" styleClass="purchase-dialog" width="900" fitViewport="true">
+            <h:panelGroup rendered="#{not empty homePageBean.selectedProduct}" layout="block" id="purchaseDialogContent" styleClass="purchase-dialog-body">
+                <p:commandButton type="button" icon="pi pi-times" onclick="PF('purchaseDialogWidget').hide()"
+                                 styleClass="purchase-dialog-close ui-button-flat ui-button-plain" title="Close quick buy dialog"/>
+
+
+                <div class="purchase-dialog-panel">
+                    <div class="purchase-product-visual">
+                        <h:graphicImage value="#{homePageBean.resolveMediaUrl(homePageBean.selectedProduct.imageUrl)}" alt="#{homePageBean.selectedProduct.name}"/>
+                    </div>
+                    <div class="purchase-dialog-content">
+                        <div class="purchase-product-summary">
+                            <span class="purchase-dialog-eyebrow">Quick buy</span>
+                            <h3>#{homePageBean.selectedProduct.name}</h3>
+                            <p>Choose the right pack size and continue instantly. This layout is optimized for both desktop and mobile.</p>
+                        </div>
+                        <div class="purchase-selection-block">
+                            <div class="purchase-selection-header">
+                                <span>Select variant</span>
+                                <h:panelGroup rendered="#{not empty homePageBean.selectedVariant}">
+                                    <strong>#{homePageBean.selectedVariant.name}</strong>
+
+                                </h:panelGroup>
+                            </div>
+                            <h:panelGroup id="variantChooser" layout="block" styleClass="variant-options-shell">
+                                <ui:repeat value="#{homePageBean.selectedProductVariants}" var="variant">
+                                    <p:commandLink actionListener="#{homePageBean.selectVariant(variant.index)}" process="@this" update=":mainForm:purchaseDialog"
+                                                   styleClass="variant-option-card #{homePageBean.selectedVariant ne null and homePageBean.selectedVariant.index eq variant.index ? 'active' : ''}">
+                                        <span class="variant-option-check"><i class="pi pi-check"></i></span>
+                                        <h:graphicImage value="#{variant.imageUrl}" alt="#{variant.name}"/>
+                                        <div class="variant-option-details">
+                                            <div class="variant-option-topline">
+                                                <strong>#{variant.name}</strong>
+                                                <span class="variant-option-price">#{homePageBean.formatPrice(variant.price)}</span>
+                                            </div>
+                                            <div class="variant-option-meta">
+                                                <span>Best suited for quick checkout</span>
+                                                <h:panelGroup rendered="#{not empty variant.comparePrice}">
+                                                    <small class="old-price">#{homePageBean.formatPrice(variant.comparePrice)}</small>
+                                                </h:panelGroup>
+                                            </div>
+                                        </div>
+                                    </p:commandLink>
+                                </ui:repeat>
+                            </h:panelGroup>
+                        </div>
+
+
+                        <div class="purchase-dialog-note">
+                            <i class="pi pi-shield"></i>
+                            <span>Safe checkout flow with clear variant selection before you continue.</span>
+                        </div>
+
+                        <div class="purchase-dialog-actions">
+                            <p:commandButton value="Add to cart" action="#{homePageBean.addSelectedVariantToCart}"
+                                             update=":mainForm:messages :mainForm:purchaseDialog" process=":mainForm:purchaseDialog"
+                                             oncomplete="if (!args.validationFailed) PF('purchaseDialogWidget').hide()" styleClass="product-cta-btn product-cta-add purchase-secondary-action"/>
+                            <p:commandButton value="Buy it now" action="#{homePageBean.buySelectedVariantNow}"
+                                             update=":mainForm:messages :mainForm:purchaseDialog" process=":mainForm:purchaseDialog"
+                                             oncomplete="if (!args.validationFailed) PF('purchaseDialogWidget').hide()" styleClass="product-cta-btn product-cta-buy purchase-primary-action"/>
                         </div>
                     </div>
-                </h:panelGroup>
-            </p:dialog>
-            
-            <footer class="site-footer">
-                <div class="footer-grid">
-                    <div class="footer-brand">
-                        <h2>Need help before you order?</h2>
-                        <p>Check our store policies and contact page for delivery, refund, privacy, and support details.</p>
-                    </div>
-                    <div class="footer-links">
-                        <h3>Quick Links</h3>
-                        <ul>
-                            <li><h:outputLink value="shipping-policy.xhtml">Shipping Policy</h:outputLink></li>
-                            <li><h:outputLink value="refund-policy.xhtml">Refund Policy</h:outputLink></li>
-                            <li><h:outputLink value="privacy-policy.xhtml">Privacy Policy</h:outputLink></li>
-                            <li><h:outputLink value="contact-information.xhtml">Contact Information</h:outputLink></li>
-                        </ul>
-                    </div>
                 </div>
-            </footer>
-        </h:form>
+            </h:panelGroup>
+        </p:dialog>
+    </ui:define>
+
+    <ui:define name="bodyEnd">
         <h:outputScript target="body">
             (function () {
-            // Auto pause other videos when one plays
             document.addEventListener('play', function (e) {
             const videos = document.querySelectorAll('.store-video-section video');
             videos.forEach(function (video) {
@@ -422,7 +370,7 @@
             } else {
             initCollectionGroups();
             }
-            })();
+            }());
         </h:outputScript>
-    </h:body>
-</html>
+    </ui:define>
+</ui:composition>
