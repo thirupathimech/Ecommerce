@@ -200,6 +200,10 @@ public class HomePageBean extends BaseBean {
     public String productCtaLabel(Product product) {
         return product != null && product.isHasVariants() ? "Buy Now" : "Add To Cart";
     }
+    
+    public String defaultQuantityLabel(Product product) {
+        return "1";
+    }
 
     public String productCountLabel(int count) {
         return count == 1 ? "1 product" : count + " products";
@@ -232,6 +236,14 @@ public class HomePageBean extends BaseBean {
     public void openPurchaseDialog(Product product) {
         selectedProductId = product == null ? null : product.getId();
         selectedVariantIndex = 0;
+    }
+    
+    public void addProductToCart(Product product) {
+        if (product == null) {
+            addWarn("Product is unavailable.");
+            return;
+        }
+        addInfo(product.getName() + " added to cart. Qty: 1.");
     }
 
     public Product getSelectedProduct() {

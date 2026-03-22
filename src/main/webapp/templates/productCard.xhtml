@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
     <article class="product-card">
         <div class="product-card-media">
             <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}" layout="block" styleClass="product-badge">Sale</h:panelGroup>
@@ -9,7 +10,9 @@
             </h:outputLink>
         </div>
         <div class="product-info">
-            <h3 class="product-title">#{product.name}</h3>
+            <h3 class="product-title">
+                <h:outputLink value="#{request.contextPath}/product.xhtml?id=#{product.id}" styleClass="product-title-link">#{product.name}</h:outputLink>
+            </h3>
             <div class="product-price-stack">
                 <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}">
                     <span class="old-price">#{homePageBean.formatPrice(product.comparePrice)}</span>
@@ -23,7 +26,15 @@
                     </ui:repeat>
                 </div>
             </h:panelGroup>
-            <h:outputLink value="#{request.contextPath}/product.xhtml?id=#{product.id}" styleClass="catalog-card-button">View Product</h:outputLink>
+            <h:panelGroup rendered="#{product.hasVariants}">
+                <p:commandButton value="Buy Now" actionListener="#{homePageBean.openPurchaseDialog(product)}"
+                                 update=":mainForm:purchaseDialog" process="@this"
+                                 oncomplete="PF('purchaseDialogWidget').show()" styleClass="catalog-card-button product-card-action"/>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{not product.hasVariants}">
+                <p:commandButton value="Add to Cart" action="#{homePageBean.addProductToCart(product)}"
+                                 update=":mainForm:messages" process="@this" styleClass="catalog-card-button product-card-action"/>
+            </h:panelGroup>
         </div>
     </article>
 </ui:composition>
