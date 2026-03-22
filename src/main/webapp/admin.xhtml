@@ -92,9 +92,14 @@
                     <ui:include src="/admin/content.xhtml"/>
                 </h:panelGroup>
                 
-                 <!-- ═══════════════════════════════════════════════ MENU ═══════════════════════════════════════════════ -->
+                <!-- ═══════════════════════════════════════════════ MENU ═══════════════════════════════════════════════ -->
                 <h:panelGroup rendered="#{adminPanelBean.activeMenu eq 'menu'}" layout="block">
                     <ui:include src="/admin/menu.xhtml"/>
+                </h:panelGroup>
+                
+                <!-- ═══════════════════════════════════════════════ THEME ═══════════════════════════════════════════════ -->
+                <h:panelGroup rendered="#{adminPanelBean.activeMenu eq 'theme'}" layout="block">
+                    <ui:include src="/admin/theme.xhtml"/>
                 </h:panelGroup>
 
                 <!-- ═══════════════════════════════════════════════ SETTINGS ═══════════════════════════════════════════════ -->

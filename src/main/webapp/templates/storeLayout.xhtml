@@ -23,7 +23,9 @@
                             <p:commandButton id="bar" type="button" icon="pi pi-bars" onclick="toggleStoreMenu(true); return false;" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                             <p:commandButton id="searchBtn" type="button" icon="pi pi-search" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                         </div>
-                        <h:link outcome="index"><h:graphicImage id="logo" styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="logo"/></h:link>
+                        <h:outputLink value="#{request.contextPath}/index.xhtml" styleClass="logo-link">
+                            <h:graphicImage id="logo" styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="logo"/>
+                        </h:outputLink>
                         <div class="nav-right">
                             <p:commandButton id="userBtn" type="button" icon="pi pi-user" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                             <button id="shoppingBtn" type="button" class="cart-trigger" onclick="toggleCartDrawer(true); return false;" aria-label="Open cart drawer">
