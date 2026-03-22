@@ -7,6 +7,9 @@
     <ui:define name="title">Ecommerce</ui:define>
     <ui:define name="head">
         <h:outputStylesheet name="index.css" library="css"/>
+        <h:outputStylesheet name="index-tablet.css" library="css"/>
+        <h:outputStylesheet name="index-mobile.css" library="css"/>
+        <h:outputStylesheet name="index-mobile-tablets.css" library="css"/>
     </ui:define>
     <ui:define name="content">
         <main id="mainContainer" class="container">
@@ -26,7 +29,7 @@
 
             <ui:fragment id="orderedHomeSectionsFragment" rendered="#{homePageBean.hasOrderedHomeSections()}">
                 <ui:repeat id="orderedHomeSections_repeat" value="#{homePageBean.orderedHomeSections}" var="orderedSection" varStatus="orderstatus">
-                    
+
                     <!-- ═══════════════════════════════════════════════ MARQUEE ═══════════════════════════════════════════════ -->
                     <h:panelGroup id="marqueePanelGroup" rendered="#{orderedSection.type.name() eq 'MARQUEE' and not empty homePageBean.getMarqueeItems(orderedSection.marquee)}"
                                   layout="block"
@@ -39,7 +42,7 @@
                             </ui:repeat>
                         </div>
                     </h:panelGroup>
-                    
+
                     <!-- ═══════════════════════════════════════════════ VIDEO_CAROUSEL ═══════════════════════════════════════════════ -->
                     <h:panelGroup id="video_carousel_panelgroup" rendered="#{orderedSection.type.name() eq 'VIDEO_CAROUSEL'}" layout="block" styleClass="store-video-section">
                         <h2 class="section-title">#{orderedSection.videoItem.title}</h2>
@@ -70,7 +73,7 @@
                             </div>
                         </article>
                     </h:panelGroup>
-                    
+
                     <!-- ═══════════════════════════════════════════════ COLLECTION_GROUP ═══════════════════════════════════════════════ -->
                     <h:panelGroup id="collection_section_panelgroup" rendered="#{orderedSection.type.name() eq 'COLLECTION_GROUP' and not empty orderedSection.collections}" layout="block" styleClass="collection-group-section #{orderedSection.collectionGroup.scrollDisplayMode ? 'collection-group-section-scroll' : 'collection-group-section-box'}">
                         <section>

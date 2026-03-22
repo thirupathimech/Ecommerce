@@ -4,7 +4,12 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/templates/storeLayout.xhtml">
     <ui:define name="title">Collection</ui:define>
-    <ui:define name="head"><h:outputStylesheet name="index.css" library="css"/></ui:define>
+    <ui:define name="head">
+        <h:outputStylesheet name="index.css" library="css"/>
+        <h:outputStylesheet name="index-tablet.css" library="css"/>
+        <h:outputStylesheet name="index-mobile.css" library="css"/>
+        <h:outputStylesheet name="index-mobile-tablets.css" library="css"/>
+    </ui:define>
     <ui:define name="content">
         <main class="container catalog-page-shell">
             <h:panelGroup rendered="#{not empty storefrontBean.selectedCollection}" layout="block">
