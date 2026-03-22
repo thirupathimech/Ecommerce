@@ -37,7 +37,7 @@ public abstract class AdminBean extends BaseBean implements Serializable {
     protected String activeMenu;
 
     protected String fileSelectionTarget;
-    
+
     protected int fileSelectionVariantIndex;
     private static Object selectFileBean;
     private List<MediaFile> selectedMediaFiles;
@@ -64,17 +64,21 @@ public abstract class AdminBean extends BaseBean implements Serializable {
     public abstract boolean deleteForm(Object form);
 
     public void selectFile(MediaFile file) {
-        if(selectFileBean == null) return;
-        if(selectFileBean instanceof ProductBean productBean){
+        if (selectFileBean == null) {
+            return;
+        }
+        if (selectFileBean instanceof ProductBean productBean) {
             productBean.selectFile(file);
-        } else if(selectFileBean instanceof HomeDivSectionBean homeDivSectionBean){
+        } else if (selectFileBean instanceof HomeDivSectionBean homeDivSectionBean) {
             homeDivSectionBean.selectFile(file);
-        } else if(selectFileBean instanceof HomeSliderBean homeSliderBean){
+        } else if (selectFileBean instanceof HomeSliderBean homeSliderBean) {
             homeSliderBean.selectFile(file);
-        } else if(selectFileBean instanceof VideoCarouselBean videoCarouselBean){
+        } else if (selectFileBean instanceof VideoCarouselBean videoCarouselBean) {
             videoCarouselBean.selectFile(file);
-        } else if(selectFileBean instanceof ProductCollectionBean productCollectionBean){
+        } else if (selectFileBean instanceof ProductCollectionBean productCollectionBean) {
             productCollectionBean.selectFile(file);
+        } else if (selectFileBean instanceof SettingsBean settingsBean) {
+            settingsBean.selectFile(file);
         }
         selectFileBean = null;
     }

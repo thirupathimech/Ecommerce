@@ -11,11 +11,27 @@
             <div class="field"><label class="mandatory">Store Name</label><p:inputText value="#{settingsBean.storeName}"/></div>
             <div class="field"><label class="mandatory">Store Email</label><p:inputText value="#{settingsBean.storeEmail}"/></div>
             <div class="field"><label class="mandatory">Store Phone Number</label><p:inputText value="#{settingsBean.storePhoneNumber}"/></div>
-            <div class="field"><label class="mandatory">Store Logo</label><p:inputText value="#{settingsBean.storeLogo}" placeholder="Image URL or file reference"/></div>
-            <div class="field"><label class="mandatory">Store Favicon</label><p:inputText value="#{settingsBean.storeFavicon}" placeholder="Favicon URL or file reference"/></div>
+            <div class="field full">
+                <label class="mandatory">Store Logo</label>
+                <div class="file-inline-picker">
+                    <p:inputText value="#{settingsBean.storeLogo}" placeholder="Use Files reference only" readonly="true"/>
+                    <p:commandButton value="Choose from Files" icon="pi pi-images" process="@this" update=":mainForm:filePickerDialog :mainForm"
+                                     actionListener="#{settingsBean.openFilePicker(settingsBean, 'STORE_LOGO')}" oncomplete="PF('filePicker').show()"/>
+                </div>
+                <small>Only assets from Files should be used so usage tracking remains accurate.</small>
+            </div>
+            <div class="field full">
+                <label class="mandatory">Store Favicon</label>
+                <div class="file-inline-picker">
+                    <p:inputText value="#{settingsBean.storeFavicon}" placeholder="Use Files reference only" readonly="true"/>
+                    <p:commandButton value="Choose from Files" icon="pi pi-images" process="@this" update=":mainForm:filePickerDialog :mainForm"
+                                     actionListener="#{settingsBean.openFilePicker(settingsBean, 'STORE_FAVICON')}" oncomplete="PF('filePicker').show()"/>
+                </div>
+                <small>Selected favicon is applied across the whole application.</small>
+            </div>
             <div class="field"><label>GST Number</label><p:inputText value="#{settingsBean.gstNumber}"/></div>
-            <div class="field full"><label class="mandatory">Store Address</label><p:inputTextarea value="#{settingsBean.storeAddress}" rows="3" autoResize="false"/></div>
-            <div class="field"><label class="mandatory">Store Pin Code</label><p:inputText value="#{settingsBean.storePinCode}"/></div>
+            <div class="field"><label>Store Pin Code</label><p:inputText id="storePinCode" value="#{settingsBean.storePinCode}"/></div>
+            <div class="field full"><label class="mandatory">Store Address</label><p:inputTextarea id="storeAddress" value="#{settingsBean.storeAddress}" rows="3" autoResize="false"/></div>
             <div class="field"><label class="mandatory">Store Password</label><p:password value="#{settingsBean.storePassword}" feedback="false" toggleMask="true"/></div>
         </div>
     </div>
@@ -54,6 +70,7 @@
             <div class="field"><label>WhatsApp API key</label><p:password value="#{settingsBean.whatsappApiKey}" feedback="false" toggleMask="true"/></div>
             <div class="field"><label>Email SMTP</label><p:inputText value="#{settingsBean.emailSmtp}"/></div>
             <div class="field"><label>Delivery Tracking API</label><p:inputText value="#{settingsBean.deliveryTrackingApi}"/></div>
+            <div class="field full"><label>Google Places API key</label><p:inputText value="#{settingsBean.googlePlacesApiKey}" placeholder="Needed only if address autocomplete should work"/></div>
         </div>
     </div>
 
@@ -71,6 +88,42 @@
     </div>
 
     <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
-        <p:commandButton value="Save Settings" action="#{settingsBean.saveForm}" update="messages" icon="pi pi-save"/>
+        <p:commandButton value="Save Settings" action="#{settingsBean.saveForm}" update=":mainForm messages" icon="pi pi-save"/>
     </div>
+    <h:outputScript target="body">
+        window.initStoreAddressAutocomplete = function () {
+        var addressInput = document.getElementById('mainForm:storeAddress');
+        var pinCodeInput = document.getElementById('mainForm:storePinCode_input') || document.getElementById('mainForm:storePinCode');
+        if (!addressInput || !window.google || !google.maps || !google.maps.places) {
+        return;
+        }
+        var autocomplete = new google.maps.places.Autocomplete(addressInput, {types: ['address']});
+        autocomplete.addListener('place_changed', function () {
+        var place = autocomplete.getPlace();
+        if (!place) {
+        return;
+        }
+        if (place.formatted_address) {
+        addressInput.value = place.formatted_address;
+        addressInput.dispatchEvent(new Event('input', {bubbles: true}));
+        addressInput.dispatchEvent(new Event('change', {bubbles: true}));
+        }
+        if (!pinCodeInput || !place.address_components) {
+        return;
+        }
+        var postal = place.address_components.find(function (component) {
+        return component.types &amp;&amp; component.types.indexOf('postal_code') !== -1;
+        });
+        if (postal) {
+        pinCodeInput.value = postal.long_name;
+        pinCodeInput.dispatchEvent(new Event('input', {bubbles: true}));
+        pinCodeInput.dispatchEvent(new Event('change', {bubbles: true}));
+        }
+        });
+        };
+    </h:outputScript>
+
+    <ui:fragment rendered="#{not empty settingsBean.googlePlacesApiKey}">
+        <h:outputText escape="false" value="&lt;script src=&quot;https://maps.googleapis.com/maps/api/js?key=#{settingsBean.googlePlacesApiKey}&amp;amp;libraries=places&amp;amp;loading=async&amp;amp;callback=initStoreAddressAutocomplete&quot; async=&quot;async&quot; defer=&quot;defer&quot;&gt;&lt;/script&gt;"/>
+    </ui:fragment>
 </ui:composition>

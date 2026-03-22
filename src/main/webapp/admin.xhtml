@@ -4,16 +4,18 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
-        <title>Admin | Commerce Console</title>
+        <title>Admin | #{storeSettingsViewBean.storeName}</title>
+        <link rel="icon" type="image/x-icon" href="#{empty storeSettingsViewBean.storeFavicon ? request.contextPath.concat('/favicon.ico') : storeSettingsViewBean.storeFavicon}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <h:outputStylesheet library="css" name="app.css"/>
-        <style>:root { #{themeViewBean.cssVariables} }</style>
+        <style>:root { #{themeViewBean.cssVariables}
+        }</style>
         <h:outputStylesheet library="css" name="admin.css"/>
     </h:head>
     <h:body>
         <div class="layout">
             <h:form id="menuForm" styleClass="sidebar">
-                <p class="brand">Admin Console</p>
+                <p class="brand">#{storeSettingsViewBean.storeName}</p>
                 <div class="sidebar-shell">
                     <div class="menu-group">
                         <p:commandButton value="Dashboard" action="#{adminPanelBean.setActiveMenu('dashboard')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
@@ -94,12 +96,12 @@
                 <h:panelGroup rendered="#{adminPanelBean.activeMenu eq 'content'}" layout="block">
                     <ui:include src="/admin/content.xhtml"/>
                 </h:panelGroup>
-                
+
                 <!-- ═══════════════════════════════════════════════ MENU ═══════════════════════════════════════════════ -->
                 <h:panelGroup rendered="#{adminPanelBean.activeMenu eq 'menu'}" layout="block">
                     <ui:include src="/admin/menu.xhtml"/>
                 </h:panelGroup>
-                
+
                 <!-- ═══════════════════════════════════════════════ THEME ═══════════════════════════════════════════════ -->
                 <h:panelGroup rendered="#{adminPanelBean.activeMenu eq 'theme'}" layout="block">
                     <ui:include src="/admin/theme.xhtml"/>

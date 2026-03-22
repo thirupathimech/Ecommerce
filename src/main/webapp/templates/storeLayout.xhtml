@@ -4,7 +4,9 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
-        <title><ui:insert name="title">Ecommerce</ui:insert></title>
+        <title><ui:insert name="title">#{storeSettingsViewBean.metaTitle}</ui:insert></title>
+        <meta name="description" content="#{storeSettingsViewBean.metaDescription}" />
+        <link rel="icon" href="#{empty storeSettingsViewBean.storeFavicon ? request.contextPath.concat('/resources/images/favicon.ico') : request.contextPath.concat(storeSettingsViewBean.storeFavicon)}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <h:outputStylesheet library="css" name="app.css"/>
         <style>:root { #{themeViewBean.cssVariables}
@@ -17,7 +19,7 @@
                 <div class="admin-link">
                     <h:outputLink value="#{request.contextPath}/admin.xhtml">Go to Admin Setup</h:outputLink>
                 </div>
-                <div id="announcementBar" class="top-strip">Sip Your Way To Health</div>
+                <div id="announcementBar" class="top-strip">#{storeSettingsViewBean.storeName}</div>
                 <!-- ═══════════════════════════════════════════════ HEADER TOOLBAR ═══════════════════════════════════════════════════════════ -->
                 <div id="nav-shell" class="nav-shell">
                     <div class="nav-row">
@@ -26,7 +28,7 @@
                             <p:commandButton id="searchBtn" type="button" icon="pi pi-search" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                         </div>
                         <h:outputLink value="#{request.contextPath}/index.xhtml" styleClass="logo-link">
-                            <h:graphicImage id="logo" styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="logo"/>
+                             <h:graphicImage id="logo" styleClass="logo-badge" value="#{storeSettingsViewBean.storeLogo}" alt="#{storeSettingsViewBean.storeName}"/>
                         </h:outputLink>
                         <div class="nav-right">
                             <p:commandButton id="userBtn" type="button" icon="pi pi-user" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
@@ -127,8 +129,8 @@
                 <footer class="site-footer">
                     <div class="footer-grid">
                         <div class="footer-brand">
-                            <h2>Shop with confidence.</h2>
-                            <p>Explore our policies to learn more about shipping, returns, and how we safeguard your information. We aim to provide a seamless and trustworthy shopping journey.</p>
+                            <h2>#{storeSettingsViewBean.storeName}</h2>
+                            <p>#{empty storeSettingsViewBean.storeAddress ? 'Configure your store address from admin settings to show it here across the storefront.' : storeSettingsViewBean.storeAddress}</p>
                         </div>
                         <div class="footer-links">
                             <h3>Quick Links</h3>

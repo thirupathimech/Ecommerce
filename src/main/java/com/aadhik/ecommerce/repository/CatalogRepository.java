@@ -9,6 +9,7 @@ import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.StoreMenuItem;
+import com.aadhik.ecommerce.model.StoreSettings;
 import com.aadhik.ecommerce.model.ThemeConfig;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -123,6 +124,16 @@ public class CatalogRepository {
         return items.isEmpty() ? null : items.get(0);
     }
 
+    public StoreSettings findLatestStoreSettings() {
+        List<StoreSettings> items = entityManager.createQuery("""
+                        select s from StoreSettings s
+                        order by s.id desc
+                        """, StoreSettings.class)
+                .setMaxResults(1)
+                .getResultList();
+        return items.isEmpty() ? null : items.get(0);
+    }
+
     public List<StoreMenuItem> findStoreMenuItems(boolean activeOnly) {
         StringBuilder queryBuilder = new StringBuilder(" select m from StoreMenuItem m ");
         if (activeOnly) {
@@ -140,7 +151,7 @@ public class CatalogRepository {
                         """, Product.class)
                 .getResultList();
     }
-    
+
     public ThemeConfig findLatestThemeConfig() {
         List<ThemeConfig> configs = entityManager.createQuery("""
                         select t from ThemeConfig t
@@ -229,7 +240,14 @@ public class CatalogRepository {
                 .setParameter("ref", ref)
                 .getSingleResult();
 
-        return productUsage + sliderUsage + collectionUsage + videoCarouselUsage + divSectionUsage;
+        Long storeSettingsUsage = entityManager.createQuery("""
+                        select count(s) from StoreSettings s
+                        where s.storeLogo = :ref or s.storeFavicon = :ref
+                        """, Long.class)
+                .setParameter("ref", ref)
+                .getSingleResult();
+
+        return productUsage + sliderUsage + collectionUsage + videoCarouselUsage + divSectionUsage + storeSettingsUsage;
     }
 
     public ProductCollection findCollectionById(Long id) {
@@ -325,6 +343,15 @@ public class CatalogRepository {
     }
 
     @Transactional
+    public StoreSettings saveStoreSettings(StoreSettings storeSettings) {
+        if (storeSettings.getId() == null) {
+            entityManager.persist(storeSettings);
+            return storeSettings;
+        }
+        return entityManager.merge(storeSettings);
+    }
+
+    @Transactional
     public StoreMenuItem saveStoreMenuItem(StoreMenuItem item) {
         if (item.getId() == null) {
             entityManager.persist(item);
@@ -372,8 +399,8 @@ public class CatalogRepository {
 
         return entityManager.merge(product);
     }
-    
-     @Transactional
+
+    @Transactional
     public ThemeConfig saveThemeConfig(ThemeConfig themeConfig) {
         if (themeConfig.getId() == null) {
             entityManager.persist(themeConfig);

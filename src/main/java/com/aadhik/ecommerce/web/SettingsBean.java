@@ -1,7 +1,11 @@
 package com.aadhik.ecommerce.web;
 
+import com.aadhik.ecommerce.model.MediaFile;
+import com.aadhik.ecommerce.model.StoreSettings;
 import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.time.LocalDateTime;
 
 /**
  * @author THIRUPATHI G
@@ -10,6 +14,9 @@ import jakarta.inject.Named;
 @ViewScoped
 public class SettingsBean extends AdminBean {
 
+    @Inject
+    private StoreSettingsViewBean storeSettingsViewBean;
+    private Long id;
     private String storeName;
     private String storeLogo;
     private String storeFavicon;
@@ -27,6 +34,7 @@ public class SettingsBean extends AdminBean {
     private String metaTitle;
     private String metaDescription;
     private String googleAnalyticsId;
+    private String googlePlacesApiKey;
     private String facebookPixelId;
     private String sitemapUrl;
     private boolean allowGuestCheckout;
@@ -39,10 +47,32 @@ public class SettingsBean extends AdminBean {
 
     @Override
     public void resetForm() {
+        loadSettings();
     }
 
     @Override
     public void saveForm() {
+        StoreSettings settings = new StoreSettings();
+        settings.setId(id);
+        settings.setStoreName(storeName);
+        settings.setStoreLogo(storeLogo);
+        settings.setStoreFavicon(storeFavicon);
+        settings.setStoreEmail(storeEmail);
+        settings.setStorePhoneNumber(storePhoneNumber);
+        settings.setStoreAddress(storeAddress);
+        settings.setStorePinCode(storePinCode);
+        settings.setStorePassword(storePassword);
+        settings.setGstNumber(gstNumber);
+        settings.setGooglePlacesApiKey(googlePlacesApiKey);
+        settings.setMetaTitle(metaTitle);
+        settings.setMetaDescription(metaDescription);
+        settings.setGoogleAnalyticsId(googleAnalyticsId);
+        settings.setFacebookPixelId(facebookPixelId);
+        settings.setSitemapUrl(sitemapUrl);
+        settings.setUpdatedAt(LocalDateTime.now());
+        StoreSettings saved = catalogService.saveStoreSettings(settings);
+        id = saved.getId();
+        storeSettingsViewBean.refresh();
         addInfo("Settings saved successfully");
     }
 
@@ -60,7 +90,42 @@ public class SettingsBean extends AdminBean {
         return false;
     }
 
+    private void loadSettings() {
+        StoreSettings settings = catalogService.getStoreSettings();
+        if (settings == null) {
+            loadDefaultSettings();
+            return;
+        }
+        id = settings.getId();
+        storeName = settings.getStoreName();
+        storeLogo = settings.getStoreLogo();
+        storeFavicon = settings.getStoreFavicon();
+        storeEmail = settings.getStoreEmail();
+        storePhoneNumber = settings.getStorePhoneNumber();
+        storeAddress = settings.getStoreAddress();
+        storePinCode = settings.getStorePinCode();
+        storePassword = settings.getStorePassword();
+        gstNumber = settings.getGstNumber();
+        googlePlacesApiKey = settings.getGooglePlacesApiKey();
+        metaTitle = settings.getMetaTitle();
+        metaDescription = settings.getMetaDescription();
+        googleAnalyticsId = settings.getGoogleAnalyticsId();
+        facebookPixelId = settings.getFacebookPixelId();
+        sitemapUrl = settings.getSitemapUrl();
+        returnPolicyDays = 7;
+        allowGuestCheckout = true;
+        orderCancellationTime = 24;
+        orderEmailNotification = true;
+        adminOrderAlert = true;
+        otpProvider = "twilio";
+        whatsappApi = "Meta Cloud API";
+        smsApi = "Twilio";
+        emailSmtp = "smtp.gmail.com:587";
+        deliveryTrackingApi = "Shiprocket";
+    }
+
     private void loadDefaultSettings() {
+        id = null;
         storeName = "My Ecommerce Store";
         storeLogo = "";
         storeFavicon = "";
@@ -78,6 +143,7 @@ public class SettingsBean extends AdminBean {
         metaTitle = "Buy Online | My Ecommerce Store";
         metaDescription = "Best offers and products from our ecommerce store.";
         googleAnalyticsId = "";
+        googlePlacesApiKey = "";
         facebookPixelId = "";
         sitemapUrl = "https://example.com/sitemap.xml";
         allowGuestCheckout = true;
@@ -215,6 +281,26 @@ public class SettingsBean extends AdminBean {
 
     public void setMetaDescription(String metaDescription) {
         this.metaDescription = metaDescription;
+    }
+
+    public String getGooglePlacesApiKey() {
+        return googlePlacesApiKey;
+    }
+
+    public void setGooglePlacesApiKey(String googlePlacesApiKey) {
+        this.googlePlacesApiKey = googlePlacesApiKey;
+    }
+
+    public void selectFile(MediaFile file) {
+        if (file == null || file.getId() == null) {
+            return;
+        }
+        String ref = toDbFileRef(file.getId());
+        if ("STORE_LOGO".equalsIgnoreCase(fileSelectionTarget)) {
+            storeLogo = ref;
+        } else if ("STORE_FAVICON".equalsIgnoreCase(fileSelectionTarget)) {
+            storeFavicon = ref;
+        }
     }
 
     public String getGoogleAnalyticsId() {

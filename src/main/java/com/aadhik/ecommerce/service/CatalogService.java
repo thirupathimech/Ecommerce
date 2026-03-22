@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static com.aadhik.ecommerce.model.HomeSectionType.PRODUCTS_COLLECTION;
 import com.aadhik.ecommerce.model.StoreMenuItem;
+import com.aadhik.ecommerce.model.StoreSettings;
 import com.aadhik.ecommerce.model.ThemeConfig;
 
 @ApplicationScoped
@@ -98,7 +99,7 @@ public class CatalogService {
                 case PRODUCTS_COLLECTION -> {
                     ProductCollection productCollection = repository.findCollectionById(item.getRecordId());
                     if (productCollection != null && productCollection.isActive()) {
-                          int limit = productCollection.getHomeProductLimit() != null && productCollection.getHomeProductLimit() > 0
+                        int limit = productCollection.getHomeProductLimit() != null && productCollection.getHomeProductLimit() > 0
                                 ? productCollection.getHomeProductLimit() : 8;
                         List<Product> productList = repository.findProductsByCollection(productCollection.getId(), limit);
                         sections.add(HomeRenderSection.forProductCollection(productCollection, productList));
@@ -135,7 +136,7 @@ public class CatalogService {
     public List<Product> getProducts() {
         return repository.findProducts();
     }
-    
+
     public List<Product> getActiveProducts() {
         return repository.findActiveProducts();
     }
@@ -152,6 +153,10 @@ public class CatalogService {
         return slug == null || slug.isBlank() ? null : repository.findCollectionBySlug(slug);
     }
 
+    public StoreSettings getStoreSettings() {
+        return repository.findLatestStoreSettings();
+    }
+
     public List<StoreMenuItem> getStoreMenuItems() {
         return repository.findStoreMenuItems(false);
     }
@@ -159,7 +164,7 @@ public class CatalogService {
     public List<StoreMenuItem> getActiveStoreMenuItems() {
         return repository.findStoreMenuItems(true);
     }
-    
+
     public ThemeConfig getThemeConfig() {
         return repository.findLatestThemeConfig();
     }
@@ -219,7 +224,11 @@ public class CatalogService {
     public Product saveProduct(Product product) {
         return repository.saveProduct(product);
     }
-    
+
+    public StoreSettings saveStoreSettings(StoreSettings item) {
+        return repository.saveStoreSettings(item);
+    }
+
     public StoreMenuItem saveStoreMenuItem(StoreMenuItem item) {
         return repository.saveStoreMenuItem(item);
     }
@@ -227,7 +236,7 @@ public class CatalogService {
     public void deleteStoreMenuItem(Long id) {
         repository.deleteStoreMenuItem(id);
     }
-    
+
     public ThemeConfig saveThemeConfig(ThemeConfig themeConfig) {
         return repository.saveThemeConfig(themeConfig);
     }
