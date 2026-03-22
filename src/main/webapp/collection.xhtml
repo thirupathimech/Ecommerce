@@ -15,8 +15,6 @@
             <h:panelGroup rendered="#{not empty storefrontBean.selectedCollection}" layout="block">
                 <section class="catalog-hero">
                     <p class="catalog-eyebrow">Collection</p>
-                    <h1>#{storefrontBean.selectedCollection.name}</h1>
-                    <p>#{storefrontBean.collectionDescription()}</p>
                 </section>
                 <section class="products-grid is-box catalog-grid-shell">
                     <ui:repeat value="#{storefrontBean.selectedCollectionProducts}" var="product">

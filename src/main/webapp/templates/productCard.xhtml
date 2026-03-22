@@ -27,7 +27,7 @@
                 </div>
             </h:panelGroup>
             <h:panelGroup rendered="#{product.hasVariants}">
-                <p:commandButton value="Buy Now" actionListener="#{homePageBean.openPurchaseDialog(product)}"
+                <p:commandButton id="buyNowBtn" value="Buy Now" actionListener="#{homePageBean.openPurchaseDialog(product)}"
                                  update=":mainForm:purchaseDialog" process="@this"
                                  oncomplete="PF('purchaseDialogWidget').show()" styleClass="catalog-card-button product-card-action"/>
             </h:panelGroup>

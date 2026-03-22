@@ -114,7 +114,7 @@
                                 </div>
                             </div>
                             <div class="products-grid #{orderedSection.productCollection.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
-                                <ui:repeat value="#{orderedSection.products}" var="product">
+                                <ui:repeat id="products_repeat" value="#{orderedSection.products}" var="product">
                                     <ui:include src="/templates/productCard.xhtml">
                                         <ui:param name="product" value="#{product}"/>
                                     </ui:include>
@@ -131,76 +131,6 @@
         </main>
 
         <p:messages id="messages" showDetail="true" showIcon="false" closable="true"/>
-    </ui:define>
-
-    <ui:define name="afterContent">
-        <!-- ═══════════════════════════════════════════════ PURCHASE DIALOGUE ═══════════════════════════════════════════════ -->
-        <p:dialog id="purchaseDialog" widgetVar="purchaseDialogWidget" modal="true" responsive="true" showHeader="false"
-                  appendTo="@(body)" styleClass="purchase-dialog" width="900" fitViewport="true">
-            <h:panelGroup rendered="#{not empty homePageBean.selectedProduct}" layout="block" id="purchaseDialogContent" styleClass="purchase-dialog-body">
-                <p:commandButton type="button" icon="pi pi-times" onclick="PF('purchaseDialogWidget').hide()"
-                                 styleClass="purchase-dialog-close ui-button-flat ui-button-plain" title="Close quick buy dialog"/>
-
-
-                <div class="purchase-dialog-panel">
-                    <div class="purchase-product-visual">
-                        <h:graphicImage value="#{homePageBean.resolveMediaUrl(homePageBean.selectedProduct.imageUrl)}" alt="#{homePageBean.selectedProduct.name}"/>
-                    </div>
-                    <div class="purchase-dialog-content">
-                        <div class="purchase-product-summary">
-                            <span class="purchase-dialog-eyebrow">Quick buy</span>
-                            <h3>#{homePageBean.selectedProduct.name}</h3>
-                            <p>Choose the right pack size and continue instantly.</p>
-                        </div>
-                        <div class="purchase-selection-block">
-                            <div class="purchase-selection-header">
-                                <span>Select variant</span>
-                                <h:panelGroup rendered="#{not empty homePageBean.selectedVariant}">
-                                    <strong>#{homePageBean.selectedVariant.name}</strong>
-
-                                </h:panelGroup>
-                            </div>
-                            <h:panelGroup id="variantChooser" layout="block" styleClass="variant-options-shell">
-                                <ui:repeat value="#{homePageBean.selectedProductVariants}" var="variant">
-                                    <p:commandLink actionListener="#{homePageBean.selectVariant(variant.index)}" process="@this" update=":mainForm:purchaseDialog"
-                                                   styleClass="variant-option-card #{homePageBean.selectedVariant ne null and homePageBean.selectedVariant.index eq variant.index ? 'active' : ''}">
-                                        <span class="variant-option-check"><i class="pi pi-check"></i></span>
-                                        <h:graphicImage value="#{variant.imageUrl}" alt="#{variant.name}"/>
-                                        <div class="variant-option-details">
-                                            <div class="variant-option-topline">
-                                                <strong>#{variant.name}</strong>
-                                                <span class="variant-option-price">#{homePageBean.formatPrice(variant.price)}</span>
-                                            </div>
-                                            <div class="variant-option-meta">
-                                                <span>Best suited for quick checkout</span>
-                                                <h:panelGroup rendered="#{not empty variant.comparePrice}">
-                                                    <small class="old-price">#{homePageBean.formatPrice(variant.comparePrice)}</small>
-                                                </h:panelGroup>
-                                            </div>
-                                        </div>
-                                    </p:commandLink>
-                                </ui:repeat>
-                            </h:panelGroup>
-                        </div>
-
-
-                        <div class="purchase-dialog-note">
-                            <i class="pi pi-shield"></i>
-                            <span>Safe checkout flow with clear variant selection before you continue.</span>
-                        </div>
-
-                        <div class="purchase-dialog-actions">
-                            <p:commandButton value="Add to cart" action="#{homePageBean.addSelectedVariantToCart}"
-                                             update=":mainForm:messages :mainForm:purchaseDialog :mainForm:cartDrawerContent :mainForm:cartBadge" process=":mainForm:purchaseDialog"
-                                             oncomplete="if (!args.validationFailed) { PF('purchaseDialogWidget').hide(); toggleCartDrawer(true); }" styleClass="product-cta-btn product-cta-add purchase-secondary-action"/>
-                            <p:commandButton value="Buy it now" action="#{homePageBean.buySelectedVariantNow}"
-                                             update=":mainForm:messages :mainForm:purchaseDialog" process=":mainForm:purchaseDialog"
-                                             oncomplete="if (!args.validationFailed) PF('purchaseDialogWidget').hide()" styleClass="product-cta-btn product-cta-buy purchase-primary-action"/>
-                        </div>
-                    </div>
-                </div>
-            </h:panelGroup>
-        </p:dialog>
     </ui:define>
 
     <ui:define name="bodyEnd">
