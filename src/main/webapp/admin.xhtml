@@ -22,6 +22,7 @@
                         <p:commandButton value="Products" action="#{adminPanelBean.setActiveMenu('products')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                         <p:commandButton value="Collections" action="#{adminPanelBean.setActiveMenu('collections')}" update=":mainForm" process="@this" styleClass="menu-btn"/>
                         <p:commandButton value="Files" action="#{adminPanelBean.setActiveMenu('files')}" update=":mainForm" process="@this" styleClass="menu-btn menu-separator"/>
+                        <p:commandButton value="Theme" action="#{adminPanelBean.setActiveMenu('theme')}" update=":mainForm" process="@this" styleClass="menu-btn menu-tree-btn"/>
 
                         <details class="menu-tree-group" open="open">
                             <summary class="menu-tree-label">
@@ -52,11 +53,12 @@
                 <h1 class="page-title">#{adminPanelBean.activeMenu eq 'dashboard' ? 'Dashboard' : adminPanelBean.activeMenu eq 'products' ? 'Products' : 
                                          adminPanelBean.activeMenu eq 'files' ? 'Files' : adminPanelBean.activeMenu eq 'collections' ? 'Collections' : 
                                          adminPanelBean.activeMenu eq 'home-page' ? 'Home Page' : adminPanelBean.activeMenu eq 'content' ? 'Content' : 
+                                         adminPanelBean.activeMenu eq 'theme' ? 'Theme' : 
                                          adminPanelBean.activeMenu eq 'menu' ? 'Menu' : adminPanelBean.activeMenu eq 'settings' ? 'Settings' : 'Coming Soon'}</h1>
                 <p:growl id="messages" showDetail="true" skipDetailIfEqualsSummary="true"/>
 
                 <h:panelGroup rendered="#{adminPanelBean.activeMenu ne 'dashboard' and adminPanelBean.activeMenu ne 'products' and adminPanelBean.activeMenu ne 'files' 
-                                          and adminPanelBean.activeMenu ne 'collections' and adminPanelBean.activeMenu ne 'home-page' and adminPanelBean.activeMenu ne 'content' 
+                                          and adminPanelBean.activeMenu ne 'collections' and adminPanelBean.activeMenu ne 'home-page' and adminPanelBean.activeMenu ne 'content' and adminPanelBean.activeMenu ne 'theme' 
                                           and adminPanelBean.activeMenu ne 'menu' and adminPanelBean.activeMenu ne 'settings'}" layout="block" styleClass="card">
                     <div class="card-head"><h3>#{adminPanelBean.activeMenu}</h3></div>
                     <div class="card-body">This module is added in sidebar as requested. We can enhance this one next.</div>

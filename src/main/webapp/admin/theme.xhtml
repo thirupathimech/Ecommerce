@@ -1,11 +1,125 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
-</html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <div class="theme-admin-shell">
+        <section class="theme-admin-hero">
+            <span class="status-pill active">Storefront theme</span>
+            <h3>Unified color system for the whole shopping flow</h3>
+            <p>Primary background, brand primary, Buy Now CTA, Add to Cart CTA, drawers, footer, cards, collection blocks, and preview surfaces are now aligned under one theme direction so every screen feels part of the same app.</p>
+        </section>
+
+        <section class="theme-admin-section">
+            <div>
+                <h4>Core theme tokens</h4>
+                <p>These are the main colors now driving storefront pages and conversion buttons.</p>
+            </div>
+            <div class="theme-admin-grid">
+                <article class="theme-token-card primary-bg">
+                    <div class="theme-token-meta">
+                        <strong>Primary background</strong>
+                        <span>Soft warm canvas for full page surfaces</span>
+                    </div>
+                    <small>#FFF8E8</small>
+                </article>
+                <article class="theme-token-card primary-color">
+                    <div class="theme-token-meta">
+                        <strong>Primary color</strong>
+                        <span>Main header, footer, links, and key emphasis</span>
+                    </div>
+                    <small>#173676</small>
+                </article>
+                <article class="theme-token-card buy-now">
+                    <div class="theme-token-meta">
+                        <strong>Buy Now button</strong>
+                        <span>Text + background for high intent action</span>
+                    </div>
+                    <small>Text #FFFFFF · BG Blue gradient</small>
+                </article>
+                <article class="theme-token-card add-cart">
+                    <div class="theme-token-meta">
+                        <strong>Add to Cart button</strong>
+                        <span>Text + background for secondary conversion</span>
+                    </div>
+                    <small>Text #173676 · BG #F4D332</small>
+                </article>
+            </div>
+        </section>
+
+        <section class="theme-admin-section">
+            <div>
+                <h4>Where this theme is applied</h4>
+                <p>The same palette is reused across the app so the brand stays consistent on every screen.</p>
+            </div>
+            <div class="theme-role-grid">
+                <article class="theme-role-card">
+                    <h5>Navigation &amp; footer</h5>
+                    <p>Top strip, sticky header, cart drawer badge, and footer gradients use the primary color family.</p>
+                    <div class="theme-chip-row">
+                        <span class="theme-chip">Header</span>
+                        <span class="theme-chip">Footer</span>
+                        <span class="theme-chip">Cart badge</span>
+                    </div>
+                </article>
+                <article class="theme-role-card">
+                    <h5>Catalog cards</h5>
+                    <p>Product cards, variant pills, prices, collection cards, and quick-buy states now feel visually connected.</p>
+                    <div class="theme-chip-row">
+                        <span class="theme-chip">Product card</span>
+                        <span class="theme-chip">Variants</span>
+                        <span class="theme-chip">Collections</span>
+                    </div>
+                </article>
+                <article class="theme-role-card">
+                    <h5>Action buttons</h5>
+                    <p>Buy Now uses a strong blue CTA while Add to Cart gets a highlighted yellow CTA for clear action hierarchy.</p>
+                    <div class="theme-chip-row">
+                        <span class="theme-chip">Buy Now</span>
+                        <span class="theme-chip">Add to Cart</span>
+                        <span class="theme-chip">Quick buy dialog</span>
+                    </div>
+                </article>
+                <article class="theme-role-card">
+                    <h5>Support surfaces</h5>
+                    <p>Muted support panels are used for quantity labels, notes, drawer surfaces, and helper information blocks.</p>
+                    <div class="theme-chip-row">
+                        <span class="theme-chip">Drawer</span>
+                        <span class="theme-chip">Info note</span>
+                        <span class="theme-chip">Status chips</span>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="theme-admin-section">
+            <div>
+                <h4>Live UI preview</h4>
+                <p>This mock section shows how the selected theme behaves inside a product-focused storefront screen.</p>
+            </div>
+            <div class="theme-preview-layout">
+                <div class="theme-preview-stage">
+                    <article class="theme-preview-product-card">
+                        <div class="theme-preview-media"></div>
+                        <div class="theme-preview-copy">
+                            <span class="theme-chip">Featured product</span>
+                            <h4>Signature wellness combo pack</h4>
+                            <p>Primary background keeps the page calm, primary color anchors brand elements, and both CTA buttons stand out clearly for shoppers.</p>
+                        </div>
+                        <div class="theme-preview-buttons">
+                            <button type="button" class="theme-btn add-cart">Add to Cart</button>
+                            <button type="button" class="theme-btn buy-now">Buy Now</button>
+                        </div>
+                    </article>
+                </div>
+                <aside class="theme-preview-notes">
+                    <h4>Theme checklist</h4>
+                    <ul>
+                        <li>Primary background color</li>
+                        <li>Primary brand color</li>
+                        <li>Buy Now text and background color</li>
+                        <li>Add to Cart text and background color</li>
+                        <li>Shared surfaces for cards, drawers, footer, and collections</li>
+                    </ul>
+                </aside>
+            </div>
+        </section>
+    </div>
+</ui:composition>

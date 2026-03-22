@@ -2,7 +2,24 @@
     Created on : 09-Mar-2026, 1:39:43 am
     Author     : Aadhik
 */
-
+:root {
+    --primary-bg: #fff8e8;
+    --primary-surface: #fffdf8;
+    --primary-color: #173676;
+    --primary-color-soft: #e7efff;
+    --text-main: #1d2b54;
+    --text-muted: #5f6883;
+    --buy-now-color: #ffffff;
+    --buy-now-bg: linear-gradient(135deg, #173676 0%, #2754b1 100%);
+    --buy-now-bg-hover: linear-gradient(135deg, #122c62 0%, #1d4491 100%);
+    --add-cart-color: #173676;
+    --add-cart-bg: #f4d332;
+    --add-cart-bg-hover: #e1c01d;
+    --support-surface: #f6f8ff;
+    --support-border: #dce4ff;
+    --footer-bg: linear-gradient(135deg, #10255f 0%, #173676 100%);
+    --footer-link: #fff6a8;
+}
 .mandatory::after {
     content: " *";
     color: red;
@@ -33,8 +50,8 @@
     min-height: 320px;
     padding: 1rem;
     border-radius: 12px;
-    background: #f7f9ff;
-    border: 1px solid #dde5fb;
+    background: var(--support-surface);
+    border: 1px solid var(--support-border);
     line-height: 1.7;
 }
 .content-editor-actions {
@@ -53,14 +70,14 @@
     min-height: 100vh;
 }
 .top-strip {
-    background: #ffffff;
+    background: var(--primary-surface);
     text-align: center;
     font-weight: 700;
     padding: 0.75rem 1rem;
     letter-spacing: 0.04em;
 }
 .nav-shell {
-    background: #173676;
+    background: var(--primary-color);
     color: #fff;
     padding: 0.75rem 1rem;
     position: sticky;
@@ -111,8 +128,8 @@
     width: min(360px, 86vw);
     max-width: 100%;
     height: 100vh;
-    background: #f3d327;
-    color: #1c1c1c;
+    background: var(--add-cart-bg);
+    color: var(--text-main);
     padding: 1.25rem;
     transform: translateX(-105%);
     transition: transform .28s ease;
@@ -135,7 +152,7 @@
 .store-menu-header h3 {
     margin: 0;
     font-size: 1.4rem;
-    color: #10255f;
+    color: var(--primary-color);
 }
 .store-menu-close {
     border: 0;
@@ -188,8 +205,8 @@
     height: 1.15rem;
     padding: 0 0.25rem;
     border-radius: 999px;
-    background: #f4d332;
-    color: #10255f;
+    background: var(--add-cart-bg);
+    color: var(--primary-color);
     font-size: 0.72rem;
     font-weight: 700;
     display: inline-flex;
@@ -217,8 +234,8 @@
     right: 0;
     width: min(420px, 100vw);
     height: 100vh;
-    background: #f3d327;
-    color: #1c1c1c;
+    background: var(--add-cart-bg);
+    color: var(--text-main);
     transform: translateX(105%);
     transition: transform .28s ease;
     z-index: 42;
@@ -247,7 +264,7 @@
 }
 .cart-drawer-header h2 {
     font-size: 2rem;
-    color: #10255f;
+    color: var(--primary-color);
 }
 .cart-drawer-close {
     border: 0;
@@ -370,7 +387,7 @@
     border-radius: 999px;
     padding: 1rem 1.5rem;
     background: #fff;
-    color: #10255f;
+    color: var(--primary-color);
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 10px 28px rgba(16,37,95,.12);
