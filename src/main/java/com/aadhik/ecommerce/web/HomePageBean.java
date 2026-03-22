@@ -34,6 +34,9 @@ public class HomePageBean extends BaseBean {
     @Inject
     private ContentPageService contentPageService;
 
+    @Inject
+    private CartBean cartBean;
+
     private Long selectedProductId;
     private Integer selectedVariantIndex;
 
@@ -200,7 +203,7 @@ public class HomePageBean extends BaseBean {
     public String productCtaLabel(Product product) {
         return product != null && product.isHasVariants() ? "Buy Now" : "Add To Cart";
     }
-    
+
     public String defaultQuantityLabel(Product product) {
         return "1";
     }
@@ -237,12 +240,13 @@ public class HomePageBean extends BaseBean {
         selectedProductId = product == null ? null : product.getId();
         selectedVariantIndex = 0;
     }
-    
+
     public void addProductToCart(Product product) {
         if (product == null) {
             addWarn("Product is unavailable.");
             return;
         }
+        cartBean.addProduct(product);
         addInfo(product.getName() + " added to cart. Qty: 1.");
     }
 
@@ -295,6 +299,7 @@ public class HomePageBean extends BaseBean {
             addWarn("Select a product variant first.");
             return;
         }
+        cartBean.addVariant(product, variant, variant.getImageUrl());
         addInfo(product.getName() + " - " + variant.getName() + " added to cart.");
     }
 
@@ -325,6 +330,10 @@ public class HomePageBean extends BaseBean {
         } catch (NumberFormatException ex) {
             return null;
         }
+    }
+    
+    public CartBean getCartBean() {
+        return cartBean;
     }
 
     public static class ProductVariantOption {

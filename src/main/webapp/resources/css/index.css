@@ -227,6 +227,7 @@ body {
 .product-card-action.ui-button,
 .product-card-action {
     width: 100%;
+    margin-top: auto;
 }
 .product-price-stack {
     display: flex;

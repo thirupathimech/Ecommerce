@@ -24,8 +24,10 @@
                 </section>
             </ui:fragment>
 
-            <ui:fragment id="marquee_fragment" rendered="#{homePageBean.hasOrderedHomeSections()}">
-                <ui:repeat id="marquee_panel_repeat" value="#{homePageBean.orderedHomeSections}" var="orderedSection" varStatus="orderstatus">
+            <ui:fragment id="orderedHomeSectionsFragment" rendered="#{homePageBean.hasOrderedHomeSections()}">
+                <ui:repeat id="orderedHomeSections_repeat" value="#{homePageBean.orderedHomeSections}" var="orderedSection" varStatus="orderstatus">
+                    
+                    <!-- ═══════════════════════════════════════════════ MARQUEE ═══════════════════════════════════════════════ -->
                     <h:panelGroup id="marqueePanelGroup" rendered="#{orderedSection.type.name() eq 'MARQUEE' and not empty homePageBean.getMarqueeItems(orderedSection.marquee)}"
                                   layout="block"
                                   styleClass="store-marquee #{orderedSection.marquee.pauseOnHover ? 'pause-on-hover' : ''}"
@@ -37,7 +39,8 @@
                             </ui:repeat>
                         </div>
                     </h:panelGroup>
-
+                    
+                    <!-- ═══════════════════════════════════════════════ VIDEO_CAROUSEL ═══════════════════════════════════════════════ -->
                     <h:panelGroup id="video_carousel_panelgroup" rendered="#{orderedSection.type.name() eq 'VIDEO_CAROUSEL'}" layout="block" styleClass="store-video-section">
                         <h2 class="section-title">#{orderedSection.videoItem.title}</h2>
                         <div class="store-video-track">
@@ -50,6 +53,7 @@
                         </div>
                     </h:panelGroup>
 
+                    <!-- ═══════════════════════════════════════════════ DIV_SECTION ═══════════════════════════════════════════════ -->
                     <h:panelGroup id="div_section_panelgroup" rendered="#{orderedSection.type.name() eq 'DIV_SECTION'}" layout="block" styleClass="home-div-section">
                         <article class="home-div-card #{orderedSection.divSection.imageSide eq 'RIGHT' ? 'right' : ''}">
                             <div class="home-div-image-wrap">
@@ -66,7 +70,8 @@
                             </div>
                         </article>
                     </h:panelGroup>
-
+                    
+                    <!-- ═══════════════════════════════════════════════ COLLECTION_GROUP ═══════════════════════════════════════════════ -->
                     <h:panelGroup id="collection_section_panelgroup" rendered="#{orderedSection.type.name() eq 'COLLECTION_GROUP' and not empty orderedSection.collections}" layout="block" styleClass="collection-group-section #{orderedSection.collectionGroup.scrollDisplayMode ? 'collection-group-section-scroll' : 'collection-group-section-box'}">
                         <section>
                             <div class="collection-group-header #{orderedSection.collectionGroup.scrollDisplayMode ? 'is-scroll' : 'is-box'}">
@@ -96,6 +101,7 @@
                         </section>
                     </h:panelGroup>
 
+                    <!-- ═══════════════════════════════════════════════ PRODUCTS_COLLECTION ═══════════════════════════════════════════════ -->
                     <h:panelGroup id="product_collection_panelgroup" rendered="#{orderedSection.type.name() eq 'PRODUCTS_COLLECTION' and not empty orderedSection.products}" layout="block" styleClass="product-collection-section">
                         <section>
                             <div class="product-collection-header">
@@ -125,6 +131,7 @@
     </ui:define>
 
     <ui:define name="afterContent">
+        <!-- ═══════════════════════════════════════════════ PURCHASE DIALOGUE ═══════════════════════════════════════════════ -->
         <p:dialog id="purchaseDialog" widgetVar="purchaseDialogWidget" modal="true" responsive="true" showHeader="false"
                   appendTo="@(body)" styleClass="purchase-dialog" width="900" fitViewport="true">
             <h:panelGroup rendered="#{not empty homePageBean.selectedProduct}" layout="block" id="purchaseDialogContent" styleClass="purchase-dialog-body">
@@ -140,7 +147,7 @@
                         <div class="purchase-product-summary">
                             <span class="purchase-dialog-eyebrow">Quick buy</span>
                             <h3>#{homePageBean.selectedProduct.name}</h3>
-                            <p>Choose the right pack size and continue instantly. This layout is optimized for both desktop and mobile.</p>
+                            <p>Choose the right pack size and continue instantly.</p>
                         </div>
                         <div class="purchase-selection-block">
                             <div class="purchase-selection-header">
@@ -181,8 +188,8 @@
 
                         <div class="purchase-dialog-actions">
                             <p:commandButton value="Add to cart" action="#{homePageBean.addSelectedVariantToCart}"
-                                             update=":mainForm:messages :mainForm:purchaseDialog" process=":mainForm:purchaseDialog"
-                                             oncomplete="if (!args.validationFailed) PF('purchaseDialogWidget').hide()" styleClass="product-cta-btn product-cta-add purchase-secondary-action"/>
+                                             update=":mainForm:messages :mainForm:purchaseDialog :mainForm:cartDrawerContent :mainForm:cartBadge" process=":mainForm:purchaseDialog"
+                                             oncomplete="if (!args.validationFailed) { PF('purchaseDialogWidget').hide(); toggleCartDrawer(true); }" styleClass="product-cta-btn product-cta-add purchase-secondary-action"/>
                             <p:commandButton value="Buy it now" action="#{homePageBean.buySelectedVariantNow}"
                                              update=":mainForm:messages :mainForm:purchaseDialog" process=":mainForm:purchaseDialog"
                                              oncomplete="if (!args.validationFailed) PF('purchaseDialogWidget').hide()" styleClass="product-cta-btn product-cta-buy purchase-primary-action"/>

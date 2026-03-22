@@ -16,6 +16,7 @@
                     <h:outputLink value="#{request.contextPath}/admin.xhtml">Go to Admin Setup</h:outputLink>
                 </div>
                 <div id="announcementBar" class="top-strip">Sip Your Way To Health</div>
+                <!-- ═══════════════════════════════════════════════ HEADER TOOLBAR ═══════════════════════════════════════════════════════════ -->
                 <div id="nav-shell" class="nav-shell">
                     <div class="nav-row">
                         <div class="nav-left">
@@ -25,13 +26,18 @@
                         <h:link outcome="index"><h:graphicImage id="logo" styleClass="logo-badge" value="https://images.unsplash.com/photo-1496450681664-3df85efbd29f?w=150&amp;h=150&amp;fit=crop" alt="logo"/></h:link>
                         <div class="nav-right">
                             <p:commandButton id="userBtn" type="button" icon="pi pi-user" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
-                            <p:commandButton id="shoppingBtn" type="button" icon="pi pi-shopping-bag" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
+                            <button id="shoppingBtn" type="button" class="cart-trigger" onclick="toggleCartDrawer(true); return false;" aria-label="Open cart drawer">
+                                <i class="pi pi-shopping-bag"></i>
+                                <h:panelGroup id="cartBadge" rendered="#{cartBean.itemCount gt 0}" styleClass="cart-badge">#{cartBean.itemCount}</h:panelGroup>
+                            </button>
                         </div>
                     </div>
                 </div>
 
                 <div id="storeMenuBackdrop" class="store-menu-backdrop" aria-hidden="true" onclick="toggleStoreMenu(false)"></div>
+                <div id="cartDrawerBackdrop" class="cart-drawer-backdrop" aria-hidden="true" onclick="toggleCartDrawer(false)"></div>
 
+                <!-- ═══════════════════════════════════════════════ LEFT SIDE MENU DRAWER ═══════════════════════════════════════════════ -->
                 <aside id="storeMenuDrawer" class="store-menu-drawer" aria-hidden="true" aria-label="Store navigation">
                     <div class="store-menu-header">
                         <h3>Menu</h3>
@@ -44,10 +50,76 @@
                     </div>
                 </aside>
 
+                <!-- ═══════════════════════════════════════════════ RIGHT SIDE CART DRAWER ═══════════════════════════════════════════════ -->
+                <aside id="cartDrawer" class="cart-drawer" aria-hidden="true" aria-label="Shopping cart">
+                    <h:panelGroup id="cartDrawerContent" layout="block" styleClass="cart-drawer-content">
+                        <div class="cart-drawer-header">
+                            <div>
+                                <h2>Your cart</h2>
+                                <p>#{cartBean.itemCount} item(s)</p>
+                            </div>
+                            <button type="button" class="cart-drawer-close" onclick="toggleCartDrawer(false)" aria-label="Close cart drawer">✕</button>
+                        </div>
+
+                        <h:panelGroup rendered="#{empty cartBean.items}" layout="block" styleClass="cart-empty-state">
+                            <i class="pi pi-shopping-bag"></i>
+                            <h3>Your cart is empty</h3>
+                            <p>Add a product to view it here instantly.</p>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{not empty cartBean.items}" layout="block" styleClass="cart-filled-state">
+                            <div class="cart-items">
+                                <ui:repeat value="#{cartBean.items}" var="item" varStatus="status">
+                                    <article class="cart-item-card">
+                                        <h:graphicImage value="#{homePageBean.resolveMediaUrl(item.imageUrl)}" alt="#{item.displayName}" styleClass="cart-item-image"/>
+                                        <div class="cart-item-body">
+                                            <div class="cart-item-topline">
+                                                <div>
+                                                    <h3>#{item.productName}</h3>
+                                                    <h:panelGroup rendered="#{not empty item.variantName}">
+                                                        <p class="cart-item-variant">#{item.variantName}</p>
+                                                    </h:panelGroup>
+                                                </div>
+                                                <strong>#{homePageBean.formatPrice(item.lineTotal)}</strong>
+                                            </div>
+                                            <div class="cart-item-footer">
+                                                <span class="cart-item-unit-price">#{homePageBean.formatPrice(item.unitPrice)} each</span>
+                                                <div class="cart-qty-control">
+                                                    <p:commandButton value="−" action="#{cartBean.decrease(status.index)}"
+                                                                     process="@this" update=":mainForm:cartDrawerContent :mainForm:cartBadge"
+                                                                     styleClass="cart-qty-btn"/>
+                                                    <span class="cart-qty-value">#{item.quantity}</span>
+                                                    <p:commandButton value="+" action="#{cartBean.increase(status.index)}"
+                                                                     process="@this" update=":mainForm:cartDrawerContent :mainForm:cartBadge"
+                                                                     styleClass="cart-qty-btn"/>
+                                                </div>
+                                                <p:commandButton icon="pi pi-trash" action="#{cartBean.remove(status.index)}"
+                                                                 process="@this" update=":mainForm:cartDrawerContent :mainForm:cartBadge"
+                                                                 styleClass="cart-remove-btn ui-button-flat ui-button-plain"/>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </ui:repeat>
+                            </div>
+
+                            <div class="cart-summary">
+                                <div class="cart-summary-row">
+                                    <strong>Estimated total</strong>
+                                    <strong>#{homePageBean.formatPrice(cartBean.estimatedTotal)}</strong>
+                                </div>
+                                <p>Taxes included. Discounts and shipping calculated at checkout.</p>
+                                <button type="button" class="cart-checkout-btn">Check out</button>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </aside>
+
+                <!-- ═══════════════════════════════════════════════ INDEX PAGE DYNAMIC ═════════════════════════════════════════════════════ -->
                 <div class="page-content">
                     <ui:insert name="content"/>
                 </div>
 
+                <!-- ═══════════════════════════════════════════════ FOOTER ═══════════════════════════════════════════════════════════════════ -->
                 <footer class="site-footer">
                     <div class="footer-grid">
                         <div class="footer-brand">
@@ -82,22 +154,43 @@
             backdrop.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
             document.body.classList.toggle('store-menu-open', shouldOpen);
             }
+
+            function toggleCartDrawer(isOpen) {
+            var drawer = document.getElementById('cartDrawer');
+            var backdrop = document.getElementById('cartDrawerBackdrop');
+            if (!drawer || !backdrop) { return; }
+
+            var shouldOpen = !!isOpen;
+            drawer.classList.toggle('open', shouldOpen);
+            backdrop.classList.toggle('open', shouldOpen);
+            drawer.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+            backdrop.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+            document.body.classList.toggle('cart-drawer-open', shouldOpen);
+            }
+
             document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
             toggleStoreMenu(false);
+            toggleCartDrawer(false);
             }
             });
 
             document.addEventListener('click', function(event) {
-            var drawer = document.getElementById('storeMenuDrawer');
-            var trigger = document.getElementById('mainForm:bar');
-            if (!drawer || drawer.getAttribute('aria-hidden') === 'true') {
-            return;
-            }
-            if (drawer.contains(event.target) || (trigger &amp;&amp; trigger.contains(event.target))) {
-            return;
-            }
+            var menuDrawer = document.getElementById('storeMenuDrawer');
+            var menuTrigger = document.getElementById('mainForm:bar');
+            if (menuDrawer &amp;&amp; menuDrawer.getAttribute('aria-hidden') === 'false') {
+            if (!menuDrawer.contains(event.target) &amp;&amp; !(menuTrigger &amp;&amp; menuTrigger.contains(event.target))) {
             toggleStoreMenu(false);
+            }
+            }
+
+            var cartDrawer = document.getElementById('cartDrawer');
+            var cartTrigger = document.getElementById('shoppingBtn');
+            if (cartDrawer &amp;&amp; cartDrawer.getAttribute('aria-hidden') === 'false') {
+            if (!cartDrawer.contains(event.target) &amp;&amp; !(cartTrigger &amp;&amp; cartTrigger.contains(event.target))) {
+            toggleCartDrawer(false);
+            }
+            }
             });
         </h:outputScript>
     </h:body>

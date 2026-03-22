@@ -33,7 +33,8 @@
             </h:panelGroup>
             <h:panelGroup rendered="#{not product.hasVariants}">
                 <p:commandButton value="Add to Cart" action="#{homePageBean.addProductToCart(product)}"
-                                 update=":mainForm:messages" process="@this" styleClass="catalog-card-button product-card-action"/>
+                                 update=":mainForm:messages :mainForm:cartDrawerContent :mainForm:cartBadge" process="@this"
+                                 oncomplete="toggleCartDrawer(true)" styleClass="catalog-card-button product-card-action"/>
             </h:panelGroup>
         </div>
     </article>
