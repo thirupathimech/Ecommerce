@@ -6,6 +6,7 @@ import com.aadhik.ecommerce.model.HomeSlider;
 import com.aadhik.ecommerce.model.MarqueeConfig;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
+import com.aadhik.ecommerce.model.ThemeConfig;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
 import com.aadhik.ecommerce.service.CatalogService;
 import com.aadhik.ecommerce.service.ContentPageService;
@@ -62,6 +63,10 @@ public class HomePageBean extends BaseBean {
 
     public List<ProductCollection> getActiveCollections() {
         return catalogService.getActiveCollections();
+    }
+    
+    public ThemeConfig getThemeConfig() {
+        return catalogService.getThemeConfig();
     }
 
     public MarqueeConfig getActiveMarquee() {

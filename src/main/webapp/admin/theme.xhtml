@@ -1,89 +1,124 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
     <div class="theme-admin-shell">
         <section class="theme-admin-hero">
-            <span class="status-pill active">Storefront theme</span>
-            <h3>Unified color system for the whole shopping flow</h3>
-            <p>Primary background, brand primary, Buy Now CTA, Add to Cart CTA, drawers, footer, cards, collection blocks, and preview surfaces are now aligned under one theme direction so every screen feels part of the same app.</p>
+            <h3>Configure storefront colors from admin</h3>
         </section>
 
         <section class="theme-admin-section">
             <div>
-                <h4>Core theme tokens</h4>
-                <p>These are the main colors now driving storefront pages and conversion buttons.</p>
+                 <h4>Theme color setup</h4>
+                <p>Color picker-la select pannunga, save pannunga, app full storefront-la adhe theme reflect aagum.</p>
             </div>
-            <div class="theme-admin-grid">
-                <article class="theme-token-card primary-bg">
+
+            <div class="theme-config-grid">
+                <div class="theme-config-field">
+                    <label for="themePrimaryBg">Primary background</label>
+                    <p:colorPicker id="themePrimaryBg" value="#{themeConfigBean.themeForm.primaryBackground}" format="hex"/>
+                    <small>Page background and soft surface base.</small>
+                </div>
+                <div class="theme-config-field">
+                    <label for="themePrimaryColor">Primary color</label>
+                    <p:colorPicker id="themePrimaryColor" value="#{themeConfigBean.themeForm.primaryColor}" format="hex"/>
+                    <small>Header, footer, links and brand accents.</small>
+                </div>
+                <div class="theme-config-field">
+                    <label for="themeBuyNowBg">Buy Now background</label>
+                    <p:colorPicker id="themeBuyNowBg" value="#{themeConfigBean.themeForm.buyNowBackground}" format="hex"/>
+                    <small>Main CTA button background.</small>
+                </div>
+                <div class="theme-config-field">
+                    <label for="themeBuyNowText">Buy Now text</label>
+                    <p:colorPicker id="themeBuyNowText" value="#{themeConfigBean.themeForm.buyNowTextColor}" format="hex"/>
+                    <small>Main CTA text color.</small>
+                </div>
+                <div class="theme-config-field">
+                    <label for="themeAddCartBg">Add to Cart background</label>
+                    <p:colorPicker id="themeAddCartBg" value="#{themeConfigBean.themeForm.addCartBackground}" format="hex"/>
+                    <small>Secondary CTA button background.</small>
+                </div>
+                <div class="theme-config-field">
+                    <label for="themeAddCartText">Add to Cart text</label>
+                    <p:colorPicker id="themeAddCartText" value="#{themeConfigBean.themeForm.addCartTextColor}" format="hex"/>
+                    <small>Secondary CTA text color.</small>
+                </div>
+            </div>
+
+            <div class="theme-admin-actions">
+                <p:commandButton value="Restore defaults" actionListener="#{themeConfigBean.restoreDefaults}" update=":mainForm" process="@this" styleClass="ui-button-secondary ui-button-outlined"/>
+                <p:commandButton value="Save theme" actionListener="#{themeConfigBean.saveForm}" update=":mainForm" process=":mainForm" icon="pi pi-save"/>
+            </div>
+        </section>
+
+        <section class="theme-admin-section">
+            <div>
+                <h4>Live token preview</h4>
+                <p>Save panna pora colors preview-ku keezha same-a kaamikum.</p>
+            </div>
+             <div class="theme-admin-grid">
+                <article class="theme-token-card primary-bg" style="background: #{themeConfigBean.themeForm.primaryBackground}; color: var(--text-main);">
                     <div class="theme-token-meta">
                         <strong>Primary background</strong>
-                        <span>Soft warm canvas for full page surfaces</span>
+                        <span>#{themeConfigBean.themeForm.primaryBackground}</span>
                     </div>
-                    <small>#FFF8E8</small>
+                    <small>Store body, hero support surface</small>
                 </article>
-                <article class="theme-token-card primary-color">
+                <article class="theme-token-card primary-color" style="background: #{themeConfigBean.themeForm.primaryColor}; color: #FFFFFF;">
                     <div class="theme-token-meta">
                         <strong>Primary color</strong>
-                        <span>Main header, footer, links, and key emphasis</span>
+                        <span>#{themeConfigBean.themeForm.primaryColor}</span>
                     </div>
-                    <small>#173676</small>
+                    <small>Brand color</small>
                 </article>
-                <article class="theme-token-card buy-now">
+                <article class="theme-token-card buy-now" style="background: #{themeConfigBean.themeForm.buyNowBackground}; color: #{themeConfigBean.themeForm.buyNowTextColor};">
                     <div class="theme-token-meta">
-                        <strong>Buy Now button</strong>
-                        <span>Text + background for high intent action</span>
+                        <strong>Buy Now</strong>
+                        <span>BG #{themeConfigBean.themeForm.buyNowBackground}</span>
                     </div>
-                    <small>Text #FFFFFF · BG Blue gradient</small>
+                    <small>Text #{themeConfigBean.themeForm.buyNowTextColor}</small>
                 </article>
-                <article class="theme-token-card add-cart">
+                <article class="theme-token-card add-cart" style="background: #{themeConfigBean.themeForm.addCartBackground}; color: #{themeConfigBean.themeForm.addCartTextColor};">
                     <div class="theme-token-meta">
-                        <strong>Add to Cart button</strong>
-                        <span>Text + background for secondary conversion</span>
+                        <strong>Add to Cart</strong>
+                        <span>BG #{themeConfigBean.themeForm.addCartBackground}</span>
                     </div>
-                    <small>Text #173676 · BG #F4D332</small>
+                    <small>Text #{themeConfigBean.themeForm.addCartTextColor}</small>
                 </article>
             </div>
         </section>
 
         <section class="theme-admin-section">
             <div>
-                <h4>Where this theme is applied</h4>
-                <p>The same palette is reused across the app so the brand stays consistent on every screen.</p>
+                <h4>Where theme applies</h4>
+                <p>Store layout variables use pannitu index.xhtml, product cards, drawer, footer and CTA buttons update aagum.</p>
             </div>
             <div class="theme-role-grid">
                 <article class="theme-role-card">
-                    <h5>Navigation &amp; footer</h5>
-                    <p>Top strip, sticky header, cart drawer badge, and footer gradients use the primary color family.</p>
+                    <h5>Storefront shell</h5>
+                    <p>Top strip, navigation, content background and footer theme colors use pannum.</p>
                     <div class="theme-chip-row">
+                        <span class="theme-chip">index.xhtml</span>
                         <span class="theme-chip">Header</span>
                         <span class="theme-chip">Footer</span>
-                        <span class="theme-chip">Cart badge</span>
                     </div>
                 </article>
                 <article class="theme-role-card">
-                    <h5>Catalog cards</h5>
-                    <p>Product cards, variant pills, prices, collection cards, and quick-buy states now feel visually connected.</p>
-                    <div class="theme-chip-row">
-                        <span class="theme-chip">Product card</span>
-                        <span class="theme-chip">Variants</span>
-                        <span class="theme-chip">Collections</span>
-                    </div>
-                </article>
-                <article class="theme-role-card">
-                    <h5>Action buttons</h5>
-                    <p>Buy Now uses a strong blue CTA while Add to Cart gets a highlighted yellow CTA for clear action hierarchy.</p>
+                    <h5>CTA buttons</h5>
+                    <p>Buy Now and Add to Cart values DB-la irunthu read pannitu storefront actions-ku apply aagum.</p>
                     <div class="theme-chip-row">
                         <span class="theme-chip">Buy Now</span>
                         <span class="theme-chip">Add to Cart</span>
-                        <span class="theme-chip">Quick buy dialog</span>
+                        <span class="theme-chip">Quick buy</span>
                     </div>
                 </article>
                 <article class="theme-role-card">
-                    <h5>Support surfaces</h5>
-                    <p>Muted support panels are used for quantity labels, notes, drawer surfaces, and helper information blocks.</p>
+                    <h5>Shared surfaces</h5>
+                    <p>Cards, badges, note panels, side drawers, collection blocks ellam theme variables use pannum.</p>
                     <div class="theme-chip-row">
+                        <span class="theme-chip">Cards</span>
                         <span class="theme-chip">Drawer</span>
-                        <span class="theme-chip">Info note</span>
-                        <span class="theme-chip">Status chips</span>
+                        <span class="theme-chip">Collections</span>
                     </div>
                 </article>
             </div>
@@ -92,31 +127,31 @@
         <section class="theme-admin-section">
             <div>
                 <h4>Live UI preview</h4>
-                <p>This mock section shows how the selected theme behaves inside a product-focused storefront screen.</p>
+                <p>Admin-la configure panra color combination storefront product section mathiri preview aagum.</p>
             </div>
             <div class="theme-preview-layout">
-                <div class="theme-preview-stage">
+                <div class="theme-preview-stage" style="background: #{themeConfigBean.themeForm.primaryBackground};">
                     <article class="theme-preview-product-card">
                         <div class="theme-preview-media"></div>
                         <div class="theme-preview-copy">
                             <span class="theme-chip">Featured product</span>
                             <h4>Signature wellness combo pack</h4>
-                            <p>Primary background keeps the page calm, primary color anchors brand elements, and both CTA buttons stand out clearly for shoppers.</p>
+                            <p>Saved theme colors storefront-la same experience kudukkum. Admin save pannina udane next user request-la adhu apply aagum.</p>
                         </div>
                         <div class="theme-preview-buttons">
-                            <button type="button" class="theme-btn add-cart">Add to Cart</button>
-                            <button type="button" class="theme-btn buy-now">Buy Now</button>
+                            <button type="button" class="theme-btn add-cart" style="background: #{themeConfigBean.themeForm.addCartBackground}; color: #{themeConfigBean.themeForm.addCartTextColor};">Add to Cart</button>
+                            <button type="button" class="theme-btn buy-now" style="background: #{themeConfigBean.themeForm.buyNowBackground}; color: #{themeConfigBean.themeForm.buyNowTextColor};">Buy Now</button>
                         </div>
                     </article>
                 </div>
                 <aside class="theme-preview-notes">
                     <h4>Theme checklist</h4>
                     <ul>
-                        <li>Primary background color</li>
-                        <li>Primary brand color</li>
-                        <li>Buy Now text and background color</li>
-                        <li>Add to Cart text and background color</li>
-                        <li>Shared surfaces for cards, drawers, footer, and collections</li>
+                        <li>Primary background saved in DB</li>
+                        <li>Primary brand color saved in DB</li>
+                        <li>Buy Now button colors saved in DB</li>
+                        <li>Add to Cart button colors saved in DB</li>
+                        <li>Storefront layout applies saved variables</li>
                     </ul>
                 </aside>
             </div>

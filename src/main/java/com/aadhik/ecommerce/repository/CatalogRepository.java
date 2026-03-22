@@ -9,6 +9,7 @@ import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.StoreMenuItem;
+import com.aadhik.ecommerce.model.ThemeConfig;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
@@ -138,6 +139,16 @@ public class CatalogRepository {
                         order by p.id desc
                         """, Product.class)
                 .getResultList();
+    }
+    
+    public ThemeConfig findLatestThemeConfig() {
+        List<ThemeConfig> configs = entityManager.createQuery("""
+                        select t from ThemeConfig t
+                        order by t.id desc
+                        """, ThemeConfig.class)
+                .setMaxResults(1)
+                .getResultList();
+        return configs.isEmpty() ? null : configs.get(0);
     }
 
     public List<MarqueeConfig> findMarqueeConfigs() {
@@ -360,6 +371,15 @@ public class CatalogRepository {
         }
 
         return entityManager.merge(product);
+    }
+    
+     @Transactional
+    public ThemeConfig saveThemeConfig(ThemeConfig themeConfig) {
+        if (themeConfig.getId() == null) {
+            entityManager.persist(themeConfig);
+            return themeConfig;
+        }
+        return entityManager.merge(themeConfig);
     }
 
     @Transactional

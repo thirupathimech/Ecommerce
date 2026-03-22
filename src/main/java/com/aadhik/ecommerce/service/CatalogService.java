@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static com.aadhik.ecommerce.model.HomeSectionType.PRODUCTS_COLLECTION;
 import com.aadhik.ecommerce.model.StoreMenuItem;
+import com.aadhik.ecommerce.model.ThemeConfig;
 
 @ApplicationScoped
 public class CatalogService {
@@ -158,6 +159,10 @@ public class CatalogService {
     public List<StoreMenuItem> getActiveStoreMenuItems() {
         return repository.findStoreMenuItems(true);
     }
+    
+    public ThemeConfig getThemeConfig() {
+        return repository.findLatestThemeConfig();
+    }
 
     public List<MarqueeConfig> getMarqueeConfigs() {
         return repository.findMarqueeConfigs();
@@ -221,6 +226,10 @@ public class CatalogService {
 
     public void deleteStoreMenuItem(Long id) {
         repository.deleteStoreMenuItem(id);
+    }
+    
+    public ThemeConfig saveThemeConfig(ThemeConfig themeConfig) {
+        return repository.saveThemeConfig(themeConfig);
     }
 
     public MarqueeConfig saveMarqueeConfig(MarqueeConfig marqueeConfig) {

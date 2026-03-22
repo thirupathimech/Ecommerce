@@ -7,6 +7,7 @@ import com.aadhik.ecommerce.model.MenuItemTargetType;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
 import com.aadhik.ecommerce.model.StoreMenuItem;
+import com.aadhik.ecommerce.model.ThemeConfig;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
@@ -27,6 +28,7 @@ public class DataSeeder {
     @Transactional
     public void seed() {
         try {
+            seedThemeIfNeeded();
             seedContentPages();
             seedStoreMenusIfNeeded();
 
@@ -78,6 +80,24 @@ public class DataSeeder {
             e.printStackTrace();
             System.out.println(">>>>> com.aadhik.ecommerce.service.DataSeeder.seed() ## END");
         }
+    }
+    
+    private void seedThemeIfNeeded() {
+        Long themeCount = entityManager.createQuery("select count(t) from ThemeConfig t", Long.class)
+                .getSingleResult();
+        if (themeCount != null && themeCount > 0) {
+            return;
+        }
+
+        ThemeConfig theme = new ThemeConfig();
+        theme.setPrimaryBackground("#FFF8E8");
+        theme.setPrimaryColor("#173676");
+        theme.setBuyNowBackground("#173676");
+        theme.setBuyNowTextColor("#FFFFFF");
+        theme.setAddCartBackground("#F4D332");
+        theme.setAddCartTextColor("#173676");
+        theme.setUpdatedAt(java.time.LocalDateTime.now());
+        entityManager.persist(theme);
     }
 
     private void seedStoreMenusIfNeeded() {
