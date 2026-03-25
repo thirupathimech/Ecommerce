@@ -8,6 +8,7 @@ import jakarta.inject.Named;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.primefaces.model.DualListModel;
@@ -101,12 +102,20 @@ public class ProductBean extends AdminBean {
         }
 
         for (ProductVariantInput variant : variantInputs) {
-            if (isBlank(variant.getColor())) {
-                addError("Variant color is required.");
+            if (isBlank(variant.getFieldType())) {
+                addError("Variant field type is required.");
+                return false;
+            }
+            if (isBlank(variant.getValue())) {
+                addError("Variant value is required.");
                 return false;
             }
             if (isBlank(variant.getImageUrl())) {
                 addError("Variant image selection is required.");
+                return false;
+            }
+            if (!getVariantImageOptions().contains(variant.getImageUrl())) {
+                addError("Variant image must be selected from Product Images.");
                 return false;
             }
             if (variant.getPrice() == null || variant.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
@@ -197,7 +206,7 @@ public class ProductBean extends AdminBean {
             addError("Invalid product record.");
             return;
         }
-        if("inStock".equalsIgnoreCase(field)){
+        if ("inStock".equalsIgnoreCase(field)) {
             product.setInStock(!product.isInStock());
         } else if ("status".equalsIgnoreCase(field)) {
             product.setActive(!product.isActive());
@@ -211,7 +220,9 @@ public class ProductBean extends AdminBean {
     }
 
     public void addVariantRow() {
-        variantInputs.add(new ProductVariantInput());
+        ProductVariantInput variantInput = new ProductVariantInput();
+        variantInput.setFieldType("TEXT");
+        variantInputs.add(variantInput);
     }
 
     public void removeVariantRow(int index) {
@@ -229,7 +240,8 @@ public class ProductBean extends AdminBean {
             if (builder.length() > 0) {
                 builder.append("\n");
             }
-            builder.append(escape(variant.getColor())).append("|")
+            builder.append(escape(variant.getFieldType())).append("|")
+                    .append(escape(variant.getValue())).append("|")
                     .append(escape(variant.getImageUrl())).append("|")
                     .append(variant.getPrice() == null ? "" : variant.getPrice()).append("|")
                     .append(variant.getComparePrice() == null ? "" : variant.getComparePrice()).append("|")
@@ -248,11 +260,24 @@ public class ProductBean extends AdminBean {
         for (String line : lines) {
             String[] parts = line.split("\\|", -1);
             ProductVariantInput variant = new ProductVariantInput();
-            variant.setColor(unescape(getSafe(parts, 0)));
-            variant.setImageUrl(unescape(getSafe(parts, 1)));
-            variant.setPrice(toDecimal(getSafe(parts, 2)));
-            variant.setComparePrice(toDecimal(getSafe(parts, 3)));
-            variant.setWeight(toDecimal(getSafe(parts, 4)));
+            if (parts.length >= 6) {
+                variant.setFieldType(unescape(getSafe(parts, 0)));
+                variant.setValue(unescape(getSafe(parts, 1)));
+                variant.setImageUrl(unescape(getSafe(parts, 2)));
+                variant.setPrice(toDecimal(getSafe(parts, 3)));
+                variant.setComparePrice(toDecimal(getSafe(parts, 4)));
+                variant.setWeight(toDecimal(getSafe(parts, 5)));
+            } else {
+                variant.setFieldType("TEXT");
+                variant.setValue(unescape(getSafe(parts, 0)));
+                variant.setImageUrl(unescape(getSafe(parts, 1)));
+                variant.setPrice(toDecimal(getSafe(parts, 2)));
+                variant.setComparePrice(toDecimal(getSafe(parts, 3)));
+                variant.setWeight(toDecimal(getSafe(parts, 4)));
+            }
+            if (isBlank(variant.getFieldType())) {
+                variant.setFieldType("TEXT");
+            }
             variants.add(variant);
         }
 
@@ -333,10 +358,6 @@ public class ProductBean extends AdminBean {
         String ref = toDbFileRef(file.getId());
         if ("PRODUCT".equals(fileSelectionTarget)) {
             productForm.setImageUrl(ref);
-        } else if ("PRODUCT_VARIANT".equals(fileSelectionTarget)
-                && fileSelectionVariantIndex >= 0
-                && fileSelectionVariantIndex < variantInputs.size()) {
-            variantInputs.get(fileSelectionVariantIndex).setImageUrl(ref);
         } else if ("PRODUCT_GALLERY".equals(fileSelectionTarget)) {
             if (isBlank(productForm.getGalleryImages())) {
                 productForm.setGalleryImages(ref);
@@ -347,20 +368,51 @@ public class ProductBean extends AdminBean {
         addInfo("File selected");
     }
 
+    public List<String> getVariantFieldTypeOptions() {
+        return Arrays.asList("TEXT", "COLOR", "NUMBER");
+    }
+
+    public List<String> getVariantImageOptions() {
+        if (productForm == null || isBlank(productForm.getGalleryImages())) {
+            return new ArrayList<>();
+        }
+        List<String> refs = new ArrayList<>();
+        String[] parts = productForm.getGalleryImages().split(",");
+        for (String part : parts) {
+            if (isBlank(part)) {
+                continue;
+            }
+            String value = part.trim();
+            if (!refs.contains(value)) {
+                refs.add(value);
+            }
+        }
+        return refs;
+    }
+
     public static class ProductVariantInput implements Serializable {
 
-        private String color;
+        private String fieldType = "TEXT";
+        private String value;
         private String imageUrl;
         private BigDecimal price;
         private BigDecimal comparePrice;
         private BigDecimal weight;
 
-        public String getColor() {
-            return color;
+        public String getFieldType() {
+            return fieldType;
         }
 
-        public void setColor(String color) {
-            this.color = color;
+        public void setFieldType(String fieldType) {
+            this.fieldType = fieldType;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
         }
 
         public String getImageUrl() {

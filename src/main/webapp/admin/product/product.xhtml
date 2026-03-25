@@ -1,7 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:panelGroup rendered="#{not productBean.productEditorVisible}" layout="block">
         <div class="card">
             <div class="card-head product-card-head">
@@ -165,15 +166,23 @@
                                     <div class="product-section-body">
                                         <div class="grid">
                                             <div class="field">
-                                                <label class="mandatory">Color</label>
-                                                <p:inputText value="#{v.color}"/>
+                                                <label class="mandatory">Field Type</label>
+                                                <p:selectOneMenu value="#{v.fieldType}">
+                                                    <f:selectItems value="#{productBean.variantFieldTypeOptions}" />
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div class="field">
+                                                <label class="mandatory">Variant Value</label>
+                                                <p:inputText value="#{v.value}"/>
                                             </div>
                                             <div class="field">
                                                 <label class="mandatory">Variant Image</label>
-                                                <p:inputText value="#{v.imageUrl}" readonly="true"/>
-                                                <p:commandButton type="button" value="Select" icon="pi pi-image" onclick="PF('filePicker').show()">
-                                                    <p:ajax event="click" listener="#{productBean.openFilePicker(productBean, 'PRODUCT_VARIANT', vs.index)}" update=":mainForm:filePickerTable :mainForm:messages"/>
-                                                </p:commandButton>
+                                                <p:selectOneMenu value="#{v.imageUrl}" filter="true" filterMatchMode="contains">
+                                                    <f:selectItem itemLabel="Select image from Product Images" itemValue="" noSelectionOption="true"/>
+                                                    <f:selectItems value="#{productBean.variantImageOptions}" var="galleryRef"
+                                                                   itemLabel="#{productBean.previewLabel(galleryRef)}" itemValue="#{galleryRef}"/>
+                                                </p:selectOneMenu>
+                                                <small>Only Product Images list references are available for variants.</small>
                                             </div>
                                             <div class="field">
                                                 <label class="mandatory">Variant Price</label>
@@ -215,7 +224,7 @@
                             <div class="field">
                                 <label for="hsn">HSN</label>
                                 <p:inputText id="hsn" value="#{productBean.productForm.hsn}">
-                                     <p:ajax/>
+                                    <p:ajax/>
                                 </p:inputText>
                             </div>
                             <div class="field full">
@@ -224,7 +233,7 @@
                                             itemLabel="#{productBean.resolveCollectionNameById(collectionId)}"
                                             itemValue="#{collectionId}" showSourceFilter="true" showTargetFilter="true"
                                             filterMatchMode="contains" responsive="true">
-                                     <p:ajax/>
+                                    <p:ajax/>
                                 </p:pickList>
                             </div>
                         </div>

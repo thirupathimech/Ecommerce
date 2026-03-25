@@ -64,7 +64,7 @@ public class HomePageBean extends BaseBean {
     public List<ProductCollection> getActiveCollections() {
         return catalogService.getActiveCollections();
     }
-    
+
     public ThemeConfig getThemeConfig() {
         return catalogService.getThemeConfig();
     }
@@ -231,11 +231,25 @@ public class HomePageBean extends BaseBean {
             String[] parts = line.split("\\|", -1);
             ProductVariantOption option = new ProductVariantOption();
             option.setIndex(index);
-            option.setName(unescape(getSafe(parts, 0)));
-            option.setImageUrl(resolveMediaUrl(unescape(getSafe(parts, 1))));
-            option.setPrice(toDecimal(getSafe(parts, 2)));
-            option.setComparePrice(toDecimal(getSafe(parts, 3)));
-            option.setWeight(toDecimal(getSafe(parts, 4)));
+            if (parts.length >= 6) {
+                option.setFieldType(unescape(getSafe(parts, 0)));
+                option.setValue(unescape(getSafe(parts, 1)));
+                option.setImageUrl(resolveMediaUrl(unescape(getSafe(parts, 2))));
+                option.setPrice(toDecimal(getSafe(parts, 3)));
+                option.setComparePrice(toDecimal(getSafe(parts, 4)));
+                option.setWeight(toDecimal(getSafe(parts, 5)));
+            } else {
+                option.setFieldType("TEXT");
+                option.setValue(unescape(getSafe(parts, 0)));
+                option.setImageUrl(resolveMediaUrl(unescape(getSafe(parts, 1))));
+                option.setPrice(toDecimal(getSafe(parts, 2)));
+                option.setComparePrice(toDecimal(getSafe(parts, 3)));
+                option.setWeight(toDecimal(getSafe(parts, 4)));
+            }
+            if (isBlank(option.getFieldType())) {
+                option.setFieldType("TEXT");
+            }
+            option.setName(option.getValue());
             variants.add(option);
         }
         return variants;
@@ -297,6 +311,20 @@ public class HomePageBean extends BaseBean {
         return selectedVariantIndex;
     }
 
+    public String variantDisplayLabel(ProductVariantOption variant) {
+        if (variant == null) {
+            return "";
+        }
+        String fieldType = isBlank(variant.getFieldType()) ? "TEXT" : variant.getFieldType().trim().toUpperCase();
+        if ("COLOR".equals(fieldType)) {
+            return "Color: " + variant.getValue();
+        }
+        if ("NUMBER".equals(fieldType)) {
+            return "Option: " + variant.getValue();
+        }
+        return variant.getValue();
+    }
+
     public void addSelectedVariantToCart() {
         Product product = getSelectedProduct();
         ProductVariantOption variant = getSelectedVariant();
@@ -336,7 +364,7 @@ public class HomePageBean extends BaseBean {
             return null;
         }
     }
-    
+
     public CartBean getCartBean() {
         return cartBean;
     }
@@ -344,6 +372,8 @@ public class HomePageBean extends BaseBean {
     public static class ProductVariantOption {
 
         private int index;
+        private String fieldType;
+        private String value;
         private String name;
         private String imageUrl;
         private BigDecimal price;
@@ -356,6 +386,22 @@ public class HomePageBean extends BaseBean {
 
         public void setIndex(int index) {
             this.index = index;
+        }
+
+        public String getFieldType() {
+            return fieldType;
+        }
+
+        public void setFieldType(String fieldType) {
+            this.fieldType = fieldType;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
         }
 
         public String getName() {
