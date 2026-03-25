@@ -62,6 +62,9 @@ public class Product {
     @Column(nullable = false)
     private boolean featured = false;
 
+    @Column(name = "in_stock", nullable = false)
+    private boolean inStock = true;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "product_collection_map",
             joinColumns = @JoinColumn(name = "product_id"),
@@ -178,6 +181,14 @@ public class Product {
 
     public void setFeatured(boolean featured) {
         this.featured = featured;
+    }
+
+    public boolean isInStock() {
+        return inStock;
+    }
+
+    public void setInStock(boolean inStock) {
+        this.inStock = inStock;
     }
 
     public List<ProductCollection> getCollections() {

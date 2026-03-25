@@ -20,8 +20,11 @@
                     <p:column headerText="SKU"><h:outputText value="#{empty pItem.sku ? '—' : pItem.sku}"/></p:column>
                     <p:column headerText="Price"><h:outputText value="Rs. #{pItem.price}"/></p:column>
                     <p:column headerText="Collections"><h:outputText value="#{productBean.resolveCollectionNames(pItem)}"/></p:column>
+                    <p:column headerText="Stock">
+                        <p:selectBooleanCheckbox value="#{pItem.inStock}" disabled="true" itemLabel="In Stock"/>
+                    </p:column>
                     <p:column headerText="Status">
-                        <span class="status-pill #{pItem.active ? 'active' : 'inactive'}">#{pItem.active ? 'Active' : 'Inactive'}</span>
+                        <p:selectBooleanCheckbox value="#{pItem.active}" disabled="true" itemLabel="Active"/>
                     </p:column>
                     <p:column headerText="Action" style="width: 120px;">
                         <p:commandButton value="Edit" action="#{productBean.editForm(pItem)}" update=":mainForm" process="@this"/>
@@ -239,6 +242,10 @@
                         <div class="field">
                             <label for="featured">Featured</label>
                             <p:selectBooleanCheckbox id="featured" value="#{productBean.productForm.featured}" itemLabel="Yes"/>
+                        </div>
+                        <div class="field">
+                            <label for="inStock">Stock</label>
+                            <p:selectBooleanCheckbox id="inStock" value="#{productBean.productForm.inStock}" itemLabel="In Stock"/>
                         </div>
                         <div class="field">
                             <label for="active">Status</label>

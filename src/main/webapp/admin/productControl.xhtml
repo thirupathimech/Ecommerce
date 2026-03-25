@@ -1,6 +1,39 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-                    
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <div class="card">
+        <div class="card-head product-card-head">
+            <div>
+                <h3>Product Control</h3>
+                <p class="section-subtitle">Manage stock and publish status quickly from one table.</p>
+            </div>
+        </div>
+        <div class="card-body">
+            <p:dataTable value="#{productBean.products}" var="pItem" paginator="true" rows="10" rowKey="#{pItem.id}"
+                         paginatorPosition="bottom" emptyMessage="No products found." reflow="true">
+                <p:column headerText="Image" style="width: 90px;">
+                    <h:graphicImage value="#{productBean.resolveMediaUrl(pItem.imageUrl)}" styleClass="thumb"/>
+                </p:column>
+                <p:column headerText="Product Name">
+                    <h:outputText value="#{pItem.name}"/>
+                </p:column>
+                <p:column headerText="Stock" style="width: 180px;">
+                    <p:selectBooleanCheckbox value="#{pItem.inStock}" itemLabel="In Stock">
+                        <p:ajax process="@this" listener="#{productBean.saveProductControl(pItem,'inStock')}" update=":mainForm:messages @this"/>
+                    </p:selectBooleanCheckbox>
+                    <br/>
+                    <small>#{pItem.inStock ? 'Stock available' : 'Out of stock'}</small>
+                </p:column>
+                <p:column headerText="Status" style="width: 180px;">
+                    <p:selectBooleanCheckbox value="#{pItem.active}" itemLabel="Active">
+                        <p:ajax process="@this" listener="#{productBean.saveProductControl(pItem,'status')}" update=":mainForm:messages @this"/>
+                    </p:selectBooleanCheckbox>
+                    <br/>
+                    <small>#{pItem.active ? 'Published' : 'Unpublished'}</small>
+                </p:column>
+            </p:dataTable>
+        </div>
+    </div>
 </ui:composition>

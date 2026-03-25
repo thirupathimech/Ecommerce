@@ -27,13 +27,9 @@ public class ProductBean extends AdminBean {
     @Override
     public void resetForm() {
         productForm = new Product();
-        productForm.setCollections(new ArrayList<>());
-        productForm.setActive(true);
-        productForm.setHasVariants(false);
         variantInputs = new ArrayList<>();
         variantInputs.add(new ProductVariantInput());
         productCollectionPickList = null;
-        productEditorVisible = true;
     }
 
     @Override
@@ -138,6 +134,7 @@ public class ProductBean extends AdminBean {
             draft.setHasVariants(product.isHasVariants());
             draft.setVariantData(product.getVariantData());
             draft.setFeatured(product.isFeatured());
+            draft.setInStock(product.isInStock());
             draft.setActive(product.isActive());
             draft.setCollections(toCollectionReferences(product.getCollections()));
             productForm = draft;
@@ -193,6 +190,24 @@ public class ProductBean extends AdminBean {
     public void cancelProductEditor() {
         resetForm();
         productEditorVisible = false;
+    }
+
+    public void saveProductControl(Product product, String field) {
+        if (product == null || product.getId() == null || isBlank(field)) {
+            addError("Invalid product record.");
+            return;
+        }
+        if("inStock".equalsIgnoreCase(field)){
+            product.setInStock(!product.isInStock());
+        } else if ("status".equalsIgnoreCase(field)) {
+            product.setActive(!product.isActive());
+        }
+        try {
+            catalogService.saveProduct(product);
+            addInfo("Product control updated for " + product.getName());
+        } catch (Exception ex) {
+            addError("Unable to update product control.");
+        }
     }
 
     public void addVariantRow() {
