@@ -12,7 +12,7 @@
     </ui:define>
     <ui:define name="content">
         <main class="container catalog-page-shell">
-            <h:panelGroup rendered="#{not empty storefrontBean.selectedProduct}" layout="block" styleClass="product-detail-shell">
+            <h:panelGroup rendered="#{not empty storefrontBean.selectedProduct and storefrontBean.selectedProduct.active}" layout="block" styleClass="product-detail-shell">
                 <div class="product-detail-media">
                     <h:graphicImage value="#{homePageBean.resolveMediaUrl(storefrontBean.selectedProduct.imageUrl)}" alt="#{storefrontBean.selectedProduct.name}"/>
                 </div>
@@ -20,10 +20,17 @@
                     <p class="catalog-eyebrow">Product</p>
                     <h1>#{storefrontBean.selectedProduct.name}</h1>
                     <p class="product-detail-price">#{homePageBean.productPriceLabel(storefrontBean.selectedProduct)}</p>
+                    <div class="product-detail-flags">
+                        <ui:fragment rendered="#{not storefrontBean.selectedProduct.inStock}">
+                            <label>
+                                <span>Out of Stock</span>
+                            </label>
+                        </ui:fragment>
+                    </div>
                     <p>#{storefrontBean.selectedProduct.description}</p>
                 </div>
             </h:panelGroup>
-            <h:panelGroup rendered="#{empty storefrontBean.selectedProduct}" layout="block" styleClass="catalog-empty-state">
+            <h:panelGroup rendered="#{empty storefrontBean.selectedProduct or not storefrontBean.selectedProduct.active}" layout="block" styleClass="catalog-empty-state">
                 <h2>Product not found</h2>
                 <p>Please choose a valid product menu.</p>
             </h:panelGroup>
