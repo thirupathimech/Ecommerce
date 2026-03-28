@@ -19,6 +19,32 @@
     --support-border: #dce4ff;
     --footer-bg: linear-gradient(135deg, #10255f 0%, #173676 100%);
     --footer-link: #fff6a8;
+    --card-radius: 24px;
+    --card-border: #efe7d6;
+    --hero-overlay-bg: rgba(15, 32, 77, 0.78);
+    --support-highlight: #fff3bf;
+    --footer-link-hover: #ffffff;
+    --brand-blue: var(--primary-color);
+    --surface: var(--primary-bg);
+    --accent-yellow: #ddd000;
+    --accent-yellow-dark: #c8bc00;
+}
+
+
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    background: var(--surface);
+    color: var(--text-main);
+}
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.25rem;
 }
 .mandatory::after {
     content: " *";
@@ -426,5 +452,388 @@
 @media (max-width: 1100px) {
     .content-editor-layout {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1024px) {
+    .purchase-dialog-panel {
+        grid-template-columns: minmax(260px, 0.95fr) minmax(0, 1fr);
+    }
+    .purchase-dialog-content {
+        padding: 1.5rem;
+    }
+    .purchase-product-summary h3 {
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+    }
+    .products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .hero-slide img {
+        height: 300px;
+    }
+    .video-card {
+        flex: 0 0 240px;
+    }
+    .video-card video {
+        height: 360px;
+    }
+}
+
+
+/* Moved from index-mobile.css */
+/* 
+    Created on : 22-Mar-2026, 10:22:37 am
+    Author     : THIRUPATHI G
+*/
+@media (max-width: 640px) {
+    .policy-page-shell {
+        width: min(100% - 1rem, 1180px);
+        margin-top: 1rem;
+    }
+    .policy-page-card {
+        padding: 1rem;
+        border-radius: 24px;
+    }
+    .policy-page-hero {
+        flex-direction: column;
+        gap: 0.9rem;
+        padding: 0;
+    }
+    .policy-page-actions {
+        width: 100%;
+    }
+    .policy-back-link {
+        width: 100%;
+    }
+    .policy-page-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .policy-page-nav-card,
+    .policy-page-content-card {
+        border-radius: 20px;
+        padding: 1rem;
+    }
+    .policy-page-links {
+        grid-template-columns: 1fr;
+    }
+    .container {
+        padding: 1rem 0.75rem 1.5rem;
+    }
+    .products-grid {
+        gap: 1rem;
+    }
+    .products-grid.is-box {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .products-grid.is-scroll {
+        grid-auto-columns: minmax(220px, 78vw);
+    }
+    .product-card-media {
+        padding: 0.8rem 0.8rem 0;
+    }
+    .product-info {
+        padding: 0.85rem 0.8rem 1rem;
+    }
+    .product-title {
+        font-size: 0.95rem;
+        min-height: 4.2em;
+    }
+    .new-price {
+        font-size: 1.15rem;
+    }
+    .product-badge {
+        top: 1rem;
+        left: 1rem;
+        font-size: 0.92rem;
+        padding: 0.32rem 0.75rem;
+    }
+    .hero-slide img {
+        height: 220px;
+    }
+    .home-div-card,.home-div-card.right {
+        flex-direction:column;
+        min-height:auto;
+    }
+    .home-div-image-wrap {
+        min-width:100%;
+        height:clamp(190px, 52vw, 260px);
+    }
+    .home-div-content {
+        padding:1.5rem;
+    }
+    .store-video-track {
+        gap: 0.75rem;
+    }
+    .video-card {
+        flex: 0 0 75%;
+    }
+    .video-card video {
+        height: 320px;
+    }
+    .collection-group-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .collection-group-scroll-tools {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .collection-group-scroll-nav {
+        align-self: flex-end;
+    }
+    .collection-group-track {
+        gap: 0.8rem;
+    }
+    .collection-group-track.is-box {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .collection-group-track.is-scroll {
+        padding-bottom: 0.8rem;
+    }
+    .collection-group-card.is-scroll {
+        flex: 0 0 82%;
+        min-width: 0;
+    }
+    .collection-group-card img {
+        height: 150px;
+    }
+    .collection-group-card-body {
+        padding: 0.85rem 0.9rem 1rem;
+        min-height: 84px;
+    }
+    .collection-group-card-title {
+        font-size: 1.05rem;
+    }
+    .purchase-dialog.ui-dialog {
+        left: 0.75rem !important;
+        right: 0.75rem !important;
+        top: 5.5rem !important;
+        bottom: 0.75rem !important;
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        border-radius: 32px !important;
+        box-shadow: 0 24px 60px rgba(20, 34, 74, 0.28) !important;
+        overflow: hidden !important;
+    }
+    .purchase-dialog .ui-dialog-content {
+        max-height: calc(100dvh - 6.25rem);
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        border-radius: 32px !important;
+        background: linear-gradient(180deg, #fffaf0 0%, #ffffff 42%, #ffffff 100%);
+        -webkit-overflow-scrolling: touch;
+    }
+    .purchase-dialog-body,
+    .purchase-dialog-panel,
+    .purchase-product-visual,
+    .purchase-dialog-content {
+        min-width: 0;
+        width: 100%;
+    }
+    .purchase-dialog-panel {
+        display: flex;
+        flex-direction: column;
+        min-height: auto;
+    }
+    .purchase-product-visual {
+        padding: 1rem 1rem 0.7rem;
+        background: linear-gradient(180deg, #fff7df 0%, rgba(255, 255, 255, 0) 100%);
+    }
+    .purchase-product-visual img {
+        display: block;
+        width: min(100%, 230px);
+        height: 112px;
+        margin: 0 auto;
+        object-fit: cover;
+        border-radius: 24px;
+        box-shadow: none;
+    }
+    .purchase-dialog-content {
+        padding: 1.05rem 1.2rem 1.2rem;
+        gap: 1rem;
+    }
+    .purchase-dialog-close.ui-button {
+        top: 0.8rem;
+        right: 0.8rem;
+        width: 38px;
+        height: 38px;
+        border: 0 !important;
+        background: rgba(255, 255, 255, 0.92) !important;
+        color: #667190 !important;
+        box-shadow: 0 6px 18px rgba(23, 54, 118, 0.16) !important;
+    }
+    .purchase-product-summary {
+        gap: 0.55rem;
+    }
+    .purchase-dialog-eyebrow {
+        padding: 0.35rem 0.8rem;
+        font-size: 0.78rem;
+    }
+    .purchase-product-summary h3 {
+        font-size: clamp(1.9rem, 8vw, 2.35rem);
+        line-height: 1.08;
+    }
+    .purchase-product-summary p {
+        font-size: 0.94rem;
+        line-height: 1.55;
+        color: #566487;
+    }
+    .purchase-selection-block {
+        gap: 0.75rem;
+    }
+    .purchase-selection-header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }
+    .purchase-selection-header span {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #33416f;
+    }
+    .variant-options-shell {
+        gap: 0.85rem;
+    }
+    .variant-option-card {
+        grid-template-columns: 22px 56px minmax(0, 1fr);
+        padding: 0.9rem 0.95rem;
+        align-items: center;
+        gap: 0.75rem;
+        border-radius: 20px;
+        background: rgba(255, 253, 247, 0.96);
+        box-shadow: none;
+    }
+    .variant-option-card.active {
+        box-shadow: 0 0 0 1.5px rgba(209, 195, 0, 0.9);
+    }
+    .variant-option-check {
+        width: 22px;
+        height: 22px;
+    }
+    .variant-option-card img {
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+    }
+    .variant-option-topline,
+    .variant-option-meta {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+    }
+    .variant-option-details {
+        min-width: 0;
+        gap: 0.2rem;
+    }
+    .variant-option-details strong,
+    .variant-option-price,
+    .variant-option-meta span,
+    .variant-option-meta small {
+        overflow-wrap: anywhere;
+    }
+    .variant-option-details strong {
+        font-size: 0.95rem;
+    }
+    .variant-option-price {
+        font-size: 0.98rem;
+        line-height: 1.2;
+    }
+    .variant-option-meta {
+        font-size: 0.8rem;
+        color: #64708e;
+    }
+    .purchase-dialog-note {
+        align-items: flex-start;
+        padding: 0.9rem 0.95rem;
+        border-radius: 18px;
+        font-size: 0.92rem;
+        background: #f5f7ff;
+    }
+    .purchase-dialog-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: stretch;
+        padding-top: 0.25rem;
+    }
+    .purchase-dialog-actions .product-cta-btn.ui-button {
+        min-height: 52px;
+    }
+    .purchase-dialog-actions .product-cta-btn.ui-button .ui-button-text {
+        display: block;
+        white-space: normal;
+        line-height: 1.25;
+    }
+    .policy-admin-card {
+        padding: 1rem;
+        border-radius: 24px;
+    }
+
+    .policy-admin-panel,
+    .policy-admin-preview-surface {
+        padding: 1rem;
+        border-radius: 20px;
+    }
+
+    .policy-admin-preview-card {
+        padding: 1rem;
+    }
+
+    .policy-admin-save-btn.p-button,
+    .policy-admin-menu-btn.p-button {
+        width: 100%;
+    }
+}
+
+
+/* Moved from index-mobile-tablets.css */
+/* 
+    Created on : 22-Mar-2026, 10:25:42 am
+    Author     : Aadhik
+*/
+@media (max-width: 768px) {
+    .nav-row {
+        flex-wrap: wrap;
+    }
+    .nav-left,
+    .nav-right {
+        min-width: 0;
+    }
+    .hero-overlay {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        width: auto !important;
+    }
+    .home-div-content-inner {
+        max-width: 100%;
+    }
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+    .site-footer {
+        padding: 1.5rem 1rem;
+    }
+    .product-detail-shell {
+        grid-template-columns: 1fr;
+    }
+    .products-grid.is-box {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 960px) {
+    .policy-admin-hero,
+    .policy-admin-editor-head,
+    .policy-admin-layout {
+        grid-template-columns: 1fr;
+        display: grid;
+    }
+
+    .policy-admin-hero-badge {
+        max-width: none;
     }
 }
