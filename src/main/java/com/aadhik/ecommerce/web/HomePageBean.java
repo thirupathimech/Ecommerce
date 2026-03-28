@@ -10,7 +10,7 @@ import com.aadhik.ecommerce.model.ThemeConfig;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
 import com.aadhik.ecommerce.service.CatalogService;
 import com.aadhik.ecommerce.service.ContentPageService;
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.math.BigDecimal;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author THIRUPATHI G
  */
 @Named
-@RequestScoped
+@ViewScoped
 public class HomePageBean extends BaseBean {
 
     private static final DecimalFormat PRICE_FORMAT = new DecimalFormat("0.00");
@@ -336,14 +336,17 @@ public class HomePageBean extends BaseBean {
         addInfo(product.getName() + " - " + variant.getName() + " added to cart.");
     }
 
-    public void buySelectedVariantNow() {
+    public String buySelectedVariantNow() {
         Product product = getSelectedProduct();
         ProductVariantOption variant = getSelectedVariant();
         if (product == null || variant == null) {
             addWarn("Select a product variant first.");
-            return;
+            return null;
         }
-        addInfo("Buy it now ready for " + product.getName() + " - " + variant.getName() + ".");
+        cartBean.addVariant(product, variant, variant.getImageUrl());
+        selectedProductId = null;
+        selectedVariantIndex = null;
+        return "/checkout.xhtml?faces-redirect=true";
     }
 
     private String getSafe(String[] values, int index) {

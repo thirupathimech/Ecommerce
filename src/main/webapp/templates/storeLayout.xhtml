@@ -177,7 +177,7 @@
                                         <f:selectItems value="#{homePageBean.selectedProductVariants}" var="variant"
                                                        itemLabel="#{homePageBean.variantDisplayLabel(variant)} - #{homePageBean.formatPrice(variant.price)}"
                                                        itemValue="#{variant.index}"/>
-                                        <p:ajax process="@this" update=":mainForm:purchaseDialog"/>
+                                        <p:ajax process="@this" update=":mainForm:purchaseDialogContent"/>
                                     </p:selectOneMenu>
                                     <h:panelGroup rendered="#{not empty homePageBean.selectedVariant}" layout="block" styleClass="variant-option-details">
                                         <div class="variant-option-topline">
@@ -202,11 +202,10 @@
 
                             <div class="purchase-dialog-actions">
                                 <p:commandButton value="Add to cart" action="#{homePageBean.addSelectedVariantToCart}"
-                                                 update=":mainForm:messages :mainForm:purchaseDialog :mainForm:cartDrawerContent :mainForm:cartBadge" process=":mainForm:purchaseDialog"
+                                                 update=":mainForm:messages :mainForm:cartDrawerContent :mainForm:cartBadge" process=":mainForm:purchaseDialog"
                                                  oncomplete="if (!args.validationFailed) { PF('purchaseDialogWidget').hide(); toggleCartDrawer(true); }" styleClass="product-cta-btn product-cta-add purchase-secondary-action"/>
                                 <p:commandButton value="Buy it now" action="#{homePageBean.buySelectedVariantNow}"
-                                                 update=":mainForm:messages :mainForm:purchaseDialog" process=":mainForm:purchaseDialog"
-                                                 oncomplete="if (!args.validationFailed) PF('purchaseDialogWidget').hide()" styleClass="product-cta-btn product-cta-buy purchase-primary-action"/>
+                                                 process=":mainForm:purchaseDialog" styleClass="product-cta-btn product-cta-buy purchase-primary-action"/>
                             </div>
                         </div>
                     </div>

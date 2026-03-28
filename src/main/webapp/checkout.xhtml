@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/storeLayout.xhtml">
+    <ui:define name="title">Checkout</ui:define>
+    <ui:define name="head">
+        <h:outputStylesheet name="index.css" library="css"/>
+    </ui:define>
+    <ui:define name="content">
+        <main class="container catalog-page-shell">
+            <section class="catalog-empty-state" style="text-align:left; max-width:720px; margin-inline:auto;">
+                <h2>Checkout</h2>
+                <h:panelGroup rendered="#{empty cartBean.items}">
+                    <p>Your cart is empty. Add products to continue checkout.</p>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not empty cartBean.items}" layout="block">
+                    <p>Review your selected products before placing the order.</p>
+                    <ui:repeat value="#{cartBean.items}" var="item">
+                        <div style="display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid #ececec;">
+                            <div>
+                                <strong>#{item.productName}</strong>
+                                <h:panelGroup rendered="#{not empty item.variantName}">
+                                    <div>Variant: #{item.variantName}</div>
+                                </h:panelGroup>
+                                <div>Qty: #{item.quantity}</div>
+                            </div>
+                            <strong>#{homePageBean.formatPrice(item.lineTotal)}</strong>
+                        </div>
+                    </ui:repeat>
+                    <div style="display:flex; justify-content:space-between; padding-top:16px; font-size:1.1rem;">
+                        <span>Total</span>
+                        <strong>#{homePageBean.formatPrice(cartBean.estimatedTotal)}</strong>
+                    </div>
+                </h:panelGroup>
+            </section>
+        </main>
+    </ui:define>
+</ui:composition>
