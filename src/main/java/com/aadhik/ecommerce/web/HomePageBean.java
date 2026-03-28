@@ -40,6 +40,7 @@ public class HomePageBean extends BaseBean {
 
     private Long selectedProductId;
     private Integer selectedVariantIndex;
+    private Product selectedProduct;
 
     public List<HomeSlider> getSliders() {
         return catalogService.getHomeActiveSliders();
@@ -256,6 +257,7 @@ public class HomePageBean extends BaseBean {
     }
 
     public void openPurchaseDialog(Product product) {
+        selectedProduct = product;
         selectedProductId = product == null ? null : product.getId();
         selectedVariantIndex = 0;
     }
@@ -270,13 +272,21 @@ public class HomePageBean extends BaseBean {
     }
 
     public Product getSelectedProduct() {
-        if (selectedProductId == null) {
-            return null;
+        if (selectedProduct != null) {
+            return selectedProduct;
+        }
+        if (selectedProductId != null) {
+            Product product = catalogService.findProductById(selectedProductId);
+            if (product != null) {
+                selectedProduct = product;
+                return selectedProduct;
+            }
         }
         for (CatalogService.HomeRenderSection section : getOrderedHomeSections()) {
             for (Product product : section.getProducts()) {
                 if (selectedProductId.equals(product.getId())) {
-                    return product;
+                    selectedProduct = product;
+                    return selectedProduct;
                 }
             }
         }
@@ -346,6 +356,7 @@ public class HomePageBean extends BaseBean {
         cartBean.addVariant(product, variant, variant.getImageUrl());
         selectedProductId = null;
         selectedVariantIndex = null;
+        selectedProduct = null;
         return "/checkout.xhtml?faces-redirect=true";
     }
 
