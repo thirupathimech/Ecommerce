@@ -275,17 +275,18 @@ public class HomePageBean extends BaseBean {
         if (selectedProduct != null) {
             return selectedProduct;
         }
-        if (selectedProductId != null) {
-            Product product = catalogService.findProductById(selectedProductId);
-            if (product != null) {
-                selectedProduct = product;
-                return selectedProduct;
-            }
+        if (selectedProductId == null) {
+            return null;
+        }
+        Product product = catalogService.findProductById(selectedProductId);
+        if (product != null) {
+            selectedProduct = product;
+            return selectedProduct;
         }
         for (CatalogService.HomeRenderSection section : getOrderedHomeSections()) {
-            for (Product product : section.getProducts()) {
-                if (selectedProductId.equals(product.getId())) {
-                    selectedProduct = product;
+            for (Product productTemp : section.getProducts()) {
+                if (selectedProductId.equals(productTemp.getId())) {
+                    selectedProduct = productTemp;
                     return selectedProduct;
                 }
             }
