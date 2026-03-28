@@ -1,0 +1,44 @@
+version: '3.9'
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: ecommerce-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ecommerce
+      MYSQL_USER: ecom_user
+      MYSQL_PASSWORD: ecom_password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce-app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ecommerce
+      DB_USER: ecom_user
+      DB_PASSWORD: ecom_password
+      DB_POOL_NAME: ecomPool
+      DB_JNDI_NAME: jdbc/ecomDS
+    ports:
+      - "8080:8080"
+      - "4848:4848"
+
+volumes:
+  mysql_data:
