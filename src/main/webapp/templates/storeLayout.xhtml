@@ -177,7 +177,7 @@
                                         <f:selectItems value="#{homePageBean.selectedProductVariants}" var="variant"
                                                        itemLabel="#{homePageBean.variantDisplayLabel(variant)} - #{homePageBean.formatPrice(variant.price)}"
                                                        itemValue="#{variant.index}"/>
-                                        <p:ajax process="@this" update=":mainForm:purchaseDialogContent"/>
+                                        <p:ajax process="@this" update=":mainForm:purchaseDialog:purchaseDialogContent"/>
                                     </p:selectOneMenu>
                                     <h:panelGroup rendered="#{not empty homePageBean.selectedVariant}" layout="block" styleClass="variant-option-details">
                                         <div class="variant-option-topline">
