@@ -310,8 +310,8 @@ public class HomePageBean extends BaseBean {
         return variants.get(index);
     }
 
-    public void setSelectedVariantIndex(int selectedVariantIndex) {
-        this.selectedVariantIndex = selectedVariantIndex;
+    public void setSelectedVariantIndex(Integer selectedVariantIndex) {
+        this.selectedVariantIndex = selectedVariantIndex == null ? 0 : selectedVariantIndex;
     }
 
     public void selectVariant(int variantIndex) {
