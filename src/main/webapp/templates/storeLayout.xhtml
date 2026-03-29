@@ -173,11 +173,11 @@
                                     </h:panelGroup>
                                 </div>
                                 <h:panelGroup id="variantChooser" layout="block" styleClass="variant-options-shell">
-                                     <p:selectOneMenu value="#{homePageBean.selectedVariantIndex}" style="width:100%;">
+                                    <p:selectOneMenu value="#{homePageBean.selectedVariantIndex}" style="width:100%;">
                                         <f:selectItems value="#{homePageBean.selectedProductVariants}" var="variant"
                                                        itemLabel="#{homePageBean.variantDisplayLabel(variant)} - #{homePageBean.formatPrice(variant.price)}"
                                                        itemValue="#{variant.index}"/>
-                                        <p:ajax process="@this" update="purchaseDialogContent"/>
+                                        <p:ajax process="@this" update=":mainForm:purchaseDialogContent"/>
                                     </p:selectOneMenu>
                                     <h:panelGroup rendered="#{not empty homePageBean.selectedVariant}" layout="block" styleClass="variant-option-details">
                                         <div class="variant-option-topline">

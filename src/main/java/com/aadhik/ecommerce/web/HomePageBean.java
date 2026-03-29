@@ -296,7 +296,7 @@ public class HomePageBean extends BaseBean {
 
     public List<ProductVariantOption> getSelectedProductVariants() {
         return getProductVariants(getSelectedProduct());
-    }
+        }
 
     public ProductVariantOption getSelectedVariant() {
         List<ProductVariantOption> variants = getSelectedProductVariants();
