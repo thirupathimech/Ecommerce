@@ -14,10 +14,15 @@
                 <div class="policy-page-hero">
                     <div class="policy-page-header">
                         <span class="policy-eyebrow">Store information</span>
+                        <h1>#{contentViewBean.currentPage.title}</h1>
+                        <p>Everything you need to know about this policy, in one place.</p>
+                    </div>
+                    <div class="policy-page-actions">
+                        <h:outputLink value="#{request.contextPath}/index.xhtml" styleClass="policy-back-link">Back to store</h:outputLink>
                     </div>
                 </div>
 
-                <div class="policy-page-layout">
+                <div class="policy-page-layout policy-page-layout--single">
 
                     <article class="policy-page-content-card">
                         <div class="policy-page-content-head">

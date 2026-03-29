@@ -884,6 +884,11 @@
     gap: 1.4rem;
     align-items: start;
 }
+.policy-page-layout--single {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 960px;
+    margin: 0 auto;
+}
 .policy-page-sidebar,
 .policy-page-content-card,
 .policy-page-nav-card {
@@ -965,6 +970,23 @@
 }
 .policy-page-body > :last-child {
     margin-bottom: 0;
+}
+
+@media (min-width: 992px) {
+    .policy-page-card {
+        padding: 2.2rem;
+        gap: 1.8rem;
+    }
+    .policy-page-content-card {
+        padding: 1.85rem 2rem;
+    }
+    .policy-page-content-head h2 {
+        font-size: clamp(1.9rem, 2.3vw, 2.4rem);
+    }
+    .policy-page-body {
+        font-size: 1.05rem;
+        line-height: 1.95;
+    }
 }
 .policy-admin-card {
     background: linear-gradient(180deg, #fffdf8 0%, #f7f9ff 100%);
