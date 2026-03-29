@@ -73,6 +73,10 @@ public class CartBean implements Serializable {
         }
     }
 
+    public void clear() {
+        items.clear();
+    }
+
     private void addOrIncrement(CartItem candidate) {
         for (CartItem item : items) {
             if (item.sameEntry(candidate)) {
