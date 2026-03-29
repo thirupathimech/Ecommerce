@@ -17,6 +17,7 @@
     <h:body>
         <h:form id="mainForm">
             <div class="page-shell">
+                <p:messages id="messages" showDetail="true" closable="true"/>
                 <div class="admin-link">
                     <h:outputLink value="#{request.contextPath}/admin.xhtml">Go to Admin Setup</h:outputLink>
                 </div>
@@ -115,7 +116,11 @@
                                     <strong>#{homePageBean.formatPrice(cartBean.estimatedTotal)}</strong>
                                 </div>
                                 <p>Taxes included. Discounts and shipping calculated at checkout.</p>
-                                <button type="button" class="cart-checkout-btn">Check out</button>
+                                <p:commandButton value="Check out" action="#{checkoutBean.startCheckout}"
+                                                 process="@this" update=":mainForm:messages"
+                                                 styleClass="cart-checkout-btn"
+                                                 disabled="#{empty cartBean.items}"
+                                                 onclick="toggleCartDrawer(false);"/>
                             </div>
                         </h:panelGroup>
                     </h:panelGroup>

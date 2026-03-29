@@ -2,6 +2,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/templates/storeLayout.xhtml">
     <ui:define name="title">Checkout</ui:define>
     <ui:define name="head">
@@ -9,28 +11,100 @@
     </ui:define>
     <ui:define name="content">
         <main class="container catalog-page-shell">
-            <section class="catalog-empty-state" style="text-align:left; max-width:720px; margin-inline:auto;">
+            <section class="catalog-empty-state" style="text-align:left; max-width:1080px; margin-inline:auto;">
                 <h2>Checkout</h2>
+
                 <h:panelGroup rendered="#{empty cartBean.items}">
                     <p>Your cart is empty. Add products to continue checkout.</p>
+                    <h:outputLink value="#{request.contextPath}/index.xhtml" styleClass="catalog-cta">Continue shopping</h:outputLink>
                 </h:panelGroup>
+
                 <h:panelGroup rendered="#{not empty cartBean.items}" layout="block">
-                    <p>Review your selected products before placing the order.</p>
-                    <ui:repeat value="#{cartBean.items}" var="item">
-                        <div style="display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid #ececec;">
-                            <div>
-                                <strong>#{item.productName}</strong>
-                                <h:panelGroup rendered="#{not empty item.variantName}">
-                                    <div>Variant: #{item.variantName}</div>
-                                </h:panelGroup>
-                                <div>Qty: #{item.quantity}</div>
+                    <p>Complete customer, shipping and payment details. Charges update instantly based on business rules.</p>
+
+                    <div style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:24px; align-items:start; margin-top:16px;">
+                        <div style="display:grid; gap:16px;">
+                            <div style="border:1px solid #ececec; border-radius:14px; padding:16px; background:#fff;">
+                                <h3 style="margin-top:0;">Customer details</h3>
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                                    <p:inputText value="#{checkoutBean.customerName}" placeholder="Full name"/>
+                                    <p:inputText value="#{checkoutBean.phone}" placeholder="Mobile number"/>
+                                    <p:inputText value="#{checkoutBean.email}" placeholder="Email"/>
+                                    <p:inputText value="#{checkoutBean.postalCode}" placeholder="PIN code"/>
+                                </div>
                             </div>
-                            <strong>#{homePageBean.formatPrice(item.lineTotal)}</strong>
+
+                            <div style="border:1px solid #ececec; border-radius:14px; padding:16px; background:#fff;">
+                                <h3 style="margin-top:0;">Shipping address</h3>
+                                <div style="display:grid; gap:12px;">
+                                    <p:inputTextarea value="#{checkoutBean.addressLine}" rows="3" autoResize="false" placeholder="Flat / Street / Landmark"/>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                                        <p:inputText value="#{checkoutBean.city}" placeholder="City"/>
+                                        <p:inputText value="#{checkoutBean.state}" placeholder="State"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="border:1px solid #ececec; border-radius:14px; padding:16px; background:#fff;">
+                                <h3 style="margin-top:0;">Fulfilment and payment</h3>
+                                <div style="display:grid; gap:12px;">
+                                    <p:selectOneRadio value="#{checkoutBean.shippingMethod}" layout="responsive" columns="1">
+                                        <f:selectItems value="#{checkoutBean.shippingMethods}" var="option"
+                                                       itemLabel="#{option.label} - #{checkoutBean.money(option.fee)}"
+                                                       itemValue="#{option.code}"/>
+                                        <p:ajax process="@this" update=":mainForm:checkoutSummary"/>
+                                    </p:selectOneRadio>
+
+                                    <p:selectOneMenu value="#{checkoutBean.paymentMethod}" style="width:100%;">
+                                        <f:selectItems value="#{checkoutBean.paymentMethods}" var="pm"
+                                                       itemLabel="#{pm.label}" itemValue="#{pm.code}"/>
+                                        <p:ajax process="@this" update=":mainForm:checkoutSummary"/>
+                                    </p:selectOneMenu>
+
+                                    <div style="display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center;">
+                                        <p:inputText value="#{checkoutBean.promoCode}" placeholder="Promo code (SAVE10 / FREESHIP)"/>
+                                        <p:commandButton value="Apply" process="@this" update=":mainForm:checkoutSummary"/>
+                                    </div>
+                                    <p:selectBooleanCheckbox value="#{checkoutBean.giftWrap}" itemLabel="Gift wrap this order (+ Rs. 30)">
+                                        <p:ajax process="@this" update=":mainForm:checkoutSummary"/>
+                                    </p:selectBooleanCheckbox>
+                                </div>
+                            </div>
                         </div>
-                    </ui:repeat>
-                    <div style="display:flex; justify-content:space-between; padding-top:16px; font-size:1.1rem;">
-                        <span>Total</span>
-                        <strong>#{homePageBean.formatPrice(cartBean.estimatedTotal)}</strong>
+
+                        <h:panelGroup id="checkoutSummary" layout="block" style="border:1px solid #ececec; border-radius:14px; padding:16px; background:#fff; position:sticky; top:85px;">
+                            <h3 style="margin-top:0;">Order summary</h3>
+                            <ui:repeat value="#{cartBean.items}" var="item">
+                                <div style="display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid #f2f2f2;">
+                                    <div>
+                                        <strong>#{item.productName}</strong>
+                                        <h:panelGroup rendered="#{not empty item.variantName}">
+                                            <div style="font-size:0.9rem; color:#666;">#{item.variantName}</div>
+                                        </h:panelGroup>
+                                        <div style="font-size:0.9rem; color:#666;">Qty: #{item.quantity}</div>
+                                    </div>
+                                    <strong>#{homePageBean.formatPrice(item.lineTotal)}</strong>
+                                </div>
+                            </ui:repeat>
+
+                            <div style="display:grid; gap:8px; margin-top:14px; font-size:0.95rem;">
+                                <div style="display:flex; justify-content:space-between;"><span>Subtotal</span><strong>#{checkoutBean.money(checkoutBean.subtotal)}</strong></div>
+                                <div style="display:flex; justify-content:space-between;"><span>Shipping</span><strong>#{checkoutBean.money(checkoutBean.shippingCharge)}</strong></div>
+                                <div style="display:flex; justify-content:space-between;"><span>Packaging</span><strong>#{checkoutBean.money(checkoutBean.packagingCharge)}</strong></div>
+                                <div style="display:flex; justify-content:space-between;"><span>Taxes (GST)</span><strong>#{checkoutBean.money(checkoutBean.taxAmount)}</strong></div>
+                                <div style="display:flex; justify-content:space-between;"><span>Payment fee</span><strong>#{checkoutBean.money(checkoutBean.paymentSurcharge)}</strong></div>
+                                <div style="display:flex; justify-content:space-between; color:#047857;"><span>Discount</span><strong>- #{checkoutBean.money(checkoutBean.discountAmount)}</strong></div>
+                            </div>
+
+                            <div style="display:flex; justify-content:space-between; padding-top:14px; margin-top:14px; border-top:1px solid #ececec; font-size:1.1rem;">
+                                <span>Total payable</span>
+                                <strong>#{checkoutBean.money(checkoutBean.grandTotal)}</strong>
+                            </div>
+
+                            <p:commandButton value="Place order" action="#{checkoutBean.placeOrder}"
+                                             update=":mainForm:messages :mainForm:cartDrawerContent :mainForm:cartBadge :mainForm:checkoutSummary"
+                                             styleClass="product-cta-btn product-cta-buy" style="width:100%; margin-top:14px;"/>
+                        </h:panelGroup>
                     </div>
                 </h:panelGroup>
             </section>
