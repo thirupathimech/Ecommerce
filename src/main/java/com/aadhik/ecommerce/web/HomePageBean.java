@@ -303,15 +303,16 @@ public class HomePageBean extends BaseBean {
         if (variants.isEmpty()) {
             return null;
         }
-        int index = selectedVariantIndex;
-        if (index < 0 || index >= variants.size()) {
-            return variants.get(0);
+        for (ProductVariantOption variant : variants) {
+            if (variant.getIndex() == selectedVariantIndex) {
+                return variant;
+            }
         }
-        return variants.get(index);
+        return variants.get(0);
     }
 
-    public void setSelectedVariantIndex(Integer selectedVariantIndex) {
-        this.selectedVariantIndex = selectedVariantIndex == null ? 0 : selectedVariantIndex;
+    public void setSelectedVariantIndex(int selectedVariantIndex) {
+        this.selectedVariantIndex = Math.max(0, selectedVariantIndex);
     }
 
     public void selectVariant(int variantIndex) {
