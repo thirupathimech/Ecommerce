@@ -39,7 +39,7 @@ public class HomePageBean extends BaseBean {
     private CartBean cartBean;
 
     private Long selectedProductId;
-    private int selectedVariantIndex;
+    private Integer selectedVariantIndex = 0;
     private Product selectedProduct;
 
     public List<HomeSlider> getSliders() {
@@ -304,22 +304,22 @@ public class HomePageBean extends BaseBean {
             return null;
         }
         for (ProductVariantOption variant : variants) {
-            if (variant.getIndex() == selectedVariantIndex) {
+            if (selectedVariantIndex != null && variant.getIndex() == selectedVariantIndex) {
                 return variant;
             }
         }
         return variants.get(0);
     }
 
-    public void setSelectedVariantIndex(int selectedVariantIndex) {
-        this.selectedVariantIndex = Math.max(0, selectedVariantIndex);
+    public void setSelectedVariantIndex(Integer selectedVariantIndex) {
+        this.selectedVariantIndex = selectedVariantIndex == null ? 0 : Math.max(0, selectedVariantIndex);
     }
 
     public void selectVariant(int variantIndex) {
-        this.selectedVariantIndex = variantIndex;
+        this.selectedVariantIndex = Math.max(0, variantIndex);
     }
 
-    public int getSelectedVariantIndex() {
+    public Integer getSelectedVariantIndex() {
         return selectedVariantIndex;
     }
 

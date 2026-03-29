@@ -173,7 +173,7 @@
                                     </h:panelGroup>
                                 </div>
                                 <h:panelGroup id="variantChooser" layout="block" styleClass="variant-options-shell">
-                                    <p:selectOneMenu value="#{homePageBean.selectedVariantIndex}" style="width:100%;">
+                                    <p:selectOneMenu id="variantSelect" value="#{homePageBean.selectedVariantIndex}" converter="jakarta.faces.Integer" style="width:100%;">
                                         <f:selectItems value="#{homePageBean.selectedProductVariants}" var="variant"
                                                        itemLabel="#{homePageBean.variantDisplayLabel(variant)} - #{homePageBean.formatPrice(variant.price)}"
                                                        itemValue="#{variant.index}"/>
