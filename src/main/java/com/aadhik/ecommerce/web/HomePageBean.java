@@ -39,7 +39,7 @@ public class HomePageBean extends BaseBean {
     private CartBean cartBean;
 
     private Long selectedProductId;
-    private Integer selectedVariantIndex;
+    private int selectedVariantIndex;
     private Product selectedProduct;
 
     public List<HomeSlider> getSliders() {
@@ -303,7 +303,7 @@ public class HomePageBean extends BaseBean {
         if (variants.isEmpty()) {
             return null;
         }
-        int index = selectedVariantIndex == null ? 0 : selectedVariantIndex;
+        int index = selectedVariantIndex;
         if (index < 0 || index >= variants.size()) {
             return variants.get(0);
         }
@@ -311,14 +311,14 @@ public class HomePageBean extends BaseBean {
     }
 
     public void setSelectedVariantIndex(Integer selectedVariantIndex) {
-        this.selectedVariantIndex = selectedVariantIndex;
+        this.selectedVariantIndex = selectedVariantIndex == null ? 0 : selectedVariantIndex;
     }
 
     public void selectVariant(int variantIndex) {
         this.selectedVariantIndex = variantIndex;
     }
 
-    public Integer getSelectedVariantIndex() {
+    public int getSelectedVariantIndex() {
         return selectedVariantIndex;
     }
 
@@ -356,7 +356,7 @@ public class HomePageBean extends BaseBean {
         }
         cartBean.addVariant(product, variant, variant.getImageUrl());
         selectedProductId = null;
-        selectedVariantIndex = null;
+        selectedVariantIndex = 0;
         selectedProduct = null;
         return "/checkout.xhtml?faces-redirect=true";
     }
