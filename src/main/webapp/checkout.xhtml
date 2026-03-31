@@ -75,28 +75,28 @@
                         <h:panelGroup id="checkoutSummary" layout="block" styleClass="checkout-summary-card">
                             <h3 class="checkout-card-title">Order summary</h3>
                             <ui:repeat value="#{cartBean.items}" var="item">
-                                <div style="display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid #f2f2f2;">
-                                    <div>
+                                <div class="checkout-summary-item-row">
+                                    <div class="checkout-summary-item-content">
                                         <strong>#{item.productName}</strong>
                                         <h:panelGroup rendered="#{not empty item.variantName}">
-                                            <div style="font-size:0.9rem; color:#666;">#{item.variantName}</div>
+                                            <div class="checkout-summary-item-meta">#{item.variantName}</div>
                                         </h:panelGroup>
-                                        <div style="font-size:0.9rem; color:#666;">Qty: #{item.quantity}</div>
+                                        <div class="checkout-summary-item-meta">Qty: #{item.quantity}</div>
                                     </div>
-                                    <strong>#{homePageBean.formatPrice(item.lineTotal)}</strong>
+                                    <strong class="checkout-summary-item-amount">#{homePageBean.formatPrice(item.lineTotal)}</strong>
                                 </div>
                             </ui:repeat>
 
-                            <div style="display:grid; gap:8px; margin-top:14px; font-size:0.95rem;">
-                                <div style="display:flex; justify-content:space-between;"><span>Subtotal</span><strong>#{checkoutBean.money(checkoutBean.subtotal)}</strong></div>
-                                <div style="display:flex; justify-content:space-between;"><span>Shipping</span><strong>#{checkoutBean.money(checkoutBean.shippingCharge)}</strong></div>
-                                <div style="display:flex; justify-content:space-between;"><span>Packaging</span><strong>#{checkoutBean.money(checkoutBean.packagingCharge)}</strong></div>
-                                <div style="display:flex; justify-content:space-between;"><span>Taxes (GST)</span><strong>#{checkoutBean.money(checkoutBean.taxAmount)}</strong></div>
-                                <div style="display:flex; justify-content:space-between;"><span>Payment fee</span><strong>#{checkoutBean.money(checkoutBean.paymentSurcharge)}</strong></div>
-                                <div style="display:flex; justify-content:space-between; color:#047857;"><span>Discount</span><strong>- #{checkoutBean.money(checkoutBean.discountAmount)}</strong></div>
+                            <div class="checkout-totals-grid">
+                                <div class="checkout-total-row"><span>Subtotal</span><strong>#{checkoutBean.money(checkoutBean.subtotal)}</strong></div>
+                                <div class="checkout-total-row"><span>Shipping</span><strong>#{checkoutBean.money(checkoutBean.shippingCharge)}</strong></div>
+                                <div class="checkout-total-row"><span>Packaging</span><strong>#{checkoutBean.money(checkoutBean.packagingCharge)}</strong></div>
+                                <div class="checkout-total-row"><span>Taxes (GST)</span><strong>#{checkoutBean.money(checkoutBean.taxAmount)}</strong></div>
+                                <div class="checkout-total-row"><span>Payment fee</span><strong>#{checkoutBean.money(checkoutBean.paymentSurcharge)}</strong></div>
+                                <div class="checkout-total-row checkout-total-discount"><span>Discount</span><strong>- #{checkoutBean.money(checkoutBean.discountAmount)}</strong></div>
                             </div>
 
-                            <div style="display:flex; justify-content:space-between; padding-top:14px; margin-top:14px; border-top:1px solid #ececec; font-size:1.1rem;">
+                            <div class="checkout-grand-total-row">
                                 <span>Total payable</span>
                                 <strong>#{checkoutBean.money(checkoutBean.grandTotal)}</strong>
                             </div>
