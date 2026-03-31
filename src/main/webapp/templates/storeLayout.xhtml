@@ -9,6 +9,8 @@
         <meta name="description" content="#{storeSettingsViewBean.metaDescription}" />
         <link rel="icon" href="#{empty storeSettingsViewBean.storeFavicon ? request.contextPath.concat('/resources/images/favicon.ico') : request.contextPath.concat(storeSettingsViewBean.storeFavicon)}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
         <h:outputStylesheet library="css" name="app.css"/>
         <style>:root { #{themeViewBean.cssVariables}
             }</style>
@@ -18,13 +20,13 @@
         <h:form id="mainForm">
             <div class="page-shell">
                 <p:messages id="messages" showDetail="true" closable="true"/>
-                <div class="admin-link">
+                <div class="admin-link px-3 py-2 text-end">
                     <h:outputLink value="#{request.contextPath}/admin.xhtml">Go to Admin Setup</h:outputLink>
                 </div>
-                <div id="announcementBar" class="top-strip">#{storeSettingsViewBean.storeName}</div>
+                <div id="announcementBar" class="top-strip text-center fw-semibold">#{storeSettingsViewBean.storeName}</div>
                 <!-- ═══════════════════════════════════════════════ HEADER TOOLBAR ═══════════════════════════════════════════════════════════ -->
                 <div id="nav-shell" class="nav-shell">
-                    <div class="nav-row">
+                    <div class="nav-row container-fluid px-0 px-md-2">
                         <div class="nav-left">
                             <p:commandButton id="bar" type="button" icon="pi pi-bars" onclick="toggleStoreMenu(true); return false;" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
                             <p:commandButton id="searchBtn" type="button" icon="pi pi-search" styleClass="ui-button-flat ui-button-rounded ui-button-text"/>
@@ -133,7 +135,7 @@
 
                 <!-- ═══════════════════════════════════════════════ FOOTER ═══════════════════════════════════════════════════════════════════ -->
                 <footer class="site-footer">
-                    <div class="footer-grid">
+                    <div class="footer-grid container-fluid px-3 px-md-4">
                         <div class="footer-brand">
                             <h2>#{storeSettingsViewBean.storeName}</h2>
                             <p>#{empty storeSettingsViewBean.storeAddress ? 'Configure your store address from admin settings to show it here across the storefront.' : storeSettingsViewBean.storeAddress}</p>
@@ -272,5 +274,6 @@
             }
             });
         </h:outputScript>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     </h:body>
 </html>
