@@ -7,14 +7,16 @@
         <title>Admin | #{storeSettingsViewBean.storeName}</title>
         <link rel="icon" type="image/x-icon" href="#{empty storeSettingsViewBean.storeFavicon ? request.contextPath.concat('/favicon.ico') : storeSettingsViewBean.storeFavicon}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
         <h:outputStylesheet library="css" name="app.css"/>
         <style>:root { #{themeViewBean.cssVariables}
         }</style>
         <h:outputStylesheet library="css" name="admin.css"/>
     </h:head>
     <h:body>
-        <div class="layout">
-            <h:form id="menuForm" styleClass="sidebar">
+        <div class="layout container-fluid px-0">
+            <h:form id="menuForm" styleClass="sidebar px-2 px-md-3">
                 <p class="brand">#{storeSettingsViewBean.storeName}</p>
                 <div class="sidebar-shell">
                     <div class="menu-group">
@@ -53,7 +55,7 @@
                 </div>
             </h:form>
 
-            <h:form id="mainForm" styleClass="content" enctype="multipart/form-data">
+            <h:form id="mainForm" styleClass="content px-2 px-md-3" enctype="multipart/form-data">
                 <h1 class="page-title">#{adminPanelBean.activeMenu eq 'dashboard' ? 'Dashboard' : adminPanelBean.activeMenu eq 'products' ? 'Products' : 
                                          adminPanelBean.activeMenu eq 'files' ? 'Files' : adminPanelBean.activeMenu eq 'collections' ? 'Collections' : 
                                          adminPanelBean.activeMenu eq 'home-page' ? 'Home Page' : adminPanelBean.activeMenu eq 'content' ? 'Content' : 
@@ -141,6 +143,7 @@
             </h:form>
         </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     </h:body>
     <h:outputScript>
         document.addEventListener('contextmenu', function(e) {

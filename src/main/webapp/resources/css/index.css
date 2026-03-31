@@ -1528,3 +1528,220 @@
     position: sticky;
     top: 85px;
 }
+
+@media (max-width: 1199px) {
+    .products-grid.is-box {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .collection-group-track.is-box {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .purchase-dialog-panel {
+        grid-template-columns: minmax(240px, 0.9fr) minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 991px) {
+    .hero-slide img {
+        height: 340px;
+    }
+    .hero-overlay {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        padding: 0.85rem 1rem;
+    }
+    .products-grid.is-box {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .home-div-card,
+    .home-div-card.right {
+        flex-direction: column;
+        min-height: 0;
+    }
+    .home-div-image-wrap {
+        min-width: 100%;
+        width: 100%;
+        max-height: 320px;
+    }
+    .home-div-content {
+        padding: 1.4rem 1.2rem 1.6rem;
+    }
+    .purchase-dialog-panel {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+    .purchase-product-visual {
+        padding: 1rem;
+    }
+    .purchase-product-visual img {
+        max-height: 320px;
+    }
+    .purchase-dialog-content {
+        padding: 1.25rem;
+    }
+    .collection-group-card.is-scroll {
+        flex-basis: calc((100% - 1rem) / 2);
+        min-width: 220px;
+    }
+    .policy-page-layout,
+    .policy-admin-layout,
+    .theme-preview-section,
+    .product-detail-shell,
+    .checkout-layout {
+        grid-template-columns: 1fr;
+    }
+    .policy-page-actions {
+        justify-content: flex-start;
+    }
+    .policy-admin-hero {
+        flex-direction: column;
+    }
+    .policy-admin-hero-badge {
+        min-width: 0;
+        max-width: 100%;
+    }
+    .checkout-summary-card {
+        position: static;
+        top: auto;
+    }
+}
+
+@media (max-width: 767px) {
+    .section-title {
+        margin-bottom: 0.75rem;
+    }
+    .hero-slider {
+        margin-bottom: 1.25rem;
+    }
+    .hero-slide img {
+        height: 260px;
+    }
+    .product-collection-section,
+    .store-video-section,
+    .collection-group-section,
+    .home-div-section {
+        margin: 1.35rem 0;
+    }
+    .products-grid.is-box,
+    .collection-group-track.is-box,
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+    .product-title {
+        min-height: 0;
+    }
+    .product-price-stack {
+        min-height: 0;
+    }
+    .product-collection-header,
+    .collection-group-header,
+    .policy-page-hero,
+    .policy-admin-editor-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .collection-group-scroll-tools {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .collection-group-card.is-scroll {
+        flex-basis: 86%;
+        min-width: 86%;
+    }
+    .purchase-dialog {
+        border-radius: 18px !important;
+    }
+    .purchase-dialog .ui-dialog-content {
+        border-radius: 18px !important;
+    }
+    .purchase-dialog-close.ui-button {
+        top: 0.65rem;
+        right: 0.65rem;
+        width: 42px;
+        height: 42px;
+    }
+    .purchase-dialog-actions {
+        grid-template-columns: 1fr;
+    }
+    .policy-page-card,
+    .policy-admin-card,
+    .theme-preview-card,
+    .not-found-card {
+        padding: 1rem;
+        border-radius: 20px;
+    }
+    .policy-page-nav-card,
+    .policy-page-content-card,
+    .policy-admin-panel {
+        border-radius: 18px;
+        padding: 0.95rem;
+    }
+    .theme-preview-surface-box,
+    .theme-preview-sidebar {
+        border-radius: 18px;
+        padding: 1rem;
+    }
+    .product-detail-shell,
+    .catalog-hero,
+    .checkout-card,
+    .checkout-summary-card {
+        padding: 1rem;
+    }
+    .checkout-grid-two,
+    .checkout-promo-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575px) {
+    .container {
+        padding: 0.85rem;
+    }
+    .hero-slide img {
+        height: 220px;
+    }
+    .hero-overlay h3 {
+        font-size: 1.05rem;
+    }
+    .hero-overlay p {
+        font-size: 0.88rem;
+    }
+    .products-grid.is-scroll {
+        grid-auto-columns: minmax(220px, 78vw);
+    }
+    .store-video-track {
+        gap: 0.75rem;
+    }
+    .video-card {
+        flex-basis: 220px;
+    }
+    .video-card video {
+        height: 320px;
+    }
+    .home-div-heading {
+        font-size: clamp(1.3rem, 6vw, 1.7rem);
+    }
+    .home-div-desc {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    .collection-group-scroll-nav {
+        gap: 0.55rem;
+        padding: 0.35rem 0.55rem;
+    }
+    .collection-group-card-body {
+        padding: 0.8rem;
+        min-height: 72px;
+    }
+    .collection-group-card-title {
+        font-size: 1.1rem;
+    }
+    .product-detail-price {
+        font-size: 1.5rem;
+    }
+    .not-found-link {
+        width: 100%;
+        min-width: 0;
+    }
+}
