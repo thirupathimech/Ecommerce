@@ -19,13 +19,13 @@
                 </h:panelGroup>
                 <span class="new-price">#{homePageBean.productPriceLabel(product)}</span>
             </div>
-            <h:panelGroup rendered="#{product.hasVariants}">
-                <div class="product-variant-preview">
+            <div class="product-variant-preview #{product.hasVariants ? '' : 'is-empty'}">
+                <ui:fragment rendered="#{product.hasVariants}">
                     <ui:repeat value="#{homePageBean.getProductVariants(product)}" var="variant">
                         <span class="variant-pill">#{variant.name}</span>
                     </ui:repeat>
-                </div>
-            </h:panelGroup>
+                </ui:fragment>
+            </div>
             <h:panelGroup rendered="#{product.hasVariants}">
                  <p:commandButton id="buyNowBtn" value="Buy Now" actionListener="#{homePageBean.openPurchaseDialog(product)}"
                                  update=":mainForm:purchaseDialog" process="@this"

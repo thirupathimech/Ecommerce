@@ -188,6 +188,13 @@
     margin: 0 0 1rem;
     min-height: 2rem;
 }
+.product-variant-preview.is-empty {
+    display: none;
+}
+.products-grid.is-scroll .product-variant-preview.is-empty {
+    display: flex;
+    visibility: hidden;
+}
 .variant-pill {
     background: color-mix(in srgb, var(--add-cart-bg) 18%, white);
     color: #33416f;
@@ -1698,10 +1705,10 @@
     .products-grid.is-scroll .product-card {
         flex: 0 0 min(280px, 80vw);
     }
-    .product-title {
+    .products-grid.is-box .product-title {
         min-height: 0;
     }
-    .product-price-stack {
+    .products-grid.is-box .product-price-stack {
         min-height: 0;
     }
     .product-collection-header,
