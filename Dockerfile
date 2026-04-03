@@ -9,16 +9,19 @@ COPY src ./src
 RUN mvn -B -ntp clean package -DskipTests
 
 # -------- Runtime stage --------
-FROM eclipse/glassfish:7.0.0
+FROM payara/server-full:6.2025.10-jdk17
 
 USER root
 
+ENV PAYARA_HOME=/opt/payara/appserver \
+    DOMAIN=domain1
+
 # Copy WAR built in previous stage
-COPY --from=build /build/target/ecommerce-1.0-SNAPSHOT.war /opt/glassfish7/glassfish/domains/domain1/autodeploy/ecommerce.war
+COPY --from=build /build/target/ecommerce-1.0-SNAPSHOT.war ${PAYARA_HOME}/glassfish/domains/${DOMAIN}/autodeploy/ecommerce.war
 
 # Copy and prepare startup script
-COPY docker/init-glassfish.sh /opt/glassfish7/init-glassfish.sh
-RUN chmod +x /opt/glassfish7/init-glassfish.sh
+COPY docker/init-payara.sh /opt/payara/init-payara.sh
+RUN chmod +x /opt/payara/init-payara.sh
 
 ENV DB_HOST=mysql \
     DB_PORT=3306 \
@@ -30,4 +33,4 @@ ENV DB_HOST=mysql \
 
 EXPOSE 8080 4848
 
-CMD ["/opt/glassfish7/init-glassfish.sh"]
+CMD ["/opt/payara/init-payara.sh"]

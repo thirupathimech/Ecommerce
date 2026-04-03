@@ -1,7 +1,7 @@
-# Ecommerce - Docker Deployment (GlassFish 7.0.0)
+# Ecommerce - Docker Deployment (Payara 6.2025.10)
 
 This project can be deployed with **Docker + Docker Compose** using:
-- **Eclipse GlassFish 7.0.0** for app server
+- **Payara Server Full 6.2025.10 (JDK 17)** for app server
 - **MySQL 8.4** for database
 
 ## 1) Build and run
@@ -13,18 +13,18 @@ docker compose up --build -d
 ## 2) Access URLs
 
 - Application: `http://localhost:8080/ecommerce/`
-- GlassFish Admin Console: `http://localhost:4848`
+- Payara Admin Console: `http://localhost:4848`
 
 ## 3) Database configuration (important)
 
 Your application uses JPA with this JNDI datasource in `persistence.xml`:
 - `jdbc/ecomDS`
 
-At container startup, `docker/init-glassfish.sh` automatically:
-1. Starts GlassFish domain
+At container startup, `docker/init-payara.sh` automatically:
+1. Starts Payara domain
 2. Creates JDBC Connection Pool (`ecomPool` by default)
 3. Creates JDBC Resource (`jdbc/ecomDS` by default)
-4. Pings pool and starts GlassFish in foreground
+4. Pings pool and starts Payara in foreground
 
 So in server-level database config, you only need to set environment variables.
 
@@ -37,7 +37,7 @@ So in server-level database config, you only need to set environment variables.
 | `DB_NAME` | `ecommerce` | Database name |
 | `DB_USER` | `ecom_user` | Database user |
 | `DB_PASSWORD` | `ecom_password` | Database password |
-| `DB_POOL_NAME` | `ecomPool` | GlassFish JDBC pool name |
+| `DB_POOL_NAME` | `ecomPool` | Payara JDBC pool name |
 | `DB_JNDI_NAME` | `jdbc/ecomDS` | JNDI datasource name used by app |
 
 ## 4) Stop containers
