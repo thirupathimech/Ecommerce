@@ -19,6 +19,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
 
 import java.util.List;
 
@@ -446,14 +447,13 @@ public class CatalogRepository {
         }
         return entityManager.merge(mediaFile);
     }
-
-    public boolean existsShippingConditionRule(String stateCode, ShippingThresholdType thresholdType,
-            java.math.BigDecimal thresholdValue, Long ignoreId) {
+    
+    public boolean existsShippingConditionRule(String stateCode, ShippingThresholdType thresholdType,BigDecimal thresholdValue, Long ignoreId) {
         StringBuilder jpql = new StringBuilder("""
                 SELECT COUNT(s) FROM ShippingRate s
                 WHERE s.stateCode = :stateCode
-                  AND s.thresholdType = :thresholdType
-                  AND s.thresholdValue = :thresholdValue
+                AND s.thresholdType = :thresholdType
+                AND s.thresholdValue = :thresholdValue
                 """);
         if (ignoreId != null) {
             jpql.append(" AND s.id <> :ignoreId");
@@ -468,6 +468,24 @@ public class CatalogRepository {
         return query.getSingleResult() > 0;
     }
 
+    public boolean existsShippingRule(String stateCode, ShippingThresholdType thresholdType, Long ignoreId) {
+        StringBuilder jpql = new StringBuilder("""
+                SELECT COUNT(s) FROM ShippingRate s
+                WHERE s.stateCode = :stateCode
+                  AND s.thresholdType <> :thresholdType
+                """);
+        if (ignoreId != null) {
+            jpql.append(" AND s.id <> :ignoreId");
+        }
+        TypedQuery<Long> query = entityManager.createQuery(jpql.toString(), Long.class);
+        query.setParameter("stateCode", stateCode);
+        query.setParameter("thresholdType", thresholdType);
+        if (ignoreId != null) {
+            query.setParameter("ignoreId", ignoreId);
+        }
+        return query.getSingleResult() > 0;
+    }
+    
     @Transactional
     public ShippingRate saveShippingRate(ShippingRate shippingRate) {
         if (shippingRate.getId() == null) {

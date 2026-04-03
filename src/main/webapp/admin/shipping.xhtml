@@ -6,38 +6,50 @@
     <div class="card">
         <div class="card-head product-card-head">
             <div>
-                <h3>Shipping Rates (India States)</h3>
-                <p class="section-subtitle">Oru state-ku multiple conditions create pannalaam. Aana same state + same type + same max value duplicate create panna mudiyadhu.</p>
+                <h3>Shipping Rule Headers + Conditions</h3>
+                <p class="section-subtitle">Header (State + Rule Type) oru thadava podhum. Andha header-kulla neraya child conditions add/edit pannalaam.</p>
             </div>
         </div>
         <div class="card-body">
             <div class="grid menu-admin-grid">
                 <div class="field">
-                    <label>State</label>
-                    <p:selectOneMenu value="#{shippingBean.shippingForm.stateCode}">
+                    <label>Rule Header: State</label>
+                    <p:selectOneMenu value="#{shippingBean.ruleStateCode}">
                         <f:selectItem itemLabel="Select state" itemValue="" noSelectionOption="true"/>
                         <f:selectItems value="#{shippingBean.availableStateOptions}"/>
+                        <f:ajax/>
                     </p:selectOneMenu>
-                    <small>Create always state-ku against ah.</small>
+                    <small>Same state + type header table-la once dhaan varum.</small>
                 </div>
 
                 <div class="field">
-                    <label>Rule Type</label>
-                    <p:selectOneMenu value="#{shippingBean.shippingForm.thresholdType}">
+                    <label>Rule Header: Type</label>
+                    <p:selectOneMenu value="#{shippingBean.ruleThresholdType}">
                         <f:selectItems value="#{shippingBean.thresholdTypes}" var="ruleType"
                                        itemValue="#{ruleType}" itemLabel="#{shippingBean.thresholdTypeLabel(ruleType)}"/>
                         <p:ajax process="@this" update=":mainForm"/>
                     </p:selectOneMenu>
+                    <small>Idhu header. Keela add pannradhu child conditions.</small>
                 </div>
 
                 <div class="field">
-                    <label>Maximum value</label>
+                    <label>Condition: Maximum value (upto)</label>
                     <p:inputNumber value="#{shippingBean.shippingForm.thresholdValue}" decimalPlaces="3" minValue="0"/>
-                    <small>Up to this #{shippingBean.thresholdSuffix(shippingBean.shippingForm.thresholdType)} value charge apply aagum.</small>
+                    <small>Checkout total / weight indha value kulla irundha indha charge apply aagum.</small>
                 </div>
 
+                <ui:fragment rendered="#{shippingBean.ruleThresholdType eq 'WEIGHT'}">
                 <div class="field">
-                    <label>Shipping charge</label>
+                    <label>Condition: Weight Unit</label>
+                    <p:selectOneMenu value="#{shippingBean.weightUnit}">
+                        <f:selectItems value="#{shippingBean.weightUnits}"/>
+                    </p:selectOneMenu>
+                    <small>Supported units: ml, L, g, kg (internally kg-a normalize pannuvom).</small>
+                </div>
+                </ui:fragment>
+
+                <div class="field">
+                    <label>Condition: Shipping charge</label>
                     <p:inputNumber value="#{shippingBean.shippingForm.charge}" decimalPlaces="2" minValue="0" symbol="₹" symbolPosition="p"/>
                 </div>
 
@@ -47,34 +59,41 @@
                 </div>
 
                 <div class="field full menu-admin-actions">
-                    <p:commandButton value="Save Shipping Rule" action="#{shippingBean.saveForm}" update=":mainForm" process="@form"/>
+                    <p:commandButton value="Save Condition" action="#{shippingBean.saveForm}" update=":mainForm" process="@form"/>
                     <p:commandButton value="Reset" action="#{shippingBean.resetForm}" update=":mainForm" process="@this" styleClass="ui-button-secondary"/>
                 </div>
             </div>
 
-            <p:dataTable value="#{shippingBean.shippingRates}" var="rate" paginator="true" rows="8" style="margin-top:18px;">
-                <p:column headerText="State"><h:outputText value="#{shippingBean.stateLabel(rate)}"/></p:column>
-                <p:column headerText="Rule Type"><h:outputText value="#{shippingBean.thresholdTypeLabel(rate.thresholdType)}"/></p:column>
-                <p:column headerText="Max Value"><h:outputText value="#{rate.thresholdValue} #{shippingBean.thresholdSuffix(rate.thresholdType)}"/></p:column>
-                <p:column headerText="Charge">
-                    <h:panelGroup rendered="#{shippingBean.isDefaultOtherStatesRow(rate)}">
-                        <span class="status-pill active">Free</span>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{not shippingBean.isDefaultOtherStatesRow(rate)}">
-                        <h:outputText value="#{shippingBean.chargeLabel(rate)}"/>
-                    </h:panelGroup>
-                </p:column>
-                <p:column headerText="Status"><span class="status-pill #{rate.active ? 'active' : 'inactive'}">#{rate.active ? 'Active' : 'Inactive'}</span></p:column>
-                <p:column headerText="Action" style="width:220px;">
-                    <h:panelGroup rendered="#{not shippingBean.isDefaultOtherStatesRow(rate)}">
-                        <p:commandButton value="Edit" action="#{shippingBean.editForm(rate)}" update=":mainForm" process="@this" styleClass="ui-button-secondary"/>
-                        <p:commandButton value="Delete" action="#{shippingBean.deleteForm(rate)}" update=":mainForm" process="@this" styleClass="ui-button-danger"/>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{shippingBean.isDefaultOtherStatesRow(rate)}">
-                        <span class="status-pill active">Default</span>
-                    </h:panelGroup>
-                </p:column>
-            </p:dataTable>
+            <ui:repeat id="ruleHeader" value="#{shippingBean.ruleHeaders}" var="rule_header" >
+                <div class="card" style="margin-top:16px;">
+                    <div class="card-head product-card-head">
+                        <div>
+                            <h3>#{rule_header.stateName} - #{shippingBean.thresholdTypeLabel(rule_header.thresholdType)}</h3>
+                            <p class="section-subtitle">Rule Header (no duplicate header). Child conditions.</p>
+                        </div>
+                        <div>
+                            <p:commandButton value="Use this header"
+                                             action="#{shippingBean.useRuleHeader(rule_header.stateCode, header.thresholdType)}"
+                                             update=":mainForm"
+                                             process="@this"
+                                             styleClass="ui-button-secondary"/>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p:dataTable value="#{shippingBean.getConditionsForHeader(rule_header.stateCode, rule_header.thresholdType)}" var="rate" paginator="true" rows="6">
+                            <p:column headerText="Max Value"><h:outputText value="#{shippingBean.thresholdDisplayValue(rate)}"/></p:column>
+                            <p:column headerText="Charge"><h:outputText value="#{shippingBean.chargeLabel(rate)}"/></p:column>
+                            <p:column headerText="Status"><span class="status-pill #{rate.active ? 'active' : 'inactive'}">#{rate.active ? 'Active' : 'Inactive'}</span></p:column>
+                            <p:column headerText="Action" style="width:220px;">
+                                <p:commandButton value="Edit Condition" action="#{shippingBean.editForm(rate)}" update=":mainForm" process="@this" styleClass="ui-button-secondary"/>
+                                <h:panelGroup rendered="#{not shippingBean.isDefaultOtherStatesRow(rate)}">
+                                    <p:commandButton value="Delete Condition" action="#{shippingBean.deleteForm(rate)}" update=":mainForm" process="@this" styleClass="ui-button-danger"/>
+                                </h:panelGroup>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </ui:repeat>
         </div>
     </div>
 </ui:composition>

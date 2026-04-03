@@ -26,6 +26,7 @@ import static com.aadhik.ecommerce.model.HomeSectionType.PRODUCTS_COLLECTION;
 import com.aadhik.ecommerce.model.StoreMenuItem;
 import com.aadhik.ecommerce.model.StoreSettings;
 import com.aadhik.ecommerce.model.ThemeConfig;
+import java.math.BigDecimal;
 
 @ApplicationScoped
 public class CatalogService {
@@ -271,8 +272,11 @@ public class CatalogService {
         repository.deleteShippingRate(id);
     }
 
-    public boolean existsShippingConditionRule(String stateCode, ShippingThresholdType thresholdType,
-            java.math.BigDecimal thresholdValue, Long ignoreId) {
+    public boolean existsShippingRule(String stateCode, ShippingThresholdType thresholdType, Long ignoreId) {
+        return repository.existsShippingRule(stateCode, thresholdType, ignoreId);
+    }
+    
+     public boolean existsShippingConditionRule(String stateCode, ShippingThresholdType thresholdType, BigDecimal thresholdValue, Long ignoreId) {
         return repository.existsShippingConditionRule(stateCode, thresholdType, thresholdValue, ignoreId);
     }
 
