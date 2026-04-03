@@ -8,6 +8,8 @@ import com.aadhik.ecommerce.model.MarqueeConfig;
 import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
+import com.aadhik.ecommerce.model.ShippingThresholdType;
+import com.aadhik.ecommerce.model.ShippingRate;
 import com.aadhik.ecommerce.model.StoreMenuItem;
 import com.aadhik.ecommerce.model.StoreSettings;
 import com.aadhik.ecommerce.model.ThemeConfig;
@@ -186,6 +188,14 @@ public class CatalogRepository {
                         select m from MediaFile m
                         order by m.id desc
                         """, MediaFile.class)
+                .getResultList();
+    }
+
+    public List<ShippingRate> findShippingRates() {
+        return entityManager.createQuery("""
+                        select s from ShippingRate s
+                        order by s.stateName asc, s.thresholdType asc, s.thresholdValue asc, s.id asc
+                        """, ShippingRate.class)
                 .getResultList();
     }
 
@@ -435,6 +445,44 @@ public class CatalogRepository {
             return mediaFile;
         }
         return entityManager.merge(mediaFile);
+    }
+
+    public boolean existsShippingConditionRule(String stateCode, ShippingThresholdType thresholdType,
+            java.math.BigDecimal thresholdValue, Long ignoreId) {
+        StringBuilder jpql = new StringBuilder("""
+                SELECT COUNT(s) FROM ShippingRate s
+                WHERE s.stateCode = :stateCode
+                  AND s.thresholdType = :thresholdType
+                  AND s.thresholdValue = :thresholdValue
+                """);
+        if (ignoreId != null) {
+            jpql.append(" AND s.id <> :ignoreId");
+        }
+        TypedQuery<Long> query = entityManager.createQuery(jpql.toString(), Long.class);
+        query.setParameter("stateCode", stateCode);
+        query.setParameter("thresholdType", thresholdType);
+        query.setParameter("thresholdValue", thresholdValue);
+        if (ignoreId != null) {
+            query.setParameter("ignoreId", ignoreId);
+        }
+        return query.getSingleResult() > 0;
+    }
+
+    @Transactional
+    public ShippingRate saveShippingRate(ShippingRate shippingRate) {
+        if (shippingRate.getId() == null) {
+            entityManager.persist(shippingRate);
+            return shippingRate;
+        }
+        return entityManager.merge(shippingRate);
+    }
+
+    @Transactional
+    public void deleteShippingRate(Long id) {
+        ShippingRate shippingRate = entityManager.find(ShippingRate.class, id);
+        if (shippingRate != null) {
+            entityManager.remove(shippingRate);
+        }
     }
 
     @Transactional

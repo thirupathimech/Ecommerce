@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <div class="card">
+        <div class="card-head product-card-head">
+            <div>
+                <h3>Shipping Rates (India States)</h3>
+                <p class="section-subtitle">Oru state-ku multiple conditions create pannalaam. Aana same state + same type + same max value duplicate create panna mudiyadhu.</p>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="grid menu-admin-grid">
+                <div class="field">
+                    <label>State</label>
+                    <p:selectOneMenu value="#{shippingBean.shippingForm.stateCode}">
+                        <f:selectItem itemLabel="Select state" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{shippingBean.availableStateOptions}"/>
+                    </p:selectOneMenu>
+                    <small>Create always state-ku against ah.</small>
+                </div>
+
+                <div class="field">
+                    <label>Rule Type</label>
+                    <p:selectOneMenu value="#{shippingBean.shippingForm.thresholdType}">
+                        <f:selectItems value="#{shippingBean.thresholdTypes}" var="ruleType"
+                                       itemValue="#{ruleType}" itemLabel="#{shippingBean.thresholdTypeLabel(ruleType)}"/>
+                        <p:ajax process="@this" update=":mainForm"/>
+                    </p:selectOneMenu>
+                </div>
+
+                <div class="field">
+                    <label>Maximum value</label>
+                    <p:inputNumber value="#{shippingBean.shippingForm.thresholdValue}" decimalPlaces="3" minValue="0"/>
+                    <small>Up to this #{shippingBean.thresholdSuffix(shippingBean.shippingForm.thresholdType)} value charge apply aagum.</small>
+                </div>
+
+                <div class="field">
+                    <label>Shipping charge</label>
+                    <p:inputNumber value="#{shippingBean.shippingForm.charge}" decimalPlaces="2" minValue="0" symbol="₹" symbolPosition="p"/>
+                </div>
+
+                <div class="field menu-active-toggle">
+                    <label>Status</label>
+                    <p:selectBooleanCheckbox value="#{shippingBean.shippingForm.active}" itemLabel="Active"/>
+                </div>
+
+                <div class="field full menu-admin-actions">
+                    <p:commandButton value="Save Shipping Rule" action="#{shippingBean.saveForm}" update=":mainForm" process="@form"/>
+                    <p:commandButton value="Reset" action="#{shippingBean.resetForm}" update=":mainForm" process="@this" styleClass="ui-button-secondary"/>
+                </div>
+            </div>
+
+            <p:dataTable value="#{shippingBean.shippingRates}" var="rate" paginator="true" rows="8" style="margin-top:18px;">
+                <p:column headerText="State"><h:outputText value="#{shippingBean.stateLabel(rate)}"/></p:column>
+                <p:column headerText="Rule Type"><h:outputText value="#{shippingBean.thresholdTypeLabel(rate.thresholdType)}"/></p:column>
+                <p:column headerText="Max Value"><h:outputText value="#{rate.thresholdValue} #{shippingBean.thresholdSuffix(rate.thresholdType)}"/></p:column>
+                <p:column headerText="Charge">
+                    <h:panelGroup rendered="#{shippingBean.isDefaultOtherStatesRow(rate)}">
+                        <span class="status-pill active">Free</span>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{not shippingBean.isDefaultOtherStatesRow(rate)}">
+                        <h:outputText value="#{shippingBean.chargeLabel(rate)}"/>
+                    </h:panelGroup>
+                </p:column>
+                <p:column headerText="Status"><span class="status-pill #{rate.active ? 'active' : 'inactive'}">#{rate.active ? 'Active' : 'Inactive'}</span></p:column>
+                <p:column headerText="Action" style="width:220px;">
+                    <h:panelGroup rendered="#{not shippingBean.isDefaultOtherStatesRow(rate)}">
+                        <p:commandButton value="Edit" action="#{shippingBean.editForm(rate)}" update=":mainForm" process="@this" styleClass="ui-button-secondary"/>
+                        <p:commandButton value="Delete" action="#{shippingBean.deleteForm(rate)}" update=":mainForm" process="@this" styleClass="ui-button-danger"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{shippingBean.isDefaultOtherStatesRow(rate)}">
+                        <span class="status-pill active">Default</span>
+                    </h:panelGroup>
+                </p:column>
+            </p:dataTable>
+        </div>
+    </div>
+</ui:composition>

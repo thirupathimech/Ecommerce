@@ -13,6 +13,8 @@ import com.aadhik.ecommerce.model.MarqueeConfig;
 import com.aadhik.ecommerce.model.MediaFile;
 import com.aadhik.ecommerce.model.Product;
 import com.aadhik.ecommerce.model.ProductCollection;
+import com.aadhik.ecommerce.model.ShippingRate;
+import com.aadhik.ecommerce.model.ShippingThresholdType;
 import com.aadhik.ecommerce.model.VideoCarouselItem;
 import com.aadhik.ecommerce.repository.CatalogRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -185,6 +187,10 @@ public class CatalogService {
         return repository.findMediaFileById(id);
     }
 
+    public List<ShippingRate> getShippingRates() {
+        return repository.findShippingRates();
+    }
+
     public long getFileUsageCount(Long fileId) {
         return repository.countFileUsage(fileId);
     }
@@ -255,6 +261,19 @@ public class CatalogService {
 
     public void deleteMediaFile(Long id) {
         repository.deleteMediaFileById(id);
+    }
+
+    public ShippingRate saveShippingRate(ShippingRate shippingRate) {
+        return repository.saveShippingRate(shippingRate);
+    }
+
+    public void deleteShippingRate(Long id) {
+        repository.deleteShippingRate(id);
+    }
+
+    public boolean existsShippingConditionRule(String stateCode, ShippingThresholdType thresholdType,
+            java.math.BigDecimal thresholdValue, Long ignoreId) {
+        return repository.existsShippingConditionRule(stateCode, thresholdType, thresholdValue, ignoreId);
     }
 
     public boolean isExistSKU(String sku, Long ignoreProductId) {
