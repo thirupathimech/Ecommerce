@@ -257,9 +257,11 @@ public class HomePageBean extends BaseBean {
     }
 
     public void openPurchaseDialog(Product product) {
-        selectedProduct = product;
         selectedProductId = product == null ? null : product.getId();
-        selectedVariantIndex = 0;
+        selectedProduct = null;
+        Product latestProduct = getSelectedProduct();
+        List<ProductVariantOption> variants = getProductVariants(latestProduct);
+        selectedVariantIndex = variants.isEmpty() ? 0 : variants.get(0).getIndex();
     }
 
     public void addProductToCart(Product product) {
@@ -272,15 +274,15 @@ public class HomePageBean extends BaseBean {
     }
 
     public Product getSelectedProduct() {
-        if (selectedProduct != null) {
-            return selectedProduct;
-        }
         if (selectedProductId == null) {
             return null;
         }
         Product product = catalogService.findProductById(selectedProductId);
         if (product != null) {
             selectedProduct = product;
+            return selectedProduct;
+        }
+        if (selectedProduct != null && selectedProductId.equals(selectedProduct.getId())) {
             return selectedProduct;
         }
         for (CatalogService.HomeRenderSection section : getOrderedHomeSections()) {
@@ -303,16 +305,24 @@ public class HomePageBean extends BaseBean {
         if (variants.isEmpty()) {
             return null;
         }
+        if (selectedVariantIndex == null) {
+            selectedVariantIndex = variants.get(0).getIndex();
+            return variants.get(0);
+        }
         for (ProductVariantOption variant : variants) {
             if (selectedVariantIndex != null && variant.getIndex() == selectedVariantIndex) {
                 return variant;
             }
         }
+        selectedVariantIndex = variants.get(0).getIndex();
         return variants.get(0);
     }
 
     public void setSelectedVariantIndex(Integer selectedVariantIndex) {
-        this.selectedVariantIndex = selectedVariantIndex == null ? 0 : Math.max(0, selectedVariantIndex);
+        if (selectedVariantIndex == null) {
+            return;
+        }
+        this.selectedVariantIndex = Math.max(0, selectedVariantIndex);
     }
 
     public void selectVariant(int variantIndex) {
@@ -320,6 +330,10 @@ public class HomePageBean extends BaseBean {
     }
 
     public Integer getSelectedVariantIndex() {
+        if (selectedVariantIndex == null) {
+            ProductVariantOption variant = getSelectedVariant();
+            return variant == null ? 0 : variant.getIndex();
+        }
         return selectedVariantIndex;
     }
 
