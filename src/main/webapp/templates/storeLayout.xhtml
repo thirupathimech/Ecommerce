@@ -170,6 +170,7 @@
                                 <span class="purchase-dialog-eyebrow">Quick buy</span>
                                 <h3>#{homePageBean.selectedProduct.name}</h3>
                                 <p>Choose the right pack size and continue instantly.</p>
+                                <h:panelGroup rendered="#{not homePageBean.selectedProduct.inStock}" layout="block" styleClass="stock-status-label">Out of stock</h:panelGroup>
                             </div>
                             <div class="purchase-selection-block">
                                 <div class="purchase-selection-header">
@@ -210,9 +211,11 @@
                             <div class="purchase-dialog-actions">
                                 <p:commandButton value="Add to cart" action="#{homePageBean.addSelectedVariantToCart}"
                                                  update=":mainForm:messages :mainForm:cartDrawerContent :mainForm:cartBadge" process=":mainForm:purchaseDialog"
-                                                 oncomplete="if (!args.validationFailed) { PF('purchaseDialogWidget').hide(); toggleCartDrawer(true); }" styleClass="product-cta-btn product-cta-add purchase-secondary-action"/>
+                                                 oncomplete="if (!args.validationFailed) { PF('purchaseDialogWidget').hide(); toggleCartDrawer(true); }" styleClass="product-cta-btn product-cta-add purchase-secondary-action"
+                                                 disabled="#{not homePageBean.isProductPurchasable(homePageBean.selectedProduct)}"/>
                                 <p:commandButton value="Buy it now" action="#{homePageBean.buySelectedVariantNow}"
-                                                 process=":mainForm:purchaseDialog" styleClass="product-cta-btn product-cta-buy purchase-primary-action"/>
+                                                  process=":mainForm:purchaseDialog" styleClass="product-cta-btn product-cta-buy purchase-primary-action"
+                                                 disabled="#{not homePageBean.isProductPurchasable(homePageBean.selectedProduct)}"/>
                             </div>
                         </div>
                     </div>

@@ -2,7 +2,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/templates/storeLayout.xhtml">
+                template="/templates/storeLayout.xhtml"
+                xmlns:p="primefaces">
     <ui:define name="title">Product</ui:define>
     <ui:define name="head">
         <h:outputStylesheet name="index.css" library="css"/>
@@ -19,12 +20,29 @@
                     <p class="product-detail-price">#{homePageBean.productPriceLabel(storefrontBean.selectedProduct)}</p>
                     <div class="product-detail-flags">
                         <ui:fragment rendered="#{not storefrontBean.selectedProduct.inStock}">
-                            <label>
+                            <label class="stock-status-label">
                                 <span>Out of Stock</span>
                             </label>
                         </ui:fragment>
                     </div>
                     <p>#{storefrontBean.selectedProduct.description}</p>
+                    <div class="purchase-dialog-actions product-detail-actions">
+                        <h:panelGroup rendered="#{storefrontBean.selectedProduct.hasVariants}">
+                            <p:commandButton value="Buy Now" actionListener="#{homePageBean.openPurchaseDialog(storefrontBean.selectedProduct)}"
+                                             update=":mainForm:purchaseDialog" process="@this"
+                                             oncomplete="PF('purchaseDialogWidget').show()" styleClass="product-cta-btn product-cta-buy"
+                                             disabled="#{not homePageBean.isProductPurchasable(storefrontBean.selectedProduct)}"/>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{not storefrontBean.selectedProduct.hasVariants}">
+                            <p:commandButton value="Add to Cart" action="#{homePageBean.addProductToCart(storefrontBean.selectedProduct)}"
+                                             update=":mainForm:messages :mainForm:cartDrawerContent :mainForm:cartBadge" process="@this"
+                                             oncomplete="toggleCartDrawer(true)" styleClass="product-cta-btn product-cta-add"
+                                             disabled="#{not homePageBean.isProductPurchasable(storefrontBean.selectedProduct)}"/>
+                            <p:commandButton value="Buy it now" action="#{homePageBean.buyProductNow(storefrontBean.selectedProduct)}"
+                                             process="@this" styleClass="product-cta-btn product-cta-buy"
+                                             disabled="#{not homePageBean.isProductPurchasable(storefrontBean.selectedProduct)}"/>
+                        </h:panelGroup>
+                    </div>
                 </div>
             </h:panelGroup>
             <h:panelGroup rendered="#{empty storefrontBean.selectedProduct or not storefrontBean.selectedProduct.active}" layout="block" styleClass="catalog-empty-state">

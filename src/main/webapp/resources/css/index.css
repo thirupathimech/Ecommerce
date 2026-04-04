@@ -112,6 +112,12 @@
     padding: 0.45rem 0.95rem;
     border-radius: 0;
 }
+.product-badge-stockout {
+    left: auto;
+    right: 1.25rem;
+    background: #d32f2f;
+    color: #fff;
+}
 .product-info {
     padding: 1rem 1.15rem 1.25rem;
     display: flex;
@@ -1480,6 +1486,22 @@
     font-size: 2rem;
     font-weight: 700;
     color: var(--brand-blue);
+}
+.stock-status-label {
+    display: inline-flex;
+    align-items: center;
+    margin: 0.4rem 0 0.8rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: #ffebee;
+    color: #b71c1c;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.78rem;
+}
+.product-detail-actions {
+    margin-top: 1rem;
 }
 .catalog-empty-state {
     background:#fff;

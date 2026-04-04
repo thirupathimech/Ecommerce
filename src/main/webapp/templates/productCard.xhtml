@@ -5,6 +5,7 @@
     <article class="product-card">
         <div class="product-card-media">
             <h:panelGroup rendered="#{homePageBean.hasDiscount(product)}" layout="block" styleClass="product-badge">Sale</h:panelGroup>
+            <h:panelGroup rendered="#{not product.inStock}" layout="block" styleClass="product-badge product-badge-stockout">Out of stock</h:panelGroup>
             <h:outputLink value="#{request.contextPath}/product.xhtml?id=#{product.id}" styleClass="product-card-link">
                 <h:graphicImage value="#{homePageBean.resolveMediaUrl(product.imageUrl)}" alt="#{product.name}"/>
             </h:outputLink>
@@ -29,12 +30,14 @@
             <h:panelGroup rendered="#{product.hasVariants}">
                  <p:commandButton id="buyNowBtn" value="Buy Now" actionListener="#{homePageBean.openPurchaseDialog(product)}"
                                  update=":mainForm:purchaseDialog" process="@this"
-                                 oncomplete="PF('purchaseDialogWidget').show()" styleClass="catalog-card-button product-card-action"/>
+                                 oncomplete="PF('purchaseDialogWidget').show()" styleClass="catalog-card-button product-card-action"
+                                 disabled="#{not homePageBean.isProductPurchasable(product)}"/>
             </h:panelGroup>
             <h:panelGroup rendered="#{not product.hasVariants}">
                 <p:commandButton value="Add to Cart" action="#{homePageBean.addProductToCart(product)}"
                                  update=":mainForm:messages :mainForm:cartDrawerContent :mainForm:cartBadge" process="@this"
-                                 oncomplete="toggleCartDrawer(true)" styleClass="catalog-card-button product-card-action"/>
+                                 oncomplete="toggleCartDrawer(true)" styleClass="catalog-card-button product-card-action"
+                                 disabled="#{not homePageBean.isProductPurchasable(product)}"/>
             </h:panelGroup>
         </div>
     </article>

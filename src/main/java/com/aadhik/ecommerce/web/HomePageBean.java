@@ -269,8 +269,25 @@ public class HomePageBean extends BaseBean {
             addWarn("Product is unavailable.");
             return;
         }
+        if (!isProductPurchasable(product)) {
+            addWarn(product.getName() + " is out of stock.");
+            return;
+        }
         cartBean.addProduct(product);
         addInfo(product.getName() + " added to cart. Qty: 1.");
+    }
+
+    public String buyProductNow(Product product) {
+        if (product == null) {
+            addWarn("Product is unavailable.");
+            return null;
+        }
+        if (!isProductPurchasable(product)) {
+            addWarn(product.getName() + " is out of stock.");
+            return null;
+        }
+        cartBean.addProduct(product);
+        return "/checkout.xhtml?faces-redirect=true";
     }
 
     public Product getSelectedProduct() {
@@ -358,6 +375,10 @@ public class HomePageBean extends BaseBean {
             addWarn("Select a product variant first.");
             return;
         }
+        if (!isProductPurchasable(product)) {
+            addWarn(product.getName() + " is out of stock.");
+            return;
+        }
         cartBean.addVariant(product, variant, variant.getImageUrl());
         addInfo(product.getName() + " - " + variant.getName() + " added to cart.");
     }
@@ -369,11 +390,19 @@ public class HomePageBean extends BaseBean {
             addWarn("Select a product variant first.");
             return null;
         }
+        if (!isProductPurchasable(product)) {
+            addWarn(product.getName() + " is out of stock.");
+            return null;
+        }
         cartBean.addVariant(product, variant, variant.getImageUrl());
         selectedProductId = null;
         selectedVariantIndex = 0;
         selectedProduct = null;
         return "/checkout.xhtml?faces-redirect=true";
+    }
+
+    public boolean isProductPurchasable(Product product) {
+        return product != null && product.isActive() && product.isInStock();
     }
 
     private String getSafe(String[] values, int index) {
