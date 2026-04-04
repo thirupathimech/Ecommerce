@@ -27,13 +27,37 @@
                     <p:column headerText="Status">
                         <p:selectBooleanCheckbox value="#{pItem.active}" disabled="true" itemLabel="Active"/>
                     </p:column>
-                    <p:column headerText="Action" style="width: 120px;">
+                    <p:column headerText="Action" style="width: 200px;">
                         <p:commandButton value="Edit" action="#{productBean.editForm(pItem)}" update=":mainForm" process="@this"/>
+                        <p:commandButton value="Copy" icon="pi pi-copy" process="@this"
+                                         action="#{productBean.openCopyDialog(pItem)}"
+                                         update=":mainForm:copyProductDialog"
+                                         oncomplete="PF('copyProductDialogWidget').show()"
+                                         styleClass="ui-button-secondary"/>
                     </p:column>
                 </p:dataTable>
             </div>
         </div>
     </h:panelGroup>
+    
+    <ui:fragment>
+        <p:dialog id="copyProductDialog" widgetVar="copyProductDialogWidget" header="Copy Product"
+                  modal="true" closable="true" resizable="false" width="420">
+            <div class="field full">
+                <label for="copyTitle" class="mandatory">New Product Title</label>
+                <p:inputText id="copyTitle" value="#{productBean.copyProductTitle}" style="width:100%;"/>
+            </div>
+            <f:facet name="footer">
+                <p:commandButton value="Cancel" type="button" onclick="PF('copyProductDialogWidget').hide()"
+                                 styleClass="ui-button-secondary"/>
+                <p:commandButton value="Create Copy"
+                                 action="#{productBean.copyProduct}"
+                                 process="copyProductDialog"
+                                 update=":mainForm"
+                                 oncomplete="if (!args.validationFailed) PF('copyProductDialogWidget').hide();"/>
+            </f:facet>
+        </p:dialog>
+    </ui:fragment>
 
     <h:panelGroup rendered="#{productBean.productEditorVisible}" layout="block" styleClass="product-editor-page">
         <div class="product-breadcrumb-bar">

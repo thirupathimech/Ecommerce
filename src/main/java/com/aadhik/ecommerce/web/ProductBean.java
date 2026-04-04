@@ -24,6 +24,8 @@ public class ProductBean extends AdminBean {
     private boolean productEditorVisible;
     private DualListModel<String> productCollectionPickList;
     private List<ProductVariantInput> variantInputs;
+    private Product productToCopy;
+    private String copyProductTitle;
 
     @Override
     public void resetForm() {
@@ -199,6 +201,52 @@ public class ProductBean extends AdminBean {
     public void cancelProductEditor() {
         resetForm();
         productEditorVisible = false;
+    }
+
+    public void openCopyDialog(Product product) {
+        if (product == null || product.getId() == null) {
+            addError("Invalid product selected.");
+            return;
+        }
+        productToCopy = product;
+        copyProductTitle = product.getName() == null ? "" : product.getName() + " Copy";
+    }
+
+    public void copyProduct() {
+        if (productToCopy == null || productToCopy.getId() == null) {
+            addError("Please choose a product to copy.");
+            return;
+        }
+        if (isBlank(copyProductTitle)) {
+            addError("Product title is required for copy.");
+            return;
+        }
+
+        Product clone = new Product();
+        clone.setName(copyProductTitle.trim());
+        clone.setDescription(productToCopy.getDescription());
+        clone.setSku(generateCopySku(productToCopy.getSku()));
+        clone.setHsn(productToCopy.getHsn());
+        clone.setImageUrl(productToCopy.getImageUrl());
+        clone.setGalleryImages(productToCopy.getGalleryImages());
+        clone.setPrice(productToCopy.getPrice());
+        clone.setComparePrice(productToCopy.getComparePrice());
+        clone.setWeight(productToCopy.getWeight());
+        clone.setHasVariants(productToCopy.isHasVariants());
+        clone.setVariantData(productToCopy.getVariantData());
+        clone.setFeatured(productToCopy.isFeatured());
+        clone.setInStock(productToCopy.isInStock());
+        clone.setActive(productToCopy.isActive());
+        clone.setCollections(toCollectionReferences(productToCopy.getCollections()));
+
+        try {
+            catalogService.saveProduct(clone);
+            productToCopy = null;
+            copyProductTitle = null;
+            addInfo("Product copied successfully.");
+        } catch (Exception ex) {
+            addError("Unable to copy product.");
+        }
     }
 
     public void saveProductControl(Product product, String field) {
@@ -388,6 +436,25 @@ public class ProductBean extends AdminBean {
             }
         }
         return refs;
+    }
+
+    public String getCopyProductTitle() {
+        return copyProductTitle;
+    }
+
+    public void setCopyProductTitle(String copyProductTitle) {
+        this.copyProductTitle = copyProductTitle;
+    }
+
+    private String generateCopySku(String sourceSku) {
+        String baseSku = isBlank(sourceSku) ? "SKU" : sourceSku.trim();
+        String skuCandidate = baseSku + "-COPY";
+        int counter = 1;
+        while (catalogService.isExistSKU(skuCandidate, null)) {
+            skuCandidate = baseSku + "-COPY-" + counter;
+            counter++;
+        }
+        return skuCandidate;
     }
 
     public static class ProductVariantInput implements Serializable {
