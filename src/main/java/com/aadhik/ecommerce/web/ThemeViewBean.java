@@ -23,6 +23,8 @@ public class ThemeViewBean extends BaseBean {
             theme.setBuyNowTextColor("#FFFFFF");
             theme.setAddCartBackground("#F4D332");
             theme.setAddCartTextColor("#173676");
+            theme.setMenuDrawerBackground("#F4D332");
+            theme.setHeaderTextColor("#FFFFFF");
         }
         return theme;
     }
@@ -35,6 +37,9 @@ public class ThemeViewBean extends BaseBean {
         String buyNowText = normalize(theme.getBuyNowTextColor(), "#FFFFFF");
         String addCartBg = normalize(theme.getAddCartBackground(), "#F4D332");
         String addCartText = normalize(theme.getAddCartTextColor(), "#173676");
+        String menuDrawerBg = normalize(theme.getMenuDrawerBackground(), addCartBg);
+        String headerTextColor = normalize(theme.getHeaderTextColor(), "#FFFFFF");
+        String menuDrawerText = textColor(menuDrawerBg);
         return new StringBuilder()
                 .append("--primary-bg:").append(primaryBg).append(';')
                 .append("--primary-surface:").append(mix(primaryBg, "#FFFFFF", 0.82)).append(';')
@@ -48,6 +53,9 @@ public class ThemeViewBean extends BaseBean {
                 .append("--add-cart-bg:").append(addCartBg).append(';')
                 .append("--add-cart-bg-hover:").append(shade(addCartBg, -0.12)).append(';')
                 .append("--add-cart-color:").append(addCartText).append(';')
+                .append("--header-text-color:").append(headerTextColor).append(';')
+                .append("--menu-drawer-bg:").append(menuDrawerBg).append(';')
+                .append("--menu-drawer-text:").append(menuDrawerText).append(';')
                 .append("--support-surface:").append(mix(primaryColor, "#FFFFFF", 0.93)).append(';')
                 .append("--support-border:").append(mix(primaryColor, "#FFFFFF", 0.82)).append(';')
                 .append("--footer-bg:linear-gradient(135deg, ").append(shade(primaryColor, -0.28)).append(" 0%, ").append(primaryColor).append(" 100%);")

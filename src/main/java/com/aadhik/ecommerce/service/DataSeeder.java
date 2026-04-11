@@ -96,6 +96,8 @@ public class DataSeeder {
         theme.setBuyNowTextColor("#FFFFFF");
         theme.setAddCartBackground("#F4D332");
         theme.setAddCartTextColor("#173676");
+        theme.setMenuDrawerBackground("#F4D332");
+        theme.setHeaderTextColor("#FFFFFF");
         theme.setUpdatedAt(java.time.LocalDateTime.now());
         entityManager.persist(theme);
     }

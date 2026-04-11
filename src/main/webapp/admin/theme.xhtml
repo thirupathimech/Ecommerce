@@ -7,6 +7,14 @@
                 <label for="themePrimaryColor">Application theme color</label>
                 <p:colorPicker id="themePrimaryColor" value="#{themeConfigBean.themeForm.primaryColor}" format="hex"/>
             </div>
+            <div class="theme-config-field">
+                <label for="themeMenuDrawerBg">Left menu panel background</label>
+                <p:colorPicker id="themeMenuDrawerBg" value="#{themeConfigBean.themeForm.menuDrawerBackground}" format="hex"/>
+            </div>
+            <div class="theme-config-field">
+                <label for="themeHeaderTextColor">Header font/icon color</label>
+                <p:colorPicker id="themeHeaderTextColor" value="#{themeConfigBean.themeForm.headerTextColor}" format="hex"/>
+            </div>
             <div class="theme-admin-actions">
                 <p:commandButton value="Save theme" actionListener="#{themeConfigBean.saveForm}" update=":mainForm" process=":mainForm" icon="pi pi-save"/>
             </div>

@@ -12,9 +12,12 @@
     --buy-now-color: #ffffff;
     --buy-now-bg: linear-gradient(135deg, #173676 0%, #2754b1 100%);
     --buy-now-bg-hover: linear-gradient(135deg, #122c62 0%, #1d4491 100%);
+    --header-text-color: #ffffff;
     --add-cart-color: #173676;
     --add-cart-bg: #f4d332;
     --add-cart-bg-hover: #e1c01d;
+    --menu-drawer-bg: #f4d332;
+    --menu-drawer-text: #1d2b54;
     --support-surface: #f6f8ff;
     --support-border: #dce4ff;
     --footer-bg: linear-gradient(135deg, #10255f 0%, #173676 100%);
@@ -105,7 +108,7 @@ body {
 }
 .nav-shell {
     background: var(--primary-color);
-    color: #fff;
+    color: var(--header-text-color);
     padding: 0.75rem 1rem;
     position: sticky;
     top: 0;
@@ -118,6 +121,9 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
+}
+.nav-shell .ui-button {
+    color: var(--header-text-color) !important;
 }
 .nav-left,
 .nav-right {
@@ -154,8 +160,8 @@ body {
     width: min(360px, 86vw);
     max-width: 100%;
     height: 100vh;
-    background: var(--add-cart-bg);
-    color: var(--text-main);
+    background: var(--menu-drawer-bg);
+    color: var(--menu-drawer-text);
     padding: 1.25rem;
     transform: translateX(-105%);
     transition: transform .28s ease;
@@ -178,11 +184,12 @@ body {
 .store-menu-header h3 {
     margin: 0;
     font-size: 1.4rem;
-    color: var(--primary-color);
+    color: var(--menu-drawer-text);
 }
 .store-menu-close {
     border: 0;
     background: rgba(255,255,255,.35);
+    color: var(--menu-drawer-text);
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 999px;
@@ -198,7 +205,7 @@ body {
 .store-menu-link {
     display:block;
     padding:.95rem 0;
-    color:#161616;
+    color: var(--menu-drawer-text);
     text-decoration:none;
     border-bottom:1px solid rgba(0,0,0,.08);
     font-size: clamp(1rem, 2vw, 1.2rem);
@@ -217,7 +224,7 @@ body {
     border: 0;
     border-radius: 999px;
     background: transparent;
-    color: #fff;
+    color: var(--header-text-color);
     cursor: pointer;
 }
 .cart-trigger .pi {

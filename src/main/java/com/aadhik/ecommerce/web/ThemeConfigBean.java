@@ -15,6 +15,8 @@ public class ThemeConfigBean extends AdminBean {
     private static final String DEFAULT_BUY_NOW_TEXT = "#FFFFFF";
     private static final String DEFAULT_ADD_CART_BG = "#F4D332";
     private static final String DEFAULT_ADD_CART_TEXT = "#173676";
+    private static final String DEFAULT_MENU_DRAWER_BG = "#F4D332";
+    private static final String DEFAULT_HEADER_TEXT_COLOR = "#FFFFFF";
 
     private ThemeConfig themeForm;
 
@@ -33,6 +35,8 @@ public class ThemeConfigBean extends AdminBean {
         themeForm.setBuyNowTextColor(existing.getBuyNowTextColor());
         themeForm.setAddCartBackground(existing.getAddCartBackground());
         themeForm.setAddCartTextColor(existing.getAddCartTextColor());
+        themeForm.setMenuDrawerBackground(existing.getMenuDrawerBackground());
+        themeForm.setHeaderTextColor(existing.getHeaderTextColor());
         themeForm.setUpdatedAt(existing.getUpdatedAt());
     }
 
@@ -54,7 +58,9 @@ public class ThemeConfigBean extends AdminBean {
             addError("Theme form is not available.");
             return false;
         }
-        return validateColor(themeForm.getPrimaryColor(), "Application theme color");
+        return validateColor(themeForm.getPrimaryColor(), "Application theme color")
+                && validateColor(themeForm.getMenuDrawerBackground(), "Menu panel background color")
+                && validateColor(themeForm.getHeaderTextColor(), "Header text color");
     }
 
     @Override
@@ -99,22 +105,30 @@ public class ThemeConfigBean extends AdminBean {
         theme.setBuyNowTextColor(DEFAULT_BUY_NOW_TEXT);
         theme.setAddCartBackground(DEFAULT_ADD_CART_BG);
         theme.setAddCartTextColor(DEFAULT_ADD_CART_TEXT);
+        theme.setMenuDrawerBackground(DEFAULT_MENU_DRAWER_BG);
+        theme.setHeaderTextColor(DEFAULT_HEADER_TEXT_COLOR);
         theme.setUpdatedAt(LocalDateTime.now());
         return theme;
     }
 
     private void normalizeTheme(ThemeConfig theme) {
         theme.setPrimaryColor(normalizeColor(theme.getPrimaryColor(), DEFAULT_PRIMARY_COLOR));
+        theme.setMenuDrawerBackground(normalizeColor(theme.getMenuDrawerBackground(), DEFAULT_MENU_DRAWER_BG));
+        theme.setHeaderTextColor(normalizeColor(theme.getHeaderTextColor(), DEFAULT_HEADER_TEXT_COLOR));
     }
 
     private void applyDerivedTheme(ThemeConfig theme) {
         String primaryColor = normalizeColor(theme.getPrimaryColor(), DEFAULT_PRIMARY_COLOR);
+        String menuDrawerBackground = normalizeColor(theme.getMenuDrawerBackground(), DEFAULT_MENU_DRAWER_BG);
+        String headerTextColor = normalizeColor(theme.getHeaderTextColor(), DEFAULT_HEADER_TEXT_COLOR);
         theme.setPrimaryColor(primaryColor);
         theme.setPrimaryBackground(mix(primaryColor, "#FFFFFF", 0.92));
         theme.setBuyNowBackground(primaryColor);
         theme.setBuyNowTextColor(textColor(primaryColor));
         theme.setAddCartBackground(mix(primaryColor, "#FFFFFF", 0.18));
         theme.setAddCartTextColor(textColor(theme.getAddCartBackground()));
+        theme.setMenuDrawerBackground(menuDrawerBackground);
+        theme.setHeaderTextColor(headerTextColor);
     }
 
     private boolean validateColor(String value, String label) {

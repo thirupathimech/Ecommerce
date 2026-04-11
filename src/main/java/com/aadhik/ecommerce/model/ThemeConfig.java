@@ -35,6 +35,12 @@ public class ThemeConfig implements Serializable {
     @Column(name = "add_cart_color", nullable = false, length = 20)
     private String addCartTextColor;
 
+    @Column(name = "menu_drawer_bg", nullable = false, length = 20)
+    private String menuDrawerBackground;
+
+    @Column(name = "header_text_color", nullable = false, length = 20)
+    private String headerTextColor;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -92,6 +98,22 @@ public class ThemeConfig implements Serializable {
 
     public void setAddCartTextColor(String addCartTextColor) {
         this.addCartTextColor = addCartTextColor;
+    }
+
+    public String getMenuDrawerBackground() {
+        return menuDrawerBackground;
+    }
+
+    public void setMenuDrawerBackground(String menuDrawerBackground) {
+        this.menuDrawerBackground = menuDrawerBackground;
+    }
+
+    public String getHeaderTextColor() {
+        return headerTextColor;
+    }
+
+    public void setHeaderTextColor(String headerTextColor) {
+        this.headerTextColor = headerTextColor;
     }
 
     public LocalDateTime getUpdatedAt() {
